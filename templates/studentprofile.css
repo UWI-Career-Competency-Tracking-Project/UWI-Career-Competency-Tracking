@@ -1,0 +1,273 @@
+
+body, h1, h2, p, input, button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+
+body {
+    background: url('background.png') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #0d67a3;
+    color: white;
+    padding: 15px 40px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+header h1 {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+header nav ul {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+}
+
+header nav ul li a {
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+header nav ul li a:hover {
+    color: #cce7ff;
+}
+
+header .logo img {
+    height: 45px;
+}
+
+
+.profile-container {
+    background-color: rgba(255, 255, 255, 0.97);
+    margin: 50px auto;
+    padding: 35px;
+    border-radius: 25px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+    max-width: 780px;
+    border: 3px solid #ccc;
+    transition: transform 0.3s;
+}
+
+.profile-container:hover {
+    transform: translateY(-5px);
+}
+
+
+.profile-container h2 {
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+
+.form-section {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+
+.left-section {
+    width: 55%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+
+.input-field {
+    width: 100%;
+    padding: 12px;
+    border-radius: 20px;
+    border: 1px solid #bbb;
+    font-size: 14px;
+    background-color: #f0f0f0;
+    transition: box-shadow 0.3s;
+}
+
+.input-field:focus {
+    box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+
+.dob-field {
+    padding: 12px;
+    border-radius: 15px;
+    background-color: #e5d8eb;
+    display: flex;
+    align-items: center;
+    border: 2px solid #d5c2e2;
+    transition: box-shadow 0.3s;
+}
+
+.date-input {
+    border: none;
+    font-size: 16px;
+    padding: 5px;
+    width: 100%;
+    background: transparent;
+    color: #333;
+}
+
+.date-input:focus {
+    outline: none;
+}
+
+
+.region-field {
+    position: relative;
+}
+
+.region-icon {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 18px;
+    color: #ff0080;
+}
+
+
+.right-section {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.profile-display {
+    width: 150px;
+    height: 150px;
+    border: 3px dashed #bbb;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: #f0f0f0;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.profile-display img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.upload-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.upload-title {
+    font-size: 15px;
+    font-weight: bold;
+    color: #444;
+    margin-bottom: 10px;
+}
+
+
+.file-upload {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+
+.gender-box {
+    background-color: #f9f9f9;
+    border: 2px solid #d4d4d4;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: left; 
+    position: relative;
+    margin-top: 20px;
+    width: 150px;
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 10px;
+}
+
+
+.gender-label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+
+.gender-options {
+    font-size: 14px;
+    padding: 5px 10px;
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+.gender-box input[type="radio"] {
+    cursor: pointer;
+}
+
+
+.customize-button {
+    background: linear-gradient(135deg, #000000, #4b4b4b);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 14px;
+    border-radius: 25px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    display: block;
+    width: 250px;
+    margin: 20px auto;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.customize-button:hover {
+    background: linear-gradient(135deg, #333333, #555555);
+    transform: scale(1.05);
+}
+
+
+footer {
+    background-color: #0d67a3;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 14px;
+    width: 100%;
+    margin-top: auto;
+    position: relative;
+    bottom: 0;
+}
