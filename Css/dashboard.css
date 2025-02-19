@@ -1,65 +1,148 @@
-/* dashboard.css */
 body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to right, #1e3c72, #2a5298);
+    font-family: 'Poppins', sans-serif;
+    background: var(--color-lightest);
     margin: 0;
     padding: 0;
-    color: #fff;
+    color: var(--color-dark);
+    min-height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
+
 .dashboard {
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background: linear-gradient(to right, var(--color-primary), #2a5298);
+    padding: 120px 0 40px; /* Adjusted for navbar height */
+    box-sizing: border-box;
+    position: relative;
+    overflow-y: auto;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.97);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 1100px;
+    text-align: center;
+    color: var(--color-dark);
+    height: auto;
+    position: relative;
+}
+
+/* Completely remove any text or element containing 'Dashboard' */
+.container h1,
+.container h2,
+.container .dashboard-title,
+.dashboard::before,
+.dashboard::after {
+    display: none !important;
+}
+
+.dashboard-options {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 30px;
+    width: 100%;
+    padding-bottom: 40px; /* Ensure last option stays visible when scrolling */
+}
+
+.options {
+    background: var(--color-lightest);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+    max-width: 600px;
+}
+
+.options:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.options h3 {
+    color: var(--color-primary);
+    font-size: 22px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.button {
+    display: block;
+    background: var(--color-primary);
+    color: white;
+    text-decoration: none;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 12px auto;
+    width: 90%;
+    font-weight: bold;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background-color: #005bb5;
+    transition: width 0.4s ease-in-out;
+    z-index: -1;
+}
+
+.button:hover::before {
+    width: 100%;
+}
+
+.button:hover {
+    color: white;
+    transform: translateY(-3px);
+}
+
+/* Ensure dashboard content starts below navbar and stays within background */
+.dashboard-content {
+    margin-top: 80px;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url('background-image.jpg') no-repeat center center/cover;
+    flex-direction: column;
+    overflow-y: auto;
 }
-.container {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    width: 450px;
-    text-align: center;
-    color: #333;
-}
-h2 {
-    color: #222;
-    margin-bottom: 20px;
-}
-.options {
-    margin-top: 20px;
-}
-.options h3 {
-    color: #0078D7;
-    font-size: 18px;
-    margin-bottom: 15px;
-}
-.button {
-    display: block;
-    background: #0078D7;
-    color: white;
-    text-decoration: none;
-    padding: 12px;
-    border-radius: 6px;
-    margin: 8px auto;
-    width: 85%;
-    font-weight: bold;
-    transition: 0.3s;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-}
-.button:hover {
-    background: #005bb5;
-}
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 25px;
-    background: #005bb5;
-    color: white;
-}
+
 .signout {
-    font-size: 22px;
+    font-size: 24px;
     cursor: pointer;
+    transition: color 0.3s;
+}
+
+.signout:hover {
+    color: #f56c6c;
+}
+
+@media (max-width: 768px) {
+    .dashboard-options {
+        flex-direction: column;
+    }
+
+    .container {
+        padding: 25px;
+    }
 }
