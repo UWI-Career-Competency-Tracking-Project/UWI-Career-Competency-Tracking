@@ -1,9 +1,13 @@
+<!-- dashboard.html (Updated to fit existing layout) -->
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Career Competency Tracker</title>
+    <title>Dashboard | Career Competency Tracker</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
     <link rel="stylesheet" href="../Css/tempLayout.css">
+    <link rel="stylesheet" href="../Css/dashtemp.css">
     <script src="../JavaScript/tempLayout.js" defer></script>
 </head>
 <body>
@@ -18,7 +22,7 @@
             <p>Student Role</p>
         </div>
         <ul>
-            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="dashboard.html" class="active">Dashboard</a></li>
             <li><a href="competencies.html">Competencies</a></li>
             <li><a href="workshops.html">Workshops</a></li>
             <li><a href="achievements.html">Achievements</a></li>
@@ -52,9 +56,27 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="content">
-        <!-- Main content will be dynamically added per page -->
+    <!-- Main Dashboard Content -->
+    <main class="content dashboard">
+        <div class="dashboard-options">
+            <section class="options">
+                <h3>Student Options</h3>
+                <a href="#" class="button">Track Competencies</a>
+                <a href="#" class="button">Earned Badges & Certificates</a>
+                <a href="#" class="button">Workshops</a>
+                <a href="#" class="button">Job Matching</a>
+            </section>
+            <section class="options">
+                <h3>Employer Options</h3>
+                <a href="#" class="button">Search Candidates</a>
+            </section>
+            <section class="options">
+                <h3>Administration Options</h3>
+                <a href="#" class="button">Award Student Badges/Feedback</a>
+                <a href="#" class="button">Validate Competencies</a>
+                <a href="#" class="button">Create Workshops</a>
+            </section>
+        </div>
     </main>
 </body>
 </html>
