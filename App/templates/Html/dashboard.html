@@ -6,23 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | Career Competency Tracker</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
-    <link rel="stylesheet" href="../Css/Layout.css">
-    <link rel="stylesheet" href="../Css/dashboard.css">
-    <script src="../JavaScript/tempLayout.js" defer></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/Layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/dashboard.css') }}">
+    <script src="{{ url_for('static', filename='JavaScript/tempLayout.js') }}" defer></script>
 </head>
 <body>
 <!-- Topbar -->
     <header>
         <div class="topbar">
             <div class="logo">
-                <img src="../Images/logo.png" alt="Logo">
+                <img src="../static/Images/logo.png" alt="Logo">
                 <span class="title">Career Competency Tracker</span>
             </div>
             <nav class="topnav">
-                <a href="dashboard.html">Dashboard</a>
+                <a href="Html/dashboard">Dashboard</a>
                 <a href="workshops.html">Workshops</a>
                 <div class="dropdown">
-                    <img src="images/profile-placeholder.png" alt="Profile" class="profile-pic">
+                    <img src="../static/Images/profile-placeholder.png" alt="Profile" class="profile-pic">
                     <div class="dropdown-content">
                         <h4>Notifications</h4>
                         <ul class="notification-list">

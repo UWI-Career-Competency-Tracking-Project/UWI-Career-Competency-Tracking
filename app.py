@@ -2,8 +2,13 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+import os
 
-app = Flask(__name__)
+template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'App', 'templates')
+static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'App', 'static')
+app = Flask(__name__, 
+    template_folder=template_dir,
+    static_folder=static_dir)
 app.config['SECRET_KEY'] = 'supersecretkey'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -26,7 +31,7 @@ def load_user(user_id):
 @app.route('/')
 def home():
     session.pop('_flashes', None)  # Clear old flash messages
-    return render_template('home.html')
+    return render_template('Html/home.html')
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -39,7 +44,7 @@ def signup():
 
         if password != confirm_password:
             flash("Passwords do not match!", "danger")
-            return redirect(url_for('signup'))
+            return redirect(url_for('Html/signup.html'))
 
         hashed_password = generate_password_hash(password)
         new_user = User(username=username, email=email, password=hashed_password, user_type=user_type)
@@ -50,7 +55,7 @@ def signup():
         return redirect(url_for('login'))
     
     session.pop('_flashes', None)  # Clear old flash messages
-    return render_template('signup.html')
+    return render_template('Html/signup.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -67,19 +72,19 @@ def login():
             flash('Invalid username or password', 'danger')
 
     session.pop('_flashes', None)  # Clear old flash messages
-    return render_template('login.html')
+    return render_template('Html/login.html')
 
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html', user=current_user)
+    return render_template('Html/dashboard.html', user=current_user)
 
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
     flash("You have been logged out.", "info")
-    return redirect(url_for('login'))
+    return redirect(url_for('Html/login.html'))
 
 if __name__ == '__main__':
     with app.app_context():
