@@ -17,7 +17,7 @@ body {
     justify-content: center;
     align-items: flex-start;
     background: linear-gradient(to right, var(--color-primary), #2a5298);
-    padding: 120px 0 40px; /* Adjusted for navbar height */
+    padding: 120px 0 40px; 
     box-sizing: border-box;
     position: relative;
     overflow-y: auto;

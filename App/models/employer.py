@@ -1,5 +1,5 @@
 from App.database import db
-from models.user import User 
+from .user import User 
 
 class Employer(User):
     __tablename__ = "employers"

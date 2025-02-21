@@ -4,21 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Available Workshops</title>
-    <link rel="stylesheet" href="../../static/Css/studentsAvailableWorkshops.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/studentsAvailableWorkshops.css') }}">
 </head>
 <body>
 
     
     <header>
         <div class="logo">
-            <img src="../../static/Images/logo.png" alt="Logo">
+            <img src="{{ url_for('static', filename='Images/logo.png') }}" alt="Logo">
         </div>
         <h1>Career Competency Tracking System</h1>
         <nav>
             <ul>
-                <li><a href="#">Dashboard</a></li>
-                <li><a href="#">Workshops</a></li>
-                <li><a href="#">Logout</a></li>
+                <li><a href="{{ url_for('dashboard_views.dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('dashboard_views.workshops') }}">Workshops</a></li>
+                <li><a href="{{ url_for('auth_views.logout_action') }}">Logout</a></li>
             </ul>
         </nav>
     </header>
@@ -52,18 +52,24 @@
 
     
     <section class="workshops-container">
-        <div class="workshop-card"><p>Insert Workshop Details Here</p></div>
-        <div class="workshop-card"><p>Insert Workshop Details Here</p></div>
-        <div class="workshop-card"><p>Insert Workshop Details Here</p></div>
-        <div class="workshop-card"><p>Insert Workshop Details Here</p></div>
-        <div class="workshop-card"><p>Insert Workshop Details Here</p></div>
-        <div class="workshop-card"><p>Insert Workshop Details Here</p></div>
-        <div class="workshop-card"><p>Insert Workshop Details Here</p></div>
-        <div class="workshop-card"><p>Insert Workshop Details Here</p></div>
-        <div class="workshop-card"><p>Insert Workshop Details Here</p></div>
-        <div class="workshop-card"><p>Insert Workshop Details Here</p></div>
-        <div class="workshop-card"><p>Insert Workshop Details Here</p></div>
-        <div class="workshop-card"><p>Insert Workshop Details Here</p></div>
+        {% if workshops %}
+            {% for workshop in workshops %}
+                <div class="workshop-card">
+                    <h3>{{ workshop.workshopName }}</h3>
+                    <p class="workshop-id">Course Code: {{ workshop.workshopID }}</p>
+                    <p class="description">{{ workshop.workshopDescription }}</p>
+                    <div class="workshop-details">
+                        <p><strong>Date:</strong> {{ workshop.workshopDate.strftime('%B %d, %Y') }}</p>
+                        <p><strong>Time:</strong> {{ workshop.workshopTime.strftime('%I:%M %p') }}</p>
+                        <p><strong>Instructor:</strong> {{ workshop.instructor }}</p>
+                        <p><strong>Location:</strong> {{ workshop.location }}</p>
+                    </div>
+                    <button class="enroll-btn">Enroll Now</button>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-workshops">No workshops available at this time.</p>
+        {% endif %}
     </section>
 
    

@@ -1,7 +1,8 @@
 from werkzeug.security import check_password_hash, generate_password_hash
 from App.database import db
+from flask_login import UserMixin
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = "users"
     
     id = db.Column(db.Integer, primary_key=True)
@@ -10,16 +11,18 @@ class User(db.Model):
     last_name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    user_type = db.Column(db.String(50), nullable=False)
+    user_type = db.Column(db.String(50))
     
     __mapper_args__ = {
         'polymorphic_identity': 'user',
         'polymorphic_on': user_type
     }
 
-    def __init__(self, username, email, password, user_type):
+    def __init__(self, username, email, password, first_name, last_name, user_type):
         self.username = username
         self.email = email
+        self.first_name = first_name
+        self.last_name = last_name
         self.set_password(password)
         self.user_type = user_type
 

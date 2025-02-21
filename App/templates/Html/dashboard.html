@@ -1,4 +1,3 @@
-<!-- dashboard.html (Updated to fit existing layout) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,40 +10,39 @@
     <script src="{{ url_for('static', filename='JavaScript/tempLayout.js') }}" defer></script>
 </head>
 <body>
-<!-- Topbar -->
+
     <header>
         <div class="topbar">
             <div class="logo">
-                <img src="../static/Images/logo.png" alt="Logo">
+                <img src="../../static/Images/logo.png" alt="Logo">
                 <span class="title">Career Competency Tracker</span>
             </div>
             <nav class="topnav">
-                <a href="Html/dashboard">Dashboard</a>
-                <a href="workshops.html">Workshops</a>
+                <a href="{{ url_for('dashboard_views.dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('dashboard_views.workshops') }}">Workshops</a>
                 <div class="dropdown">
-                    <img src="../static/Images/profile-placeholder.png" alt="Profile" class="profile-pic">
+                    <img src="{{ url_for('static', filename='Images/profile-placeholder.png') }}" alt="Profile" class="profile-pic">
                     <div class="dropdown-content">
                         <h4>Notifications</h4>
                         <ul class="notification-list">
                             <li>No new notifications</li>
                         </ul>
                         <hr>
-                        <a href="studentprofile.html">Profile</a>
-                        <a href="logout.html">Sign Out</a>
+                        <a href="#">Profile</a>
+                        <a href="{{ url_for('auth_views.logout_action') }}">Sign Out</a>
                     </div>
                 </div>
             </nav>
         </div>
     </header>
 
-    <!-- Main Dashboard Content -->
     <main class="content dashboard">
         <div class="dashboard-options">
             <section class="options">
                 <h3>Student Options</h3>
                 <a href="#" class="button">Track Competencies</a>
                 <a href="#" class="button">Earned Badges & Certificates</a>
-                <a href="#" class="button">Workshops</a>
+                <a href="{{ url_for('dashboard_views.workshops') }}" class="button">Workshops</a>
                 <a href="#" class="button">Job Matching</a>
             </section>
             <section class="options">
@@ -55,7 +53,7 @@
                 <h3>Administration Options</h3>
                 <a href="#" class="button">Award Student Badges/Feedback</a>
                 <a href="#" class="button">Validate Competencies</a>
-                <a href="#" class="button">Create Workshops</a>
+                <a href="{{ url_for('dashboard_views.admin_workshop_creation') }}" class="button" onclick="console.log('Button clicked')">Create Workshops</a>
             </section>
         </div>
     </main>

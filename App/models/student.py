@@ -1,5 +1,5 @@
 from App.database import db
-from models.user import User 
+from .user import User 
 
 class Student(User):
     __tablename__ = "students"
