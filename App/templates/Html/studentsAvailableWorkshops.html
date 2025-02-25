@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Available Workshops</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/studentsAvailableWorkshops.css') }}">
+    <script src="{{ url_for('static', filename='JavaScript/workshopSearch.js') }}"></script>
 </head>
 <body>
 
@@ -27,8 +28,8 @@
     <section class="search-section">
         <h2>Available Workshops</h2>
         <div class="search-bar">
-            <input type="text" placeholder="Search Tags or Workshop">
-            <button class="search-button">🔍</button>
+            <input type="text" id="searchInput" placeholder="Search Workshops" value="{{ request.args.get('search', '') }}" oninput="searchWorkshops(this.value)">
+            <span class="search-icon">🔍</span>
         </div>
         <label class="notify-checkbox">
             <input type="checkbox"> Notify me when new workshops are added!
@@ -56,7 +57,7 @@
             {% for workshop in workshops %}
                 <div class="workshop-card">
                     <h3>{{ workshop.workshopName }}</h3>
-                    <p class="workshop-id">Course Code: {{ workshop.workshopID }}</p>
+                    <p class="workshop-id">Workshop Code: {{ workshop.workshopID }}</p>
                     <p class="description">{{ workshop.workshopDescription }}</p>
                     <div class="workshop-details">
                         <p><strong>Date:</strong> {{ workshop.workshopDate.strftime('%B %d, %Y') }}</p>
@@ -64,7 +65,7 @@
                         <p><strong>Instructor:</strong> {{ workshop.instructor }}</p>
                         <p><strong>Location:</strong> {{ workshop.location }}</p>
                     </div>
-                    <button class="enroll-btn">Enroll Now</button>
+                    <a href="{{ url_for('dashboard_views.enroll_workshop', workshop_id=workshop.workshopID) }}" class="enroll-btn">Enroll Now</a>
                 </div>
             {% endfor %}
         {% else %}

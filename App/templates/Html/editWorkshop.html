@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workshop Creation</title>
+    <title>Edit Workshop</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/Layout.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/adminWorkshopCreation.css') }}">
-    <!-- <link rel="stylesheet" href="../../static/Css/adminWorkshopCreation.css"> -->
 </head>
 <body>
     <header>
@@ -24,38 +24,38 @@
 
     <main>
         <div class="workshop-container">
-            <h2>Workshop Creation</h2>
-            <form method="POST" action="{{ url_for('dashboard_views.admin_workshop_creation') }}">
+            <h2>Edit Workshop</h2>
+            <form method="POST" action="{{ url_for('dashboard_views.edit_workshop', workshop_id=workshop.workshopID) }}">
                 <div class="form-group">
                     <label>Workshop Code</label>
-                    <input type="text" name="workshopID" required>
+                    <input type="text" name="workshopID" value="{{ workshop.workshopID }}" readonly>
                 </div>
                 <div class="form-group">
                     <label>Workshop Title</label>
-                    <input type="text" name="workshopName" required>
+                    <input type="text" name="workshopName" value="{{ workshop.workshopName }}" required>
                 </div>
                 <div class="form-group full-width">
                     <label>Workshop Description</label>
-                    <textarea name="workshopDescription" required></textarea>
+                    <textarea name="workshopDescription" required>{{ workshop.workshopDescription }}</textarea>
                 </div>
                 <div class="form-group">
                     <label>Workshop Instructor</label>
-                    <input type="text" name="instructor" required>
+                    <input type="text" name="instructor" value="{{ workshop.instructor }}" required>
                 </div>
                 <div class="form-group">
                     <label>Workshop Location</label>
-                    <input type="text" name="location" required>
+                    <input type="text" name="location" value="{{ workshop.location }}" required>
                 </div>
                 <div class="form-group date-time">
                     <label>Workshop Date & Time</label>
-                    <input type="date" name="workshopDate" required>
-                    <input type="time" name="workshopTime" required>
+                    <input type="date" name="workshopDate" value="{{ workshop.workshopDate }}" required>
+                    <input type="time" name="workshopTime" value="{{ workshop.workshopTime.strftime('%H:%M') }}" required>
                 </div>
                 <div class="form-group checkbox-group">
                     <input type="checkbox" id="notify" name="notify_students">
-                    <label for="notify">Notify Students</label>
+                    <label for="notify">Notify Students of Changes</label>
                 </div>
-                <button type="submit">Create Workshop</button>
+                <button type="submit">Update Workshop</button>
             </form>
         </div>
     </main>
@@ -64,4 +64,4 @@
         <p>&copy; 2025 Career Competency Tracking System. All Rights Reserved.</p>
     </footer>
 </body>
-</html>
+</html> 

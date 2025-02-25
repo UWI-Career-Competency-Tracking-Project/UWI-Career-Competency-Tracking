@@ -1,0 +1,135 @@
+.workshops-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.workshop-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 20px;
+    transition: transform 0.3s ease;
+}
+
+.workshop-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.workshop-header {
+    border-bottom: 1px solid #eee;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+}
+
+.workshop-header h3 {
+    color: #2c3e50;
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.workshop-id {
+    color: #7f8c8d;
+    font-size: 0.9em;
+}
+
+.workshop-body {
+    color: #34495e;
+}
+
+.description {
+    margin: 15px 0;
+    line-height: 1.6;
+}
+
+.workshop-details {
+    display: grid;
+    gap: 10px;
+}
+
+.workshop-details p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.workshop-details i {
+    color: #3498db;
+    width: 20px;
+}
+
+.workshops-header {
+    background: #f8f9fa;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.workshops-header h2 {
+    color: #2c3e50;
+    margin: 0;
+}
+
+.no-workshops {
+    text-align: center;
+    color: #7f8c8d;
+    font-size: 1.2em;
+    grid-column: 1 / -1;
+    padding: 40px;
+} 
+
+footer {
+    background: #0d67a3;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    margin-top: auto;
+}
+
+.notify-checkbox {
+    margin-top: 1rem;
+    display: inline-block;
+    color: #666;
+}
+
+.workshop-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.edit-btn, .delete-btn {
+    padding: 8px 16px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: none;
+    text-align: center;
+    flex: 1;
+}
+
+.edit-btn {
+    background-color: #3498db;
+    color: white;
+}
+
+.delete-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.edit-btn:hover {
+    background-color: #2980b9;
+}
+
+.delete-btn:hover {
+    background-color: #c0392b;
+}

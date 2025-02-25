@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Workshops</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/Layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/workshops.css') }}">
+</head>
+<body>
+    <header>
+        <div class="topbar">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='Images/logo.png') }}" alt="Logo">
+                <span class="title">Career Competency Tracker</span>
+            </div>
+            <nav class="topnav">
+                <a href="{{ url_for('dashboard_views.dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('dashboard_views.workshops') }}">Workshops</a>
+                <div class="dropdown">
+                    <img src="{{ url_for('static', filename='Images/profile-placeholder.png') }}" alt="Profile" class="profile-pic">
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('auth_views.logout_action') }}">Sign Out</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="content workshops">
+        <div class="workshops-header">
+            <h2>Manage Workshops</h2>
+        </div>
+        <div class="workshops-container">
+            {% if workshops %}
+                {% for workshop in workshops %}
+                    <div class="workshop-card">
+                        <div class="workshop-header">
+                            <h3>{{ workshop.workshopName }}</h3>
+                            <span class="workshop-id">Workshop ID: {{ workshop.workshopID }}</span>
+                        </div>
+                        <div class="workshop-body">
+                            <p class="description">{{ workshop.workshopDescription }}</p>
+                            <div class="workshop-details">
+                                <p><i class="fas fa-calendar"></i> {{ workshop.workshopDate }}</p>
+                                <p><i class="fas fa-clock"></i> {{ workshop.workshopTime }}</p>
+                                <p><i class="fas fa-map-marker-alt"></i> {{ workshop.location }}</p>
+                                <p><i class="fas fa-chalkboard-teacher"></i> {{ workshop.instructor }}</p>
+                            </div>
+                            <div class="workshop-actions">
+                                <a href="{{ url_for('dashboard_views.edit_workshop', workshop_id=workshop.workshopID) }}" class="edit-btn">Edit Workshop</a>
+                                <button onclick="deleteWorkshop('{{ workshop.workshopID }}')" class="delete-btn">Delete Workshop</button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-workshops">No workshops available.</p>
+            {% endif %}
+        </div>
+    </main>
+
+    <script>
+    function deleteWorkshop(workshopId) {
+        if (confirm('Are you sure you want to delete this workshop?')) {
+            fetch(`/delete-workshop/${workshopId}`, {
+                method: 'DELETE',
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                }
+            });
+        }
+    }
+    </script>
+</body>
+</html> 
