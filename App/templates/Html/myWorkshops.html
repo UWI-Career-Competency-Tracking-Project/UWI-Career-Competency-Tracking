@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Workshops</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/Layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/workshops.css') }}">
+</head>
+<body>
+    <header>
+        <div class="topbar">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='Images/logo.png') }}" alt="Logo">
+                <span class="title">Career Competency Tracker</span>
+            </div>
+            <nav class="topnav">
+                <a href="{{ url_for('dashboard_views.dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('dashboard_views.workshops') }}">Workshops</a>
+                <div class="dropdown">
+                    <img src="{{ url_for('static', filename='Images/profile-placeholder.png') }}" alt="Profile" class="profile-pic">
+                    <div class="dropdown-content">
+                        <h4>Notifications</h4>
+                        <ul class="notification-list">
+                            <li>No new notifications</li>
+                        </ul>
+                        <hr>
+                        <a href="#">Profile</a>
+                        <a href="{{ url_for('auth_views.logout_action') }}">Sign Out</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="content workshops">
+        <div class="workshops-header">
+            <h2>My Enrolled Workshops</h2>
+        </div>
+        <div class="workshops-container">
+            {% if workshops %}
+                {% for workshop in workshops %}
+                    <div class="workshop-card">
+                        <div class="workshop-header">
+                            <h3>{{ workshop.workshopName }}</h3>
+                            <span class="workshop-id">Workshop ID: {{ workshop.workshopID }}</span>
+                        </div>
+                        <div class="workshop-body">
+                            <p class="description">{{ workshop.workshopDescription }}</p>
+                            <div class="workshop-details">
+                                <p><i class="fas fa-calendar"></i> {{ workshop.workshopDate.strftime('%B %d, %Y') }}</p>
+                                <p><i class="fas fa-clock"></i> {{ workshop.workshopTime.strftime('%I:%M %p') }}</p>
+                                <p><i class="fas fa-map-marker-alt"></i> {{ workshop.location }}</p>
+                                <p><i class="fas fa-chalkboard-teacher"></i> {{ workshop.instructor }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-workshops">You are not enrolled in any workshops yet.</p>
+            {% endif %}
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Career Competency Tracking System. All Rights Reserved.</p>
+    </footer>
+</body>
+</html> 
