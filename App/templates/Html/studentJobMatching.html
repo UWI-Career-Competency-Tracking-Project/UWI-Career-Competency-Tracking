@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Recommendations</title>
+    <link rel="stylesheet" href="../../static/Css/studentJobMatching.css">
+</head>
+<body>
+
+    
+    <header>
+        <div class="logo">
+            <img src="../../static/Images/logo.png" alt="Logo">
+        </div>
+        <h1>Career Competency Tracking System</h1>
+        <nav>
+            <ul>
+                <li><a href="#">Dashboard</a></li>
+                <li><a href="#">Workshops</a></li>
+                <li><a href="#">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    
+    <main>
+        <h2 class="section-title">Based on your competencies, here are recommended job roles:</h2>
+
+        
+        <div class="search-container">
+            <input type="text" id="searchBar" class="search-bar" placeholder="Search Job Roles, Companies etc...">
+            <button class="search-button">🔍</button>
+        </div>
+
+        
+        <div class="job-container" id="jobContainer">
+
+            
+            <div class="job-card" data-bookmarked="false">
+                <div class="job-header">
+                    <span class="job-title">Job Title: Insert title here TEST1</span>
+                    <button class="bookmark" onclick="toggleBookmark(this)">🔖</button>
+                </div>
+                <p><strong>Description:</strong> Insert description here</p>
+            </div>
+
+            <div class="job-card" data-bookmarked="false">
+                <div class="job-header">
+                    <span class="job-title">Job Title: Insert title here TEST2</span>
+                    <button class="bookmark" onclick="toggleBookmark(this)">🔖</button>
+                </div>
+                <p><strong>Description:</strong> Insert description here</p>
+            </div>
+
+            <div class="job-card" data-bookmarked="false">
+                <div class="job-header">
+                    <span class="job-title">Job Title: Insert title here TEST3</span>
+                    <button class="bookmark" onclick="toggleBookmark(this)">🔖</button>
+                </div>
+                <p><strong>Description:</strong> Insert description here</p>
+            </div>
+
+            <div class="job-card" data-bookmarked="false">
+                <div class="job-header">
+                    <span class="job-title">Job Title: Insert title here TEST4</span>
+                    <button class="bookmark" onclick="toggleBookmark(this)">🔖</button>
+                </div>
+                <p><strong>Description:</strong> Insert description here</p>
+            </div>
+
+        </div>
+    </main>
+
+    
+    <footer>
+        <p>&copy; 2025 Career Competency Tracking System. All Rights Reserved.</p>
+    </footer>
+
+    <script src="../../static/JavaScript/studentJobMatching.js"></script>
+
+</body>
+</html>
