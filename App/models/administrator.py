@@ -1,19 +1,21 @@
 from .. import db
 from .user import User
-from flask_login import UserMixin
 
-class Administrator(User, UserMixin):
-    __tablename__ = "administrators"
-
+class Administrator(User):
+    __tablename__ = 'administrators'
+    
     id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
-    department = db.Column(db.String(100))
 
     __mapper_args__ = {
         'polymorphic_identity': 'admin',
     }
 
-    def __init__(self, username, email, password, first_name, last_name):
-        super().__init__(username, email, password, first_name, last_name, user_type='admin')
+    def __init__(self, username, password, email, first_name=None, last_name=None):
+        super().__init__(username=username, password=password, email=email, 
+                        first_name=first_name, last_name=last_name, user_type='admin')
+
+    def __repr__(self):
+        return f'<Administrator {self.username}>'
 
     @property
     def is_active(self):

@@ -6,60 +6,71 @@
     <title>Manage Workshops</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/Layout.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='Css/workshops.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/studentsAvailableWorkshops.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/manageWorkshops.css') }}">
 </head>
 <body>
     <header>
-        <div class="topbar">
-            <div class="logo">
-                <img src="{{ url_for('static', filename='Images/logo.png') }}" alt="Logo">
-                <span class="title">Career Competency Tracker</span>
-            </div>
-            <nav class="topnav">
-                <a href="{{ url_for('dashboard_views.dashboard') }}">Dashboard</a>
-                <a href="{{ url_for('dashboard_views.workshops') }}">Workshops</a>
-                <div class="dropdown">
-                    <img src="{{ url_for('static', filename='Images/profile-placeholder.png') }}" alt="Profile" class="profile-pic">
-                    <div class="dropdown-content">
-                        <a href="{{ url_for('auth_views.logout_action') }}">Sign Out</a>
-                    </div>
-                </div>
-            </nav>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='Images/logo.png') }}" alt="Logo">
         </div>
+        <h1>Career Competency Tracking System</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('dashboard_views.dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('dashboard_views.workshops') }}">Workshops</a></li>
+                <li><a href="{{ url_for('auth_views.logout_action') }}">Logout</a></li>
+            </ul>
+        </nav>
     </header>
 
-    <main class="content workshops">
-        <div class="workshops-header">
-            <h2>Manage Workshops</h2>
-        </div>
-        <div class="workshops-container">
-            {% if workshops %}
-                {% for workshop in workshops %}
-                    <div class="workshop-card">
-                        <div class="workshop-header">
-                            <h3>{{ workshop.name }}</h3>
-                            <span class="workshop-id">Workshop ID: {{ workshop.id }}</span>
-                        </div>
-                        <div class="workshop-body">
-                            <p class="description">{{ workshop.description }}</p>
-                            <div class="workshop-details">
-                                <p><i class="fas fa-calendar"></i> {{ workshop.date.strftime('%B %d, %Y') }}</p>
-                                <p><i class="fas fa-clock"></i> {{ workshop.time }}</p>
-                                <p><i class="fas fa-map-marker-alt"></i> {{ workshop.location }}</p>
-                                <p><i class="fas fa-chalkboard-teacher"></i> {{ workshop.instructor }}</p>
-                            </div>
-                            <div class="workshop-actions">
-                                <a href="{{ url_for('dashboard_views.edit_workshop', workshop_id=workshop.id) }}" class="edit-btn">Edit Workshop</a>
-                                <button onclick="deleteWorkshop('{{ workshop.id }}')" class="delete-btn">Delete Workshop</button>
-                            </div>
+    <section class="search-section">
+        <h2>Manage Workshops</h2>
+    </section>
+    
+    <section class="workshops-container">
+        {% if workshops %}
+            {% for workshop in workshops %}
+            <div class="workshop-card" {% if workshop.image_path %}style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('{{ url_for('static', filename=workshop.image_path) }}');"{% endif %}>
+                <div class="workshop-content">
+                    <span class="workshop-id">Workshop ID: {{ workshop.workshopID }}</span>
+                    <h3>{{ workshop.workshopName }}</h3>
+                    <p class="workshop-description">{{ workshop.workshopDescription }}</p>
+                    <div class="workshop-details">
+                        <p><i class="fas fa-user"></i> <strong>Instructor:</strong> {{ workshop.instructor }}</p>
+                        <p><i class="fas fa-calendar"></i> <strong>Date:</strong> {{ workshop.workshopDate.strftime('%B %d, %Y') }}</p>
+                        <p><i class="fas fa-clock"></i> <strong>Time:</strong> {{ workshop.workshopTime }}</p>
+                        <p><i class="fas fa-location-dot"></i> <strong>Location:</strong> {{ workshop.location }}</p>
+                    </div>
+                    {% if workshop.competencies %}
+                    <div class="competencies">
+                        <h4>Competencies:</h4>
+                        <div class="tags">
+                            {% for competency in workshop.competencies %}
+                            <span class="tag">{{ competency }}</span>
+                            {% endfor %}
                         </div>
                     </div>
-                {% endfor %}
-            {% else %}
-                <p class="no-workshops">No workshops available.</p>
-            {% endif %}
-        </div>
-    </main>
+                    {% endif %}
+                    <div class="workshop-actions">
+                        <a href="{{ url_for('dashboard_views.edit_workshop', workshop_id=workshop.id) }}" class="edit-btn">
+                            <i class="fas fa-edit"></i> Edit Workshop
+                        </a>
+                        <button onclick="deleteWorkshop('{{ workshop.id }}')" class="delete-btn">
+                            <i class="fas fa-trash"></i> Delete Workshop
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-workshops">No workshops available.</p>
+        {% endif %}
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Career Competency Tracking System. All Rights Reserved.</p>
+    </footer>
 
     <script>
     function deleteWorkshop(workshopId) {

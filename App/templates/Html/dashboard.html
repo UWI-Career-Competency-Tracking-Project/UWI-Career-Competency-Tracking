@@ -71,20 +71,20 @@
                 <h3>Student Options</h3>
                 <a href="{{ url_for('dashboard_views.my_workshops') }}" class="button">My Workshops</a>
                 <a href="{{ url_for('dashboard_views.competencies') }}" class="button">Track Competencies</a>
-                <a href="#" class="button">Earned Badges & Certificates</a>
+                <a href="{{ url_for('dashboard_views.earned_badges') }}" class="button">Earned Badges & Certificates</a>
                 <a href="{{ url_for('dashboard_views.workshops') }}" class="button">Workshops</a>
-                <a href="#" class="button">Job Matching</a>
+                <a href="{{ url_for('dashboard_views.job_matches') }}" class="button">Job Matching</a>
             </section>
             <section class="options">
                 <h3>Employer Options</h3>
-                <a href="#" class="button">Search Candidates</a>
+                <a href="{{ url_for('dashboard_views.search_candidates') }}" class="button">Search Candidates</a>
             </section>
             <section class="options">
                 <h3>Administration Options</h3>
                 <a href="{{ url_for('dashboard_views.manage_workshops') }}" class="button">Manage Workshops</a>
                 <a href="{{ url_for('dashboard_views.admin_workshop_creation') }}" class="button">Create Workshops</a>
                 <a href="{{ url_for('dashboard_views.admin_badges') }}" class="button">Award Student Badges/Feedback</a>
-                <a href="#" class="button">Validate Competencies</a>
+                <a href="{{ url_for('dashboard_views.validate_certificates') }}" class="button">Validate Certificate Requests</a>
             </section>
         </div>
     </main>

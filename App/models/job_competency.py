@@ -5,4 +5,7 @@ class JobCompetency(db.Model):
     
     jobCOMPID = db.Column(db.Integer, primary_key=True)
     jobID = db.Column(db.Integer, db.ForeignKey('job_roles.jobID'))
-    competencyID = db.Column(db.Integer, db.ForeignKey('competencies.competencyID')) 
+    competencyID = db.Column(db.Integer, db.ForeignKey('competencies.id'))
+    requiredRank = db.Column(db.Integer, default=1)  
+    
+    competency = db.relationship('Competency', backref='job_competencies', lazy=True) 

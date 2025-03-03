@@ -1,0 +1,30 @@
+{% if workshops %}
+    {% for workshop in workshops %}
+        <div class="workshop-card">
+            {% if workshop.image_path %}
+                <img src="{{ url_for('static', filename=workshop.image_path) }}" alt="{{ workshop.workshopName }}" class="workshop-image">
+            {% endif %}
+            <div class="workshop-content">
+                <h3>{{ workshop.workshopName }}</h3>
+                <p class="description">{{ workshop.workshopDescription }}</p>
+                <div class="workshop-details">
+                    <p><i class="fas fa-calendar"></i> {{ workshop.workshopDate.strftime('%B %d, %Y') }}</p>
+                    <p><i class="fas fa-clock"></i> {{ workshop.workshopTime }}</p>
+                    <p><i class="fas fa-map-marker-alt"></i> {{ workshop.location }}</p>
+                    <p><i class="fas fa-chalkboard-teacher"></i> {{ workshop.instructor }}</p>
+                </div>
+                <div class="competencies">
+                    <h4>Competencies:</h4>
+                    <ul>
+                        {% for competency in workshop.competencies %}
+                            <li>{{ competency }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <a href="{{ url_for('dashboard_views.enroll_workshop', workshop_id=workshop.id) }}" class="enroll-btn">Enroll Now</a>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <p class="no-workshops">No workshops found matching your search.</p>
+{% endif %} 

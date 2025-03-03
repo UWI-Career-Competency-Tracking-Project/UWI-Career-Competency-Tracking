@@ -11,6 +11,9 @@ from werkzeug.utils import secure_filename
 from ..models.user import User
 from ..models.student_competency import StudentCompetency
 from ..models.competency import Competency
+from ..controllers import certificate_controller
+from ..models.job_roles import JobRole
+from ..models.job_competency import JobCompetency
 
 dashboard_views = Blueprint('dashboard_views', __name__, template_folder='../templates')
 
@@ -33,32 +36,47 @@ def workshops():
     
     try:
         all_workshops = Workshop.query.all()
+        print(f"Retrieved {len(all_workshops)} workshops from database")
+        
+        for workshop in all_workshops:
+            if workshop._competencies is None:
+                workshop._competencies = []
+                db.session.add(workshop)
         
         if search_query:
             filtered_workshops = []
             for workshop in all_workshops:
-                # Check if search query matches name, description, instructor, location
-                if (search_query in workshop.name.lower() or
-                    search_query in workshop.description.lower() or
-                    search_query in workshop.instructor.lower() or
-                    search_query in workshop.location.lower() or
-                    # Check if search query matches any competency
-                    any(search_query in comp.lower() for comp in workshop.competencies)):
+                workshop_data = [
+                    workshop.workshopName.lower(),
+                    (workshop.workshopDescription or '').lower(),
+                    (workshop.instructor or '').lower(),
+                    (workshop.location or '').lower()
+                ]
+                workshop_competencies = [comp.lower() for comp in workshop.competencies]
+                
+                if any(search_query in data for data in workshop_data) or \
+                   any(search_query in comp for comp in workshop_competencies):
                     filtered_workshops.append(workshop)
             all_workshops = filtered_workshops
         
-        print(f"Found {len(all_workshops)} workshops:")
-        for workshop in all_workshops:
-            print(f"- {workshop.name} (ID: {workshop.id})")
+        print(f"Returning {len(all_workshops)} workshops after filtering")
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return render_template('Html/workshops_list.html', 
+                                workshops=all_workshops,
+                                search_query=search_query)
         
         return render_template('Html/studentsAvailableWorkshops.html', 
                              workshops=all_workshops,
                              search_query=search_query)
+                             
     except Exception as e:
-        print(f"Error fetching workshops: {e}")
+        print(f"Error in workshops route: {str(e)}")
         import traceback
-        print("Full traceback:", traceback.format_exc())
-        flash('Error loading workshops.', 'error')
+        print("Full traceback:")
+        traceback.print_exc()
+        db.session.rollback()
+        flash('Error loading workshops. Please try again.', 'error')
         return redirect(url_for('dashboard_views.dashboard'))
 
 @dashboard_views.route('/admin-workshop-creation/', methods=['GET', 'POST'])
@@ -169,6 +187,9 @@ def enroll_workshop(workshop_id):
             flash('Workshop not found.', 'error')
             return redirect(url_for('dashboard_views.workshops'))
         
+        print(f"Found workshop: {workshop.workshopName}")
+        print(f"Workshop competencies: {workshop.competencies}")
+        
         existing_enrollment = Enrollment.query.filter_by(
             student_id=current_user.id,
             workshop_id=workshop_id
@@ -185,7 +206,12 @@ def enroll_workshop(workshop_id):
         db.session.add(enrollment)
         db.session.flush()  
         
+        print("Created enrollment, adding competencies...")
+        
         enrollment.add_workshop_competencies()
+        
+        student = Student.query.get(current_user.id)
+        print(f"Student competencies after enrollment: {student.competencies}")
         
         db.session.commit()
         flash('Successfully enrolled in workshop!', 'success')
@@ -193,6 +219,9 @@ def enroll_workshop(workshop_id):
     except Exception as e:
         db.session.rollback()
         print(f"Error enrolling in workshop: {e}")
+        import traceback
+        print("Full traceback:")
+        traceback.print_exc()
         flash('An error occurred while enrolling in the workshop.', 'error')
     
     return redirect(url_for('dashboard_views.workshops'))
@@ -272,10 +301,10 @@ def edit_workshop(workshop_id):
     
     if request.method == 'POST':
         try:
-            workshop.name = request.form['name']
-            workshop.description = request.form['description']
-            workshop.date = datetime.strptime(request.form['date'], '%Y-%m-%d').date()
-            workshop.time = request.form['time']
+            workshop.workshopName = request.form['name']
+            workshop.workshopDescription = request.form['description']
+            workshop.workshopDate = datetime.strptime(request.form['date'], '%Y-%m-%d').date()
+            workshop.workshopTime = request.form['time']
             workshop.instructor = request.form['instructor']
             workshop.location = request.form['location']
             
@@ -448,6 +477,281 @@ def unenroll_workshop(workshop_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
+@dashboard_views.route('/request-certificate', methods=['POST'])
+@login_required
+def request_certificate():
+    if current_user.user_type != 'student':
+        flash('Access denied. Students only.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+    
+    try:
+        competency = request.form.get('competency')
+        if not competency:
+            flash('Invalid request.', 'error')
+            return redirect(url_for('dashboard_views.competencies'))
+        
+        student = Student.query.get(current_user.id)
+        if not student:
+            flash('Student not found.', 'error')
+            return redirect(url_for('dashboard_views.competencies'))
+        
+        if competency not in student.competencies:
+            flash('Competency not found.', 'error')
+            return redirect(url_for('dashboard_views.competencies'))
+            
+        comp_data = student.competencies[competency]
+        if comp_data.get('rank') != 3:
+            flash('Certificate can only be requested for Advanced rank competencies.', 'error')
+            return redirect(url_for('dashboard_views.competencies'))
+        
+        success, message = certificate_controller.request_certificate(current_user.id, competency)
+        
+        if success:
+            student.update_competency_certificate_status(competency, 'pending')
+            flash('Certificate request submitted successfully.', 'success')
+        else:
+            flash(message, 'error')
+            
+        return redirect(url_for('dashboard_views.competencies'))
+        
+    except Exception as e:
+        print(f"Error in request_certificate: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        flash('An error occurred while processing your request.', 'error')
+        return redirect(url_for('dashboard_views.competencies'))
+
+@dashboard_views.route('/validate-certificates')
+@login_required
+def validate_certificates():
+    if current_user.user_type != 'admin':
+        flash('Access denied. Administrators only.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+    
+    pending_requests = certificate_controller.get_pending_requests()
+    return render_template('Html/adminValidatecomp.html', pending_requests=pending_requests)
+
+@dashboard_views.route('/process-certificate-request/<int:request_id>', methods=['POST'])
+@login_required
+def process_certificate_request(request_id):
+    if current_user.user_type != 'admin':
+        flash('Access denied. Administrators only.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+    
+    action = request.form.get('action')
+    if action not in ['approve', 'deny']:
+        flash('Invalid action.', 'error')
+        return redirect(url_for('dashboard_views.validate_certificates'))
+    
+    success, message = certificate_controller.process_request(request_id, action)
+    flash(message, 'success' if success else 'error')
+    return redirect(url_for('dashboard_views.validate_certificates'))
+
+@dashboard_views.route('/view-certificate/<competency>')
+@login_required
+def view_certificate(competency):
+    if current_user.user_type != 'student':
+        flash('Access denied. Students only.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+    
+    certificate_data = certificate_controller.get_certificate_data(current_user.id, competency)
+    if not certificate_data:
+        flash('Certificate not found.', 'error')
+        return redirect(url_for('dashboard_views.competencies'))
+    
+    return render_template('Html/studentCertificate.html', **certificate_data)
+
+@dashboard_views.route('/earned-badges')
+@login_required
+def earned_badges():
+    if current_user.user_type != 'student':
+        flash('Only students can view their badges and certificates.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+        
+    try:
+        student = Student.get_by_id(current_user.id)
+        if not student:
+            flash('Student account not found.', 'error')
+            return redirect(url_for('dashboard_views.dashboard'))
+            
+        earned_competencies = []
+        if student.competencies:
+            for comp_name, comp_data in student.competencies.items():
+                rank = comp_data.get('rank', 0)
+                certificate_status = comp_data.get('certificate_status', None)
+                feedback = comp_data.get('feedback', '')
+                
+                if rank > 0:  
+                    earned_competencies.append({
+                        'name': comp_name,
+                        'rank': rank,
+                        'rank_name': ['Beginner', 'Intermediate', 'Advanced'][rank-1],
+                        'certificate_status': certificate_status,
+                        'feedback': feedback
+                    })
+        
+        return render_template('Html/earnedBadges.html', 
+                             user=student,
+                             earned_competencies=earned_competencies)
+                             
+    except Exception as e:
+        print(f"Error loading badges: {e}")
+        flash('Error loading badges and certificates.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+
+@dashboard_views.route('/search-candidates')
+@login_required
+def search_candidates():
+    print(f"Current user type: {current_user.user_type}")  
+    if not current_user.is_authenticated or current_user.user_type != 'employer':
+        flash('Access Denied. This page is only accessible to employers.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+    
+    try:
+        competency_filter = request.args.get('competency', '').strip().lower()
+        rank_filter = request.args.get('rank', '').strip()
+        
+        # Get all students
+        students = Student.query.all()
+        filtered_students = []
+        
+        for student in students:
+            if student.competencies:  
+                student_data = {
+                    'id': student.id,
+                    'first_name': student.first_name,
+                    'last_name': student.last_name,
+                    'email': student.email,
+                    'competencies': []
+                }
+                
+                # Process each competency
+                for comp_name, comp_data in student.competencies.items():
+                    rank = comp_data.get('rank', 0)
+                    if rank > 0: 
+                        rank_name = ['Beginner', 'Intermediate', 'Advanced'][rank-1]
+                        
+                        if rank_filter and str(rank) != rank_filter:
+                            continue
+                            
+                        student_data['competencies'].append({
+                            'name': comp_name,
+                            'rank': rank,
+                            'rank_name': rank_name
+                        })
+                
+                if student_data['competencies'] and (
+                    not competency_filter or 
+                    any(competency_filter in comp['name'].lower() for comp in student_data['competencies'])
+                ):
+                    filtered_students.append(student_data)
+        
+        return render_template('Html/employerSearch.html', 
+                             students=filtered_students,
+                             search_query=competency_filter,
+                             rank_filter=rank_filter)
+                             
+    except Exception as e:
+        print(f"Error in candidate search: {e}")
+        import traceback
+        traceback.print_exc()
+        flash('Error loading candidates.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+
+def create_sample_jobs():
+    """Create sample jobs if none exist"""
+    if JobRole.query.count() == 0:
+        jobs = [
+            {
+                'title': 'Software Developer',
+                'description': 'Design and develop software applications using modern technologies.',
+                'required_rank': 2,  # Intermediate
+                'competencies': [
+                    ('Programming', 2),
+                    ('Problem Solving', 2),
+                    ('Team Work', 1)
+                ]
+            },
+            {
+                'title': 'Data Analyst',
+                'description': 'Analyze complex data sets to identify trends and patterns.',
+                'required_rank': 2,
+                'competencies': [
+                    ('Data Analysis', 2),
+                    ('Problem Solving', 2),
+                    ('Communication', 1)
+                ]
+            },
+            {
+                'title': 'Project Manager',
+                'description': 'Lead and coordinate software development projects.',
+                'required_rank': 3,  # Advanced
+                'competencies': [
+                    ('Leadership', 3),
+                    ('Communication', 2),
+                    ('Team Work', 2)
+                ]
+            }
+        ]
+
+        try:
+            for job in jobs:
+                new_job = JobRole(
+                    jobTitle=job['title'],
+                    jobDescription=job['description'],
+                    requiredRank=job['required_rank']
+                )
+                db.session.add(new_job)
+                db.session.flush()  
+
+                for comp_name, rank in job['competencies']:
+                    comp = Competency.query.filter_by(name=comp_name).first()
+                    if not comp:
+                        comp = Competency(name=comp_name)
+                        db.session.add(comp)
+                        db.session.flush()
+
+                    job_comp = JobCompetency(
+                        jobID=new_job.jobID,
+                        competencyID=comp.id,
+                        requiredRank=rank
+                    )
+                    db.session.add(job_comp)
+
+            db.session.commit()
+            print("Sample jobs created successfully!")
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error creating sample jobs: {str(e)}")
+
+@dashboard_views.route('/job-matches')
+@login_required
+def job_matches():
+    if current_user.user_type != 'student':
+        flash('Only students can view job matches.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+        
+    try:
+        create_sample_jobs()
+        
+        student = Student.get_by_id(current_user.id)
+        if not student:
+            flash('Student account not found.', 'error')
+            return redirect(url_for('dashboard_views.dashboard'))
+        
+        job_matches = JobRole.get_matching_jobs(student)
+        
+        return render_template('Html/jobMatches.html', 
+                             job_matches=job_matches,
+                             user=student)
+                             
+    except Exception as e:
+        print(f"Error loading job matches: {e}")
+        import traceback
+        traceback.print_exc()
+        flash('Error loading job matches.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
 
 def init_dashboard_routes(app):
     app.register_blueprint(dashboard_views) 
