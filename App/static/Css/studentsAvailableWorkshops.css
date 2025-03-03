@@ -8,6 +8,8 @@ body {
     font-family: Arial, sans-serif;
     background: #f5f5f5;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 header {
@@ -42,127 +44,150 @@ nav a {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+.search-section h2 {
+    color: #0d67a3;
+    margin-bottom: 1.5rem;
+}
+
 .search-bar {
-    position: relative;
-    max-width: 500px;
-    margin: 20px auto;
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+}
+
+.search-bar form {
+    width: 100%;
+    display: flex;
 }
 
 .search-bar input {
-    width: 100%;
-    padding: 12px 40px 12px 20px;
+    flex: 1;
+    padding: 0.8rem;
     border: 2px solid #ddd;
-    border-radius: 25px;
-    font-size: 16px;
-    transition: border-color 0.3s ease;
+    border-radius: 4px 0 0 4px;
+    font-size: 1rem;
 }
 
-.search-bar input:focus {
-    outline: none;
-    border-color: #3498db;
-}
-
-.search-icon {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #666;
-    pointer-events: none;
-}
-
-.tags-section {
-    padding: 1.5rem 2rem;
-}
-
-.tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.8rem;
-    margin-top: 1rem;
-}
-
-.tag {
-    background: #e1e1e1;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
+.search-button {
+    padding: 0.8rem 1.5rem;
+    background: #0d67a3;
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
     cursor: pointer;
 }
 
 .workshops-container {
     padding: 2rem;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 2rem;
     max-width: 1400px;
     margin: 0 auto;
 }
 
 .workshop-card {
-    background: white;
-    border-radius: 8px;
-    padding: 1.5rem;
+    position: relative;
+    height: 450px;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #fff;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: transform 0.2s, opacity 0.3s ease;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.3s ease;
 }
 
 .workshop-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-.workshop-card h3 {
-    color: #0d67a3;
-    margin-bottom: 0.5rem;
-    font-size: 1.3rem;
+.workshop-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1.5rem;
+    color: white;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
 }
 
-.workshop-id {
-    color: #666;
+.workshop-content h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.workshop-description {
+    margin-bottom: 1rem;
     font-size: 0.9rem;
-    margin-bottom: 1rem;
-}
-
-.description {
-    color: #333;
-    margin-bottom: 1rem;
-    line-height: 1.5;
+    opacity: 0.9;
 }
 
 .workshop-details {
-    background: #f8f8f8;
-    padding: 1rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
+    margin: 1rem 0;
 }
 
 .workshop-details p {
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
 }
 
-.enroll-btn {
-    width: 100%;
-    padding: 0.8rem;
+.workshop-details i {
+    width: 20px;
+    margin-right: 5px;
+}
+
+.competencies {
+    margin-top: 1rem;
+}
+
+.competencies h4 {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tag {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+}
+
+.enroll-button {
+    display: inline-block;
     background: #0d67a3;
     color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-top: 1rem;
+    transition: background-color 0.3s;
+}
+
+.enroll-button:hover {
+    background: #085185;
+}
+
+.unenroll-button {
+    background-color: #dc3545;
+    color: white;
     border: none;
-    border-radius: 4px;
-    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    margin-top: 15px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
 }
 
-.enroll-btn:hover {
-    background: #0855a1;
-}
-
-.no-workshops {
-    text-align: center;
-    grid-column: 1 / -1;
-    color: #666;
-    font-size: 1.2rem;
+.unenroll-button:hover {
+    background-color: #c82333;
 }
 
 footer {

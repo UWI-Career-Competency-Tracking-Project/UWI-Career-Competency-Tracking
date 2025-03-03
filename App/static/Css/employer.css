@@ -1,5 +1,5 @@
 
-body, h1, h2, p, input, button, ul, li, a {
+body, h1, h2, p, img, nav, ul, li, a {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -67,41 +67,7 @@ main {
 }
 
 
-.search-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 30px;
-}
-
-.search-bar {
-    width: 50%;
-    padding: 12px;
-    border-radius: 25px;
-    border: 1px solid #bbb;
-    text-align: center;
-    font-size: 16px;
-    outline: none;
-}
-
-.search-button {
-    background-color: #0d67a3;
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 25px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background 0.3s ease-in-out;
-}
-
-.search-button:hover {
-    background-color: #085488;
-}
-
-
-.student-cards-container {
+.competency-container {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -110,54 +76,48 @@ main {
 }
 
 
-.student-card {
+.competency-card {
     background: rgba(255, 255, 255, 0.9);
     border-radius: 15px;
     padding: 20px;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 20px;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease-in-out;
-    text-align: left;
+    justify-content: space-between;
+    height: 100px;
 }
 
-.student-card:hover {
+.competency-card:hover {
     transform: translateY(-5px);
 }
 
 
-.student-header {
+.image-box {
+    width: 120px;
+    height: 80px;
+    border: 2px dashed #bbb;
+    border-radius: 10px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid #ccc;
-    padding-bottom: 10px;
+    justify-content: center;
+    background-color: #f8f8f8;
+    font-size: 14px;
+    color: #666;
+    font-weight: bold;
+}
+
+
+.competency-title {
+    flex-grow: 1;
+    text-align: center;
     font-size: 18px;
     font-weight: bold;
-}
-
-
-.view-profile-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background 0.3s ease-in-out;
-}
-
-.view-profile-button:hover {
-    background-color: #0056b3;
-}
-
-
-.student-content {
-    padding: 15px 0;
-    font-size: 16px;
-    font-weight: bold;
-    color: #333;
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #bbb;
 }
 
 
