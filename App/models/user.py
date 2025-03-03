@@ -1,9 +1,9 @@
 from werkzeug.security import check_password_hash, generate_password_hash
-from App.database import db
 from flask_login import UserMixin
+from App.database import db
 
 class User(db.Model, UserMixin):
-    __tablename__ = "users"
+    __tablename__ = 'users'
     
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -11,8 +11,8 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    user_type = db.Column(db.String(50))
-    
+    user_type = db.Column(db.String(20), nullable=False)
+
     __mapper_args__ = {
         'polymorphic_identity': 'user',
         'polymorphic_on': user_type
@@ -43,4 +43,7 @@ class User(db.Model, UserMixin):
             'email': self.email,
             'user_type': self.user_type
         }
+
+    def __repr__(self):
+        return f'<User {self.username}>'
 
