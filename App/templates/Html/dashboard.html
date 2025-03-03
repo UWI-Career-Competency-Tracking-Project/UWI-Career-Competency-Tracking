@@ -23,6 +23,8 @@
                 <div class="dropdown">
                     <img src="{{ url_for('static', filename='Images/profile-placeholder.png') }}" alt="Profile" class="profile-pic">
                     <div class="dropdown-content">
+                        <h4>{{ user.first_name }} {{ user.last_name }} ({{ user.user_type.title() }})</h4>
+                        <hr>
                         <h4>Notifications</h4>
                         <ul class="notification-list">
                             <li>No new notifications</li>
@@ -37,11 +39,38 @@
     </header>
 
     <main class="content dashboard">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <script>
+            // Auto-hide flash messages after 5 seconds
+            document.addEventListener('DOMContentLoaded', function() {
+                const flashMessages = document.querySelectorAll('.alert');
+                flashMessages.forEach(function(message) {
+                    setTimeout(function() {
+                        message.classList.add('fade-out');
+                        setTimeout(function() {
+                            message.remove();
+                        }, 500);
+                    }, 5000);
+                });
+            });
+        </script>
+
         <div class="dashboard-options">
             <section class="options">
                 <h3>Student Options</h3>
                 <a href="{{ url_for('dashboard_views.my_workshops') }}" class="button">My Workshops</a>
-                <a href="#" class="button">Track Competencies</a>
+                <a href="{{ url_for('dashboard_views.competencies') }}" class="button">Track Competencies</a>
                 <a href="#" class="button">Earned Badges & Certificates</a>
                 <a href="{{ url_for('dashboard_views.workshops') }}" class="button">Workshops</a>
                 <a href="#" class="button">Job Matching</a>
@@ -54,7 +83,7 @@
                 <h3>Administration Options</h3>
                 <a href="{{ url_for('dashboard_views.manage_workshops') }}" class="button">Manage Workshops</a>
                 <a href="{{ url_for('dashboard_views.admin_workshop_creation') }}" class="button">Create Workshops</a>
-                <a href="#" class="button">Award Student Badges/Feedback</a>
+                <a href="{{ url_for('dashboard_views.admin_badges') }}" class="button">Award Student Badges/Feedback</a>
                 <a href="#" class="button">Validate Competencies</a>
             </section>
         </div>

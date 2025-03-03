@@ -1,4 +1,4 @@
-from App.database import db
+from .. import db
 from .user import User
 from flask_login import UserMixin
 
@@ -11,6 +11,9 @@ class Administrator(User, UserMixin):
     __mapper_args__ = {
         'polymorphic_identity': 'admin',
     }
+
+    def __init__(self, username, email, password, first_name, last_name):
+        super().__init__(username, email, password, first_name, last_name, user_type='admin')
 
     @property
     def is_active(self):

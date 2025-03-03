@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Competencies</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/competencies.css') }}">
+    <style>
+ 
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='Images/logo.png') }}" alt="Logo">
+        </div>
+        <h1>Career Competency Tracking System</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('dashboard_views.dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('dashboard_views.workshops') }}">Workshops</a></li>
+                <li><a href="{{ url_for('auth_views.logout_action') }}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="competencies-container">
+            <h2>My Competencies</h2>
+            
+            {% if user.competencies and user.competencies|length > 0 %}
+                <div class="competencies-grid">
+                    {% for competency, details in user.competencies.items() %}
+                    <div class="competency-card">
+                        <h3>{{ competency }}</h3>
+                        {% set rank = details.rank|int %}
+                        {% set progress_class = "" %}
+                        {% set rank_name = "" %}
+                        
+                        {% if rank == 1 %}
+                            {% set progress_class = "progress-beginner" %}
+                            {% set rank_name = "Beginner" %}
+                        {% elif rank == 2 %}
+                            {% set progress_class = "progress-intermediate" %}
+                            {% set rank_name = "Intermediate" %}
+                        {% elif rank == 3 %}
+                            {% set progress_class = "progress-advanced" %}
+                            {% set rank_name = "Advanced" %}
+                        {% else %}
+                            {% set progress_class = "progress-unranked" %}
+                            {% set rank_name = "Unranked" %}
+                        {% endif %}
+                        
+                        <div class="progress-label">Progress:</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill {{ progress_class }}"></div>
+                        </div>
+                        <div class="rank-label">Rank: <span class="rank-text">{{ rank_name }}</span></div>
+                        {% if details.feedback %}
+                            <div class="feedback"><strong>Feedback:</strong> {{ details.feedback }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-competencies">
+                    <p>You haven't acquired any competencies yet.</p>
+                    <p>Enroll in workshops to start building your competencies!</p>
+                    <a href="{{ url_for('dashboard_views.workshops') }}" class="cta-button">Browse Workshops</a>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Career Competency Tracking System. All Rights Reserved.</p>
+    </footer>
+</body>
+</html> 

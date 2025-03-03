@@ -25,18 +25,18 @@
     <main>
         <div class="workshop-container">
             <h2>Workshop Creation</h2>
-            <form method="POST" action="{{ url_for('dashboard_views.admin_workshop_creation') }}">
+            <form method="POST" action="{{ url_for('dashboard_views.admin_workshop_creation') }}" enctype="multipart/form-data">
                 <div class="form-group">
                     <label>Workshop Code</label>
-                    <input type="text" name="workshopID" required>
+                    <input type="text" name="id" required>
                 </div>
                 <div class="form-group">
                     <label>Workshop Title</label>
-                    <input type="text" name="workshopName" required>
+                    <input type="text" name="name" required>
                 </div>
                 <div class="form-group full-width">
                     <label>Workshop Description</label>
-                    <textarea name="workshopDescription" required></textarea>
+                    <textarea name="description" required></textarea>
                 </div>
                 <div class="form-group">
                     <label>Workshop Instructor</label>
@@ -48,8 +48,18 @@
                 </div>
                 <div class="form-group date-time">
                     <label>Workshop Date & Time</label>
-                    <input type="date" name="workshopDate" required>
-                    <input type="time" name="workshopTime" required>
+                    <input type="date" name="date" required>
+                    <input type="time" name="time" required>
+                </div>
+                <div class="form-group">
+                    <label>Workshop Image</label>
+                    <input type="file" name="workshop_image" accept="image/*">
+                    <small>Select an image to be used as workshop background (Recommended size: 1200x800px)</small>
+                </div>
+                <div class="form-group">
+                    <label>Competencies (comma-separated)</label>
+                    <input type="text" name="competencies" placeholder="e.g. Leadership, Communication, Technical Skills">
+                    <small>Enter competencies that students will gain from this workshop</small>
                 </div>
                 <div class="form-group checkbox-group">
                     <input type="checkbox" id="notify" name="notify_students">
