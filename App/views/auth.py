@@ -14,9 +14,9 @@ from App.controllers import (
     login
 )
 
-auth_views = Blueprint('auth_views', __name__, template_folder='../templates')   
+auth = Blueprint('auth_views', __name__, template_folder='../templates')   
     
-@auth_views.route('/signup', methods=['GET', 'POST'])
+@auth.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
         username = request.form.get('username')
@@ -55,8 +55,7 @@ def signup():
             email=email,
             password=password,
             first_name=first_name,
-            last_name=last_name,
-            user_type=user_type
+            last_name=last_name
         )
 
         try:
@@ -71,7 +70,7 @@ def signup():
 
     return render_template('Html/signup.html')
 
-@auth_views.route('/login', methods=['GET', 'POST'])
+@auth.route('/login', methods=['GET', 'POST'])
 def login_action():
     if request.method == 'POST':
         username = request.form.get('username')
@@ -85,14 +84,14 @@ def login_action():
         flash('Invalid username or password.', 'error')
     return render_template('Html/login.html')
 
-@auth_views.route('/logout')
+@auth.route('/logout')
 @login_required
 def logout_action():
     logout_user()
     flash('Logged out successfully.', 'success')
     return redirect(url_for('login'))
 
-@auth_views.route('/api/login', methods=['POST'])
+@auth.route('/api/login', methods=['POST'])
 def user_login_api():
   data = request.json
   token = login(data['username'], data['password'])
@@ -102,16 +101,16 @@ def user_login_api():
   set_access_cookies(response, token)
   return response
 
-@auth_views.route('/api/identify', methods=['GET'])
+@auth.route('/api/identify', methods=['GET'])
 @jwt_required()
 def identify_user():
     return jsonify({'message': f"username: {current_user.username}, id : {current_user.id}"})
 
-@auth_views.route('/api/logout', methods=['GET'])
+@auth.route('/api/logout', methods=['GET'])
 def logout_api():
     response = jsonify(message="Logged Out!")
     unset_jwt_cookies(response)
     return response
 
 def init_auth_routes(app):
-    app.register_blueprint(auth_views)
+    app.register_blueprint(auth)
