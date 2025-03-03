@@ -8,9 +8,8 @@
 html, body {
     height: 100%;
     width: 100%;
-    background: linear-gradient(135deg, #8ec5fc, #e0c3fc);
-    color: white;
     overflow-x: hidden; 
+    color: white;
 }
 
 body {
@@ -19,7 +18,19 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding-top: 10px; 
+    padding-top: 10px;
+    position: relative;
+}
+
+
+#livebackground {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
 }
 
 header {
@@ -37,7 +48,7 @@ header {
 }
 
 .logo img {
-    height: 45px;
+    height: 50px; 
 }
 
 h1 {
@@ -58,26 +69,35 @@ nav ul li a {
 
 .container {
     background: rgba(255, 255, 255, 0.2);
-    padding: 30px;
+    padding: 40px;
     border-radius: 10px;
     backdrop-filter: blur(10px);
-    width: 350px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    width: 400px; 
+    box-shadow: 0 0 15px red; 
     text-align: center;
-    margin-top: 10px; 
+    margin-top: 60px;
+    transition: box-shadow 0.3s ease-in-out;
 }
+
+
+.container:hover {
+    box-shadow: 0 0 25px red;
+}
+
 
 .form-control {
     width: 95%;
-    padding: 10px;
-    margin: 10px 0;
+    padding: 12px;
+    margin: 12px 0;
     border-radius: 5px;
-    border: 1px solid #ccc;
+    border: 2px solid black; 
+    font-size: 16px;
 }
+
 
 .btn {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     background: #3a8fe4;
     border: none;
     color: white;
@@ -85,10 +105,12 @@ nav ul li a {
     cursor: pointer;
     transition: 0.3s;
     border-radius: 5px;
+    font-size: 16px;
 }
 
 .btn:hover {
-    background: #76b4fa;
+    background: red; 
+    box-shadow: 0 0 10px red;
 }
 
 footer {
@@ -101,3 +123,14 @@ footer {
     position: fixed;
     bottom: 0;
 }
+
+
+.container p a {
+    color: red;
+    font-weight: bold;
+}
+
+.container p a:hover {
+    text-decoration: underline;
+}
+
