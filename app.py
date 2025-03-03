@@ -63,18 +63,6 @@ def init_db():
             columns = [col['name'] for col in inspector.get_columns('users')]
             print("User table columns:", columns)
             
-            test_user = User(
-                username="admin",
-                first_name="Admin",
-                last_name="User",
-                email="admin@example.com",
-                password="admin123",  
-                user_type="admin"
-            )
-            db.session.add(test_user)
-            db.session.commit()
-            print("Created test admin user")
-            
     except Exception as e:
         print(f"Error initializing database: {e}")
         raise
