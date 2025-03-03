@@ -5,9 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/signup.css') }}">
     <title>Sign Up</title>
-
 </head>
 <body>
+
+    
+    <video autoplay loop muted playsinline class="live-background">
+        <source src="../../static/Images/livebackground.mp4" type="video/mp4">
+    </video>
 
     <header>
         <div class="logo">
@@ -46,7 +50,7 @@
             <button type="submit" class="btn">Sign Up</button>
         </form>
         <br>
-        <p>Already have an account? <a href="{{ url_for('auth_views.login_action') }}">Login</a></p>
+        <p>Already have an account? <a href="{{ url_for('auth_views.login_action') }}" class="glow-red">Login</a></p>
     </div>
 
     <footer>
