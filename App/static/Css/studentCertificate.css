@@ -1,0 +1,104 @@
+/* General Page Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f4f8;
+    text-align: center;
+}
+
+/* HEADER */
+header {
+    background-color: #0b5ea8;
+    color: white;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+header .logo img {
+    width: 60px; /* Increased logo size */
+    margin-left: 15px;
+}
+
+header nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: bold;
+}
+
+/* CERTIFICATE WRAPPER */
+#certificate-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+/* CERTIFICATE */
+#certificate {
+    position: relative;
+    width: 800px;
+    height: 600px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.cert-img {
+    width: 100%;
+    height: auto;
+}
+
+/* TEXT INPUT OVER CERTIFICATE */
+#student-name {
+    position: absolute;
+    top: 39.5%; /* Adjusted to align with line */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 22px;
+    font-weight: bold;
+}
+
+#competency {
+    position: absolute;
+    top: 50%; /* Adjusted position */
+    left: 38%;
+    transform: translate(-50%, -50%);
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* DOWNLOAD BUTTON */
+#download-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    margin-top: 20px;
+    transition: 0.3s;
+}
+
+#download-btn:hover {
+    background-color: #0056b3;
+    box-shadow: 0px 0px 15px rgba(0, 162, 255, 0.8); /* Blue glow effect */
+}
+
+/* FOOTER */
+footer {
+    background-color: #0b5ea8;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
