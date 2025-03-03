@@ -25,18 +25,18 @@
     <main>
         <div class="workshop-container">
             <h2>Edit Workshop</h2>
-            <form method="POST" action="{{ url_for('dashboard_views.edit_workshop', workshop_id=workshop.workshopID) }}">
+            <form method="POST" action="{{ url_for('dashboard_views.edit_workshop', workshop_id=workshop.id) }}" enctype="multipart/form-data">
                 <div class="form-group">
                     <label>Workshop Code</label>
-                    <input type="text" name="workshopID" value="{{ workshop.workshopID }}" readonly>
+                    <input type="text" name="id" value="{{ workshop.id }}" readonly>
                 </div>
                 <div class="form-group">
                     <label>Workshop Title</label>
-                    <input type="text" name="workshopName" value="{{ workshop.workshopName }}" required>
+                    <input type="text" name="name" value="{{ workshop.name }}" required>
                 </div>
                 <div class="form-group full-width">
                     <label>Workshop Description</label>
-                    <textarea name="workshopDescription" required>{{ workshop.workshopDescription }}</textarea>
+                    <textarea name="description" required>{{ workshop.description }}</textarea>
                 </div>
                 <div class="form-group">
                     <label>Workshop Instructor</label>
@@ -48,8 +48,21 @@
                 </div>
                 <div class="form-group date-time">
                     <label>Workshop Date & Time</label>
-                    <input type="date" name="workshopDate" value="{{ workshop.workshopDate }}" required>
-                    <input type="time" name="workshopTime" value="{{ workshop.workshopTime.strftime('%H:%M') }}" required>
+                    <input type="date" name="date" value="{{ workshop.date.strftime('%Y-%m-%d') }}" required>
+                    <input type="time" name="time" value="{{ workshop.time }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Workshop Image</label>
+                    <input type="file" name="workshop_image" accept="image/*">
+                    <small>Select an image to be used as workshop background (Recommended size: 1200x800px)</small>
+                    {% if workshop.image_path %}
+                        <p>Current image: {{ workshop.image_path }}</p>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label>Competencies (comma-separated)</label>
+                    <input type="text" name="competencies" value="{{ ','.join(workshop.competencies) }}" placeholder="e.g. Leadership, Communication, Technical Skills">
+                    <small>Enter competencies that students will gain from this workshop</small>
                 </div>
                 <div class="form-group checkbox-group">
                     <input type="checkbox" id="notify" name="notify_students">

@@ -24,13 +24,33 @@
 
     <div class="container">
         <h2>Login</h2>
-        {% with messages = get_flashed_messages() %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                {% for message in messages %}
-                    <div class="alert">{{ message }}</div>
-                {% endfor %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
             {% endif %}
         {% endwith %}
+
+        <script>
+            // Auto-hide flash messages after 5 seconds
+            document.addEventListener('DOMContentLoaded', function() {
+                const flashMessages = document.querySelectorAll('.alert');
+                flashMessages.forEach(function(message) {
+                    setTimeout(function() {
+                        message.classList.add('fade-out');
+                        setTimeout(function() {
+                            message.remove();
+                        }, 500);
+                    }, 5000);
+                });
+            });
+        </script>
+
         <form method="POST" action="{{ url_for('auth_views.login_action') }}">
             <input type="text" name="username" class="form-control" placeholder="Username" required>
             <input type="password" name="password" class="form-control" placeholder="Password" required>

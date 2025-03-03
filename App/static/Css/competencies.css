@@ -1,0 +1,169 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    background-color: #0d67a3;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo img {
+    height: 45px;
+}
+
+nav ul {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+}
+
+main {
+    flex: 1;
+    padding: 2rem;
+}
+
+.competencies-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+h2 {
+    color: #0d67a3;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-size: 2rem;
+}
+
+.competencies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.competency-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.competency-card:hover {
+    transform: translateY(-5px);
+}
+
+.competency-card h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.2em;
+}
+
+.progress-label {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    transition: width 0.3s ease;
+}
+
+.progress-unranked {
+    width: 0%;
+}
+
+.progress-beginner {
+    width: 33.33%;
+}
+
+.progress-intermediate {
+    width: 66.66%;
+}
+
+.progress-advanced {
+    width: 100%;
+}
+
+.rank-label {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 10px;
+    font-weight: 500;
+}
+
+.rank-text {
+    font-weight: normal;
+}
+
+.feedback {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.no-competencies {
+    text-align: center;
+    padding: 40px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-top: 20px;
+    transition: background-color 0.2s ease;
+}
+
+.cta-button:hover {
+    background-color: #45a049;
+}
+
+footer {
+    background: #0d67a3;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    margin-top: auto;
+} 

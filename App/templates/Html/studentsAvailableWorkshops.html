@@ -28,49 +28,42 @@
     <section class="search-section">
         <h2>Available Workshops</h2>
         <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Search Workshops" value="{{ request.args.get('search', '') }}" oninput="searchWorkshops(this.value)">
-            <span class="search-icon">🔍</span>
+            <form method="GET" action="{{ url_for('dashboard_views.workshops') }}">
+                <input type="text" name="search" placeholder="Search by workshop name, description, instructor, location, or competencies..." value="{{ search_query }}">
+                <button type="submit" class="search-button">🔍</button>
+            </form>
         </div>
         <label class="notify-checkbox">
             <input type="checkbox"> Notify me when new workshops are added!
         </label>
     </section>
-
-    
-    <section class="tags-section">
-        <h3>Suggested Tags:</h3>
-        <div class="tags">
-            <span class="tag">Innovation ✖</span>
-            <span class="tag">CodingSkills ✖</span>
-            <span class="tag">Agile ✖</span>
-            <span class="tag">Planning ✖</span>
-            <span class="tag">AI ✖</span>
-            <span class="tag">Leadership ✖</span>
-            <span class="tag">Analytics ✖</span>
-            <span class="tag">Logic ✖</span>
-        </div>
-    </section>
-
     
     <section class="workshops-container">
-        {% if workshops %}
-            {% for workshop in workshops %}
-                <div class="workshop-card">
-                    <h3>{{ workshop.workshopName }}</h3>
-                    <p class="workshop-id">Workshop Code: {{ workshop.workshopID }}</p>
-                    <p class="description">{{ workshop.workshopDescription }}</p>
-                    <div class="workshop-details">
-                        <p><strong>Date:</strong> {{ workshop.workshopDate.strftime('%B %d, %Y') }}</p>
-                        <p><strong>Time:</strong> {{ workshop.workshopTime.strftime('%I:%M %p') }}</p>
-                        <p><strong>Instructor:</strong> {{ workshop.instructor }}</p>
-                        <p><strong>Location:</strong> {{ workshop.location }}</p>
-                    </div>
-                    <a href="{{ url_for('dashboard_views.enroll_workshop', workshop_id=workshop.workshopID) }}" class="enroll-btn">Enroll Now</a>
+        {% for workshop in workshops %}
+        <div class="workshop-card" {% if workshop.image_path %}style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('{{ url_for('static', filename=workshop.image_path) }}');"{% endif %}>
+            <div class="workshop-content">
+                <h3>{{ workshop.name }}</h3>
+                <p class="workshop-description">{{ workshop.description }}</p>
+                <div class="workshop-details">
+                    <p><i class="fas fa-user"></i> <strong>Instructor:</strong> {{ workshop.instructor }}</p>
+                    <p><i class="fas fa-calendar"></i> <strong>Date:</strong> {{ workshop.date.strftime('%B %d, %Y') }}</p>
+                    <p><i class="fas fa-clock"></i> <strong>Time:</strong> {{ workshop.time }}</p>
+                    <p><i class="fas fa-location-dot"></i> <strong>Location:</strong> {{ workshop.location }}</p>
                 </div>
-            {% endfor %}
-        {% else %}
-            <p class="no-workshops">No workshops available at this time.</p>
-        {% endif %}
+                {% if workshop.competencies %}
+                <div class="competencies">
+                    <h4>Competencies:</h4>
+                    <div class="tags">
+                        {% for competency in workshop.competencies %}
+                        <span class="tag">{{ competency }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                <a href="{{ url_for('dashboard_views.enroll_workshop', workshop_id=workshop.id) }}" class="enroll-button">Enroll Now</a>
+            </div>
+        </div>
+        {% endfor %}
     </section>
 
    

@@ -37,20 +37,20 @@
                 {% for workshop in workshops %}
                     <div class="workshop-card">
                         <div class="workshop-header">
-                            <h3>{{ workshop.workshopName }}</h3>
-                            <span class="workshop-id">Workshop ID: {{ workshop.workshopID }}</span>
+                            <h3>{{ workshop.name }}</h3>
+                            <span class="workshop-id">Workshop ID: {{ workshop.id }}</span>
                         </div>
                         <div class="workshop-body">
-                            <p class="description">{{ workshop.workshopDescription }}</p>
+                            <p class="description">{{ workshop.description }}</p>
                             <div class="workshop-details">
-                                <p><i class="fas fa-calendar"></i> {{ workshop.workshopDate }}</p>
-                                <p><i class="fas fa-clock"></i> {{ workshop.workshopTime }}</p>
+                                <p><i class="fas fa-calendar"></i> {{ workshop.date.strftime('%B %d, %Y') }}</p>
+                                <p><i class="fas fa-clock"></i> {{ workshop.time }}</p>
                                 <p><i class="fas fa-map-marker-alt"></i> {{ workshop.location }}</p>
                                 <p><i class="fas fa-chalkboard-teacher"></i> {{ workshop.instructor }}</p>
                             </div>
                             <div class="workshop-actions">
-                                <a href="{{ url_for('dashboard_views.edit_workshop', workshop_id=workshop.workshopID) }}" class="edit-btn">Edit Workshop</a>
-                                <button onclick="deleteWorkshop('{{ workshop.workshopID }}')" class="delete-btn">Delete Workshop</button>
+                                <a href="{{ url_for('dashboard_views.edit_workshop', workshop_id=workshop.id) }}" class="edit-btn">Edit Workshop</a>
+                                <button onclick="deleteWorkshop('{{ workshop.id }}')" class="delete-btn">Delete Workshop</button>
                             </div>
                         </div>
                     </div>

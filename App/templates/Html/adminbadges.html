@@ -3,108 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pending Qualifications</title>
-    <link rel="stylesheet" href="../../static/Css/adminbadges.css">
+    <title>Award Student Badges</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/adminbadges.css') }}">
 </head>
 <body>
     <header>
         <div class="logo">
-            <img src="../../static/Images/logo.png" alt="Logo">
+            <img src="{{ url_for('static', filename='Images/logo.png') }}" alt="Logo">
         </div>
         <h1>Career Competency Tracking System</h1>
         <nav>
             <ul>
-                <li><a href="#">Dashboard</a></li>
-                <li><a href="#">Workshops</a></li>
-                <li><a href="#">Logout</a></li>
+                <li><a href="{{ url_for('dashboard_views.dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('dashboard_views.workshops') }}">Workshops</a></li>
+                <li><a href="{{ url_for('auth_views.logout_action') }}">Logout</a></li>
             </ul>
         </nav>
     </header>
 
     <main>
         <div class="search-bar">
-            <input type="text" placeholder="Search Student Name.">
-            <button>🔍</button>
+            <form method="GET" action="{{ url_for('dashboard_views.admin_badges') }}">
+                <input type="text" name="search" placeholder="Search Student Name..." value="{{ search_query }}">
+                <button type="submit">🔍</button>
+            </form>
         </div>
 
-        <h2>Pending Qualifications</h2>
+        <h2>Award Student Badges</h2>
 
         <div class="qualification-container">
-            
+            {% for item in student_competencies %}
             <div class="qualification">
-                <div class="student-pfp">Insert Student PFP Here</div>
-                <textarea class="student-details" placeholder="Insert Student Details"></textarea>
-                <div class="qualification-details">
-                    <h3>Coding</h3>
+                <div class="student-info">
+                    <img src="{{ url_for('static', filename='Images/profile-placeholder.png') }}" alt="Student" class="student-pfp">
+                    <div class="student-details">
+                        <h3>{{ item.student.first_name }} {{ item.student.last_name }}</h3>
+                        <p>{{ item.student.email }}</p>
+                    </div>
                 </div>
-                <div class="badges">
-                    <div class="badge"><img src="../../static/Images/badge1.png" alt="Badge"><input type="checkbox"></div>
-                    <div class="badge"><img src="../../static/Images/badge2.png" alt="Badge"><input type="checkbox"></div>
-                    <div class="badge"><img src="../../static/Images/badge3.png" alt="Badge"><input type="checkbox" checked></div>
-                </div>
-                <div class="feedback">
-                    <textarea placeholder="Insert Feedback here"></textarea>
-                    <button>Update Student Account</button>
-                </div>
+                
+                <form method="POST" action="{{ url_for('dashboard_views.admin_badges') }}" class="badge-form" id="form-{{ item.student.id }}-{{ item.competency|replace(' ', '-') }}">
+                    <input type="hidden" name="student_id" value="{{ item.student.id }}">
+                    <input type="hidden" name="competency" value="{{ item.competency }}">
+                    
+                    <div class="qualification-details">
+                        <h3><strong>Competency:</strong> {{ item.competency }}</h3>
+                        <p class="current-rank">Current Rank: 
+                            <span class="rank-text">
+                                {% if item.data.rank == 1 %}
+                                    Beginner
+                                {% elif item.data.rank == 2 %}
+                                    Intermediate
+                                {% elif item.data.rank == 3 %}
+                                    Advanced
+                                {% else %}
+                                    Not Ranked
+                                {% endif %}
+                            </span>
+                        </p>
+                    </div>
+                    
+                    <div class="badges">
+                        <div class="badge">
+                            <img src="{{ url_for('static', filename='Images/badge1.png') }}" alt="Beginner">
+                            <input type="radio" name="rank" value="1" {% if item.data.rank == 1 %}checked{% endif %} 
+                                   onchange="updateRankDisplay(this, 'Beginner')">
+                            <label>Beginner</label>
+                        </div>
+                        <div class="badge">
+                            <img src="{{ url_for('static', filename='Images/badge2.png') }}" alt="Intermediate">
+                            <input type="radio" name="rank" value="2" {% if item.data.rank == 2 %}checked{% endif %}
+                                   onchange="updateRankDisplay(this, 'Intermediate')">
+                            <label>Intermediate</label>
+                        </div>
+                        <div class="badge">
+                            <img src="{{ url_for('static', filename='Images/badge3.png') }}" alt="Advanced">
+                            <input type="radio" name="rank" value="3" {% if item.data.rank == 3 %}checked{% endif %}
+                                   onchange="updateRankDisplay(this, 'Advanced')">
+                            <label>Advanced</label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="feedback">Feedback:</label>
+                        <textarea name="feedback" id="feedback" rows="4" style="width: 100%; min-height: 100px;">{{ item.data.feedback if item.data and item.data.feedback else '' }}</textarea>
+                    </div>
+                    
+                    <div class="feedback">
+                        <button type="submit" onclick="submitForm(event, this)">Update Student</button>
+                    </div>
+                </form>
             </div>
-
-            <div class="qualification">
-                <div class="student-pfp">Insert Student PFP Here</div>
-                <textarea class="student-details" placeholder="Insert Student Details"></textarea>
-                <div class="qualification-details">
-                    <h3>Coding</h3>
-                </div>
-                <div class="badges">
-                    <div class="badge"><img src="../../static/Images/badge1.png" alt="Badge"><input type="checkbox"></div>
-                    <div class="badge"><img src="../../static/Images/badge2.png" alt="Badge"><input type="checkbox"></div>
-                    <div class="badge"><img src="../../static/Images/badge3.png" alt="Badge"><input type="checkbox" checked></div>
-                </div>
-                <div class="feedback">
-                    <textarea placeholder="Insert Feedback here"></textarea>
-                    <button>Update Student Account</button>
-                </div>
+            {% else %}
+            <div class="no-results">
+                <p>No students found with competencies{% if search_query %} matching "{{ search_query }}"{% endif %}.</p>
             </div>
-
-            <div class="qualification">
-                <div class="student-pfp">Insert Student PFP Here</div>
-                <textarea class="student-details" placeholder="Insert Student Details"></textarea>
-                <div class="qualification-details">
-                    <h3>Coding</h3>
-                </div>
-                <div class="badges">
-                    <div class="badge"><img src="../../static/Images/badge1.png" alt="Badge"><input type="checkbox"></div>
-                    <div class="badge"><img src="../../static/Images/badge2.png" alt="Badge"><input type="checkbox"></div>
-                    <div class="badge"><img src="../../static/Images/badge3.png" alt="Badge"><input type="checkbox" checked></div>
-                </div>
-                <div class="feedback">
-                    <textarea placeholder="Insert Feedback here"></textarea>
-                    <button>Update Student Account</button>
-                </div>
-            </div>
-
-            <div class="qualification">
-                <div class="student-pfp">Insert Student PFP Here</div>
-                <textarea class="student-details" placeholder="Insert Student Details"></textarea>
-                <div class="qualification-details">
-                    <h3>Coding</h3>
-                </div>
-                <div class="badges">
-                    <div class="badge"><img src="../../static/Images/badge1.png" alt="Badge"><input type="checkbox"></div>
-                    <div class="badge"><img src="../../static/Images/badge2.png" alt="Badge"><input type="checkbox"></div>
-                    <div class="badge"><img src="../../static/Images/badge3.png" alt="Badge"><input type="checkbox" checked></div>
-                </div>
-                <div class="feedback">
-                    <textarea placeholder="Insert Feedback here"></textarea>
-                    <button>Update Student Account</button>
-                </div>
-            </div>
-            
-
+            {% endfor %}
         </div>
     </main>
 
     <footer>
         <p>&copy; 2025 Career Competency Tracking System. All Rights Reserved.</p>
     </footer>
+
+    <script>
+        function updateRankDisplay(radio, rankText) {
+            const form = radio.closest('form');
+            const rankDisplay = form.querySelector('.rank-text');
+            rankDisplay.textContent = rankText;
+        }
+
+        function submitForm(event, button) {
+            event.preventDefault();
+            const form = button.closest('form');
+            const rank = form.querySelector('input[name="rank"]:checked');
+            
+            if (!rank) {
+                alert('Please select a rank before updating.');
+                return;
+            }
+            
+            // Create form data
+            const formData = new FormData(form);
+            
+            // Submit form using fetch
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(data => {
+                // Refresh the page after successful submission
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating. Please try again.');
+            });
+        }
+
+        // Add visual feedback when selecting badges
+        document.querySelectorAll('.badge').forEach(badge => {
+            badge.addEventListener('click', function() {
+                const radio = this.querySelector('input[type="radio"]');
+                if (radio) {
+                    radio.checked = true;
+                    const rankText = this.querySelector('label').textContent;
+                    updateRankDisplay(radio, rankText);
+                }
+            });
+        });
+
+        // Initialize rank displays on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('input[name="rank"]:checked').forEach(radio => {
+                const rankText = radio.closest('.badge').querySelector('label').textContent;
+                updateRankDisplay(radio, rankText);
+            });
+        });
+    </script>
 </body>
 </html>
