@@ -59,6 +59,19 @@
                         {% if details.feedback %}
                             <div class="feedback"><strong>Feedback:</strong> {{ details.feedback }}</div>
                         {% endif %}
+                        
+                        {% if rank == 3 %}
+                            {% if details.certificate_status == 'approved' %}
+                                <a href="{{ url_for('dashboard_views.view_certificate', competency=competency) }}" class="certificate-button view">View Certificate</a>
+                            {% elif details.certificate_status == 'pending' %}
+                                <button class="certificate-button pending" disabled>Certificate Request Pending</button>
+                            {% else %}
+                                <form action="{{ url_for('dashboard_views.request_certificate') }}" method="POST">
+                                    <input type="hidden" name="competency" value="{{ competency }}">
+                                    <button type="submit" class="certificate-button request">Request Certificate</button>
+                                </form>
+                            {% endif %}
+                        {% endif %}
                     </div>
                     {% endfor %}
                 </div>

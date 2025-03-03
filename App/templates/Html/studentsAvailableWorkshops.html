@@ -27,11 +27,13 @@
     
     <section class="search-section">
         <h2>Available Workshops</h2>
-        <div class="search-bar">
-            <form method="GET" action="{{ url_for('dashboard_views.workshops') }}">
-                <input type="text" name="search" placeholder="Search by workshop name, description, instructor, location, or competencies..." value="{{ search_query }}">
-                <button type="submit" class="search-button">🔍</button>
-            </form>
+        <div class="search-container">
+            <input type="text" 
+                   id="workshop-search" 
+                   name="search" 
+                   placeholder="Search workshops..." 
+                   value="{{ search_query }}"
+                   oninput="debounceSearch(this.value)">
         </div>
         <label class="notify-checkbox">
             <input type="checkbox"> Notify me when new workshops are added!
@@ -42,12 +44,12 @@
         {% for workshop in workshops %}
         <div class="workshop-card" {% if workshop.image_path %}style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('{{ url_for('static', filename=workshop.image_path) }}');"{% endif %}>
             <div class="workshop-content">
-                <h3>{{ workshop.name }}</h3>
-                <p class="workshop-description">{{ workshop.description }}</p>
+                <h3>{{ workshop.workshopName }}</h3>
+                <p class="workshop-description">{{ workshop.workshopDescription }}</p>
                 <div class="workshop-details">
                     <p><i class="fas fa-user"></i> <strong>Instructor:</strong> {{ workshop.instructor }}</p>
-                    <p><i class="fas fa-calendar"></i> <strong>Date:</strong> {{ workshop.date.strftime('%B %d, %Y') }}</p>
-                    <p><i class="fas fa-clock"></i> <strong>Time:</strong> {{ workshop.time }}</p>
+                    <p><i class="fas fa-calendar"></i> <strong>Date:</strong> {{ workshop.workshopDate.strftime('%B %d, %Y') }}</p>
+                    <p><i class="fas fa-clock"></i> <strong>Time:</strong> {{ workshop.workshopTime }}</p>
                     <p><i class="fas fa-location-dot"></i> <strong>Location:</strong> {{ workshop.location }}</p>
                 </div>
                 {% if workshop.competencies %}
@@ -70,6 +72,40 @@
     <footer>
         <p>&copy; 2025 Career Competency Tracking System. All Rights Reserved.</p>
     </footer>
+
+    <script>
+        let timeoutId;
+        
+        function debounceSearch(value) {
+            clearTimeout(timeoutId);
+            
+            timeoutId = setTimeout(() => {
+                performSearch(value);
+            }, 300); 
+        }
+        
+        function performSearch(query) {
+            let baseUrl = window.location.pathname;
+            
+            let url = baseUrl + (query ? `?search=${encodeURIComponent(query)}` : '');
+            
+            fetch(url)
+                .then(response => response.text())
+                .then(html => {
+                    let temp = document.createElement('div');
+                    temp.innerHTML = html;
+                    
+                    let newWorkshops = temp.querySelector('.workshops-container');
+                    let currentWorkshops = document.querySelector('.workshops-container');
+                    if (newWorkshops && currentWorkshops) {
+                        currentWorkshops.innerHTML = newWorkshops.innerHTML;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    </script>
 
 </body>
 </html>

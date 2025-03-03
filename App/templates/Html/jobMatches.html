@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Recommendations | Career Competency Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='Css/Layout.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='Css/studentJobMatching.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/jobMatches.css') }}">
 </head>
-<body class="dashboard">
+<body>
     <header>
         <div class="logo">
             <img src="{{ url_for('static', filename='Images/logo.png') }}" alt="Logo">
-            <h1>Career Competency Tracking System</h1>
+            <h1>Career Competency Tracker</h1>
         </div>
         <nav>
             <ul>
@@ -24,6 +24,18 @@
     </header>
 
     <main class="content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
         <section class="page-header">
             <h2>Your Job Matches</h2>
             <p>Based on your current competencies, here are some job roles that might interest you:</p>
@@ -110,4 +122,4 @@
         }
     </script>
 </body>
-</html>
+</html> 

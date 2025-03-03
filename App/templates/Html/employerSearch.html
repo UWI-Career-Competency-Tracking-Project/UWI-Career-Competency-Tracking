@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Candidates | Career Competency Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/Layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/employerSearch.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='Images/logo.png') }}" alt="Logo">
+        </div>
+        <h1>Career Competency Tracking System</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('dashboard_views.dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('auth_views.logout_action') }}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="search-container">
+            <h2>Search Candidates</h2>
+            <div class="search-box">
+                <div class="search-controls">
+                    <div class="search-input">
+                        <input type="text" 
+                               id="competency-search" 
+                               placeholder="Search by competency..."
+                               value="{{ search_query }}"
+                               oninput="debounceSearch()">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                    <div class="filter-select">
+                        <select id="rank-filter" onchange="debounceSearch()">
+                            <option value="">All Ranks</option>
+                            <option value="1" {% if rank_filter == '1' %}selected{% endif %}>Beginner</option>
+                            <option value="2" {% if rank_filter == '2' %}selected{% endif %}>Intermediate</option>
+                            <option value="3" {% if rank_filter == '3' %}selected{% endif %}>Advanced</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="candidates-container">
+            {% if students %}
+                {% for student in students %}
+                    <div class="candidate-card">
+                        <div class="candidate-info">
+                            <h3>{{ student.first_name }} {{ student.last_name }}</h3>
+                            <p class="email"><i class="fas fa-envelope"></i> {{ student.email }}</p>
+                        </div>
+                        {% if student.competencies %}
+                            <div class="competencies-section">
+                                <h4>Competencies:</h4>
+                                <div class="competency-tags">
+                                    {% for comp in student.competencies %}
+                                        <span class="competency-tag {{ comp.rank_name.lower() }}">
+                                            {{ comp.name }}
+                                            <span class="rank-badge">{{ comp.rank_name }}</span>
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% else %}
+                            <p class="no-competencies">No competencies earned yet</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-results">
+                    <i class="fas fa-search"></i>
+                    <p>No candidates found matching your search criteria.</p>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Career Competency Tracking System. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        let timeoutId;
+        
+        function debounceSearch() {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                const searchQuery = document.getElementById('competency-search').value;
+                const rankFilter = document.getElementById('rank-filter').value;
+                window.location.href = `{{ url_for('dashboard_views.search_candidates') }}?competency=${encodeURIComponent(searchQuery)}&rank=${encodeURIComponent(rankFilter)}`;
+            }, 300);
+        }
+    </script>
+
+    <style>
+        .search-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            flex: 1;
+            position: relative;
+        }
+
+        .filter-select select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            font-size: 1rem;
+            min-width: 150px;
+        }
+
+        .filter-select select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+    </style>
+</body>
+</html> 

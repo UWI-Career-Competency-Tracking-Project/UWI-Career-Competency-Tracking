@@ -39,31 +39,52 @@ def signup():
             flash('Email already registered!', 'error')
             return redirect(url_for('auth_views.signup'))
 
-        user_classes = {
-            'student': Student,
-            'admin': Administrator,
-            'employer': Employer
-        }
-
-        UserClass = user_classes.get(user_type)
-        if not UserClass:
-            flash('Invalid user type!', 'error')
-            return redirect(url_for('auth_views.signup'))
-
-        new_user = UserClass(
-            username=username,
-            email=email,
-            password=password,
-            first_name=first_name,
-            last_name=last_name
-        )
-
         try:
+            if user_type == 'student':
+                student_id = f"STU{username.upper()}"
+                new_user = Student(
+                    username=username,
+                    email=email,
+                    password=password,
+                    first_name=first_name,
+                    last_name=last_name,
+                    student_id=student_id
+                )
+            elif user_type == 'admin':
+                new_user = Administrator(
+                    username=username,
+                    email=email,
+                    password=password,
+                    first_name=first_name,
+                    last_name=last_name
+                )
+            elif user_type == 'employer':
+                new_user = Employer(
+                    username=username,
+                    email=email,
+                    password=password,
+                    first_name=first_name,
+                    last_name=last_name,
+                    user_type='employer' 
+                )
+                print(f"Creating employer user: {username}")  
+            else:
+                flash('Invalid user type!', 'error')
+                return redirect(url_for('auth_views.signup'))
+            
+            print(f"Creating new user with type: {user_type}") 
+            
             db.session.add(new_user)
             db.session.commit()
+            
+            # Verify the user type after creation
+            created_user = User.query.filter_by(username=username).first()
+            print(f"Created user type: {created_user.user_type}") 
+            
             flash('Registration successful! Please login.', 'success')
             return redirect(url_for('auth_views.login_action'))
         except Exception as e:
+            print(f"Error during signup: {str(e)}") 
             db.session.rollback()
             flash('An error occurred during registration.', 'error')
             return redirect(url_for('auth_views.signup'))
@@ -76,7 +97,8 @@ def login_action():
         username = request.form.get('username')
         password = request.form.get('password')
         user = User.query.filter_by(username=username).first()
-        if user and check_password_hash(user.password, password):
+        
+        if user and user.check_password(password):
             login_user(user)
             print(f"Logged in user type: {user.user_type}") 
             flash('Logged in successfully!', 'success')

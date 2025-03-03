@@ -28,15 +28,15 @@
             <form method="POST" action="{{ url_for('dashboard_views.edit_workshop', workshop_id=workshop.id) }}" enctype="multipart/form-data">
                 <div class="form-group">
                     <label>Workshop Code</label>
-                    <input type="text" name="id" value="{{ workshop.id }}" readonly>
+                    <input type="text" name="id" value="{{ workshop.workshopID }}" readonly>
                 </div>
                 <div class="form-group">
                     <label>Workshop Title</label>
-                    <input type="text" name="name" value="{{ workshop.name }}" required>
+                    <input type="text" name="name" value="{{ workshop.workshopName }}" required>
                 </div>
                 <div class="form-group full-width">
                     <label>Workshop Description</label>
-                    <textarea name="description" required>{{ workshop.description }}</textarea>
+                    <textarea name="description" required>{{ workshop.workshopDescription }}</textarea>
                 </div>
                 <div class="form-group">
                     <label>Workshop Instructor</label>
@@ -48,8 +48,8 @@
                 </div>
                 <div class="form-group date-time">
                     <label>Workshop Date & Time</label>
-                    <input type="date" name="date" value="{{ workshop.date.strftime('%Y-%m-%d') }}" required>
-                    <input type="time" name="time" value="{{ workshop.time }}" required>
+                    <input type="date" name="date" value="{{ workshop.workshopDate.strftime('%Y-%m-%d') }}" required>
+                    <input type="time" name="time" value="{{ workshop.workshopTime }}" required>
                 </div>
                 <div class="form-group">
                     <label>Workshop Image</label>
