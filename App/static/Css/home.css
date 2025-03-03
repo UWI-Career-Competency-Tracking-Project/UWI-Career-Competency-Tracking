@@ -1,4 +1,4 @@
-/* General Page Styling */
+
 body, html {
     margin: 0;
     padding: 0;
@@ -6,7 +6,7 @@ body, html {
     overflow: hidden;
 }
 
-/* Header Styling */
+
 header {
     background: #0b4f92;
     color: white;
@@ -19,11 +19,11 @@ header {
 }
 
 .logo img {
-    width: 70px; /* Increased the size of the logo */
+    width: 70px; 
     height: auto;
 }
 
-/* Navigation */
+
 nav ul {
     list-style: none;
     margin: 0;
@@ -40,7 +40,7 @@ nav ul li a {
     text-decoration: none;
 }
 
-/* Background Video Styling */
+
 .video-background {
     position: fixed;
     top: 0;
@@ -57,7 +57,7 @@ nav ul li a {
     object-fit: cover;
 }
 
-/* Centered Circular Card */
+
 main {
     display: flex;
     justify-content: center;
@@ -67,8 +67,8 @@ main {
 }
 
 .circle-card {
-    width: 400px; /* Increased size */
-    height: 400px; /* Increased size */
+    width: 400px; 
+    height: 400px; 
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
     box-shadow: 0 0 25px rgba(255, 0, 0, 0.8);
@@ -82,17 +82,17 @@ main {
     padding: 30px;
     transition: 0.3s;
     position: absolute;
-    top: 40%; /* Moved it higher */
+    top: 40%; 
     left: 50%;
     transform: translate(-50%, -50%);
 }
 
-/* Glowing Text */
+
 .circle-card h2, .circle-card p {
     text-shadow: 0 0 12px rgba(0, 255, 255, 1);
 }
 
-/* Button Styling */
+
 .btn {
     display: inline-block;
     background: white;
@@ -108,14 +108,14 @@ main {
     text-align: center;
 }
 
-/* Button Hover Effect */
+
 .btn:hover {
     background: red;
     color: white;
     box-shadow: 0 0 18px red;
 }
 
-/* Footer Styling */
+
 footer {
     background: #0b4f92;
     color: white;

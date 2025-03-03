@@ -3,18 +3,29 @@
     padding: 0;
     text-decoration: none;
     list-style: none;
+    box-sizing: border-box;
 }
 
 body {
     font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #092ed3, #05eba6);
     color: white;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     height: 100vh;
-    padding-top: 10px; 
+    overflow: hidden;
+}
+
+
+.live-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
 }
 
 header {
@@ -27,12 +38,11 @@ header {
     position: fixed;
     top: 0;
     width: 100%;
-    z-index: 1000;
-    box-sizing: border-box;
+    z-index: 10;
 }
 
 .logo img {
-    height: 45px;
+    height: 50px;
 }
 
 h1 {
@@ -52,27 +62,41 @@ nav ul li a {
 }
 
 .container {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.4); 
     padding: 40px;
-    border-radius: 10px;
+    border-radius: 15px;
     backdrop-filter: blur(10px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    width: 350px;
+    box-shadow: 0 0 20px red;
+    width: 400px;
     text-align: center;
+    margin-top: 70px;
+    transition: 0.3s;
 }
 
+.container:hover {
+    box-shadow: 0 0 30px red;
+}
+
+
 .form-control {
-    width: 96%;
-    padding: 10px;
+    width: 100%;
+    padding: 12px;
     margin: 10px 0;
     border-radius: 5px;
-    border: 1px solid #ccc;
+    border: 2px solid black;
+    background: white; 
+    color: black;
 }
+
+.form-control::placeholder {
+    color: #555;
+}
+
 
 .btn {
     width: 100%;
-    padding: 10px;
-    background: #00243b;
+    padding: 12px;
+    background: #0d67a3; 
     border: none;
     color: white;
     font-weight: bold;
@@ -82,8 +106,22 @@ nav ul li a {
 }
 
 .btn:hover {
-    background: #07f7f7;
+    background: red;
+    box-shadow: 0 0 15px red;
 }
+
+
+.glow-red {
+    color: white;
+    text-shadow: 0 0 5px red, 0 0 10px red;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.glow-red:hover {
+    text-shadow: 0 0 10px red, 0 0 20px red;
+}
+
 
 footer {
     background-color: #0d67a3;
@@ -92,11 +130,6 @@ footer {
     padding: 20px 40px;
     font-size: 16px;
     width: 100%;
-    box-sizing: border-box;
     position: fixed;
     bottom: 0;
-}
-
-h2, p {
-    color: rgb(255, 255, 255);
 }
