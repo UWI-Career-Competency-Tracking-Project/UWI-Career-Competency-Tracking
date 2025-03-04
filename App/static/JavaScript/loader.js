@@ -8,5 +8,5 @@ window.addEventListener("load", function(){
     setTimeout(function(){
       l.style.display = "none";
     }, 1000);
-  }, 2000);
+  }, 500);
 });
