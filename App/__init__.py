@@ -25,6 +25,11 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['EXPLAIN_TEMPLATE_LOADING'] = True
     
+    if os.environ.get('DATABASE_URL'):
+        app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL').replace('postgres://', 'postgresql://')
+    else:
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+    
     db.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = 'auth_views.login'
