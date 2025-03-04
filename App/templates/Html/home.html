@@ -18,7 +18,7 @@
         <nav>
             <ul>
                 <li><a href="{{ url_for('main_views.home') }}">Home</a></li>
-                <li><a href="{{ url_for('auth_views.login_action') }}">Login</a></li>
+                <li><a href="{{ url_for('auth_views.login') }}">Login</a></li>
                 <li><a href="{{ url_for('auth_views.signup') }}">Signup</a></li>
             </ul>
         </nav>
@@ -38,7 +38,7 @@
             <h2>Welcome to the Career Competency Tracking System</h2>
             <p>Select an option to proceed:</p>
             <a href="{{ url_for('auth_views.signup') }}" class="btn">Sign Up</a>
-            <a href="{{ url_for('auth_views.login_action') }}" class="btn">Login</a>
+            <a href="{{ url_for('auth_views.login') }}" class="btn">Login</a>
         </div>
     </main>
 

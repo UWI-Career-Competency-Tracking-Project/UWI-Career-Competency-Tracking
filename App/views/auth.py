@@ -82,7 +82,7 @@ def signup():
             print(f"Created user type: {created_user.user_type}") 
             
             flash('Registration successful! Please login.', 'success')
-            return redirect(url_for('auth_views.login_action'))
+            return redirect(url_for('auth_views.login'))
         except Exception as e:
             print(f"Error during signup: {str(e)}") 
             db.session.rollback()
@@ -92,18 +92,29 @@ def signup():
     return render_template('Html/signup.html')
 
 @auth.route('/login', methods=['GET', 'POST'])
-def login_action():
+def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
+
         user = User.query.filter_by(username=username).first()
-        
         if user and user.check_password(password):
             login_user(user)
-            print(f"Logged in user type: {user.user_type}") 
             flash('Logged in successfully!', 'success')
+            
+            # Redirect based on user type
+            if user.user_type == 'student':
+                return redirect(url_for('dashboard_views.student_dashboard'))
+            elif user.user_type == 'admin':
+                return redirect(url_for('dashboard_views.admin_dashboard'))
+            elif user.user_type == 'employer':
+                return redirect(url_for('dashboard_views.employer_dashboard'))
+            
+            # Fallback to main dashboard if user type is not recognized
             return redirect(url_for('dashboard_views.dashboard'))
-        flash('Invalid username or password.', 'error')
+        else:
+            flash('Invalid username or password.', 'error')
+
     return render_template('Html/login.html')
 
 @auth.route('/logout')
@@ -111,7 +122,7 @@ def login_action():
 def logout_action():
     logout_user()
     flash('Logged out successfully.', 'success')
-    return redirect(url_for('login'))
+    return redirect(url_for('auth_views.login'))
 
 @auth.route('/api/login', methods=['POST'])
 def user_login_api():

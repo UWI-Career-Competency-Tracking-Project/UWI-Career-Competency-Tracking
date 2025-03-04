@@ -21,7 +21,7 @@
         <nav>
             <ul>
                 <li><a href="{{ url_for('main_views.home') }}">Home</a></li>
-                <li><a href="{{ url_for('auth_views.login_action') }}">Login</a></li>
+                <li><a href="{{ url_for('auth_views.login') }}">Login</a></li>
             </ul>
         </nav>
     </header>
@@ -50,7 +50,7 @@
             <button type="submit" class="btn">Sign Up</button>
         </form>
         <br>
-        <p>Already have an account? <a href="{{ url_for('auth_views.login_action') }}" class="glow-red">Login</a></p>
+        <p>Already have an account? <a href="{{ url_for('auth_views.login') }}" class="glow-red">Login</a></p>
     </div>
 
     <footer>

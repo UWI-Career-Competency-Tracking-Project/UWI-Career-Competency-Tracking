@@ -23,9 +23,42 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@dashboard_views.route('/student-dashboard')
+@login_required
+def student_dashboard():
+    if current_user.user_type != 'student':
+        flash('Access denied. Students only.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+    return render_template('Html/studentdashboard.html', user=current_user)
+
+@dashboard_views.route('/admin-dashboard')
+@login_required
+def admin_dashboard():
+    if current_user.user_type != 'admin':
+        flash('Access denied. Administrators only.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+    return render_template('Html/admindashboard.html', user=current_user)
+
+@dashboard_views.route('/employer-dashboard')
+@login_required
+def employer_dashboard():
+    if current_user.user_type != 'employer':
+        flash('Access denied. Employers only.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+    return render_template('Html/employerdashboard.html', user=current_user)
+
 @dashboard_views.route('/dashboard')
 @login_required
 def dashboard():
+    # Redirect to appropriate dashboard based on user type
+    if current_user.user_type == 'student':
+        return redirect(url_for('dashboard_views.student_dashboard'))
+    elif current_user.user_type == 'admin':
+        return redirect(url_for('dashboard_views.admin_dashboard'))
+    elif current_user.user_type == 'employer':
+        return redirect(url_for('dashboard_views.employer_dashboard'))
+    
+    # Fallback to a generic dashboard if user type is not recognized
     return render_template('Html/dashboard.html', user=current_user)
 
 @dashboard_views.route('/workshops')
