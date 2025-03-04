@@ -58,7 +58,6 @@ def dashboard():
     elif current_user.user_type == 'employer':
         return redirect(url_for('dashboard_views.employer_dashboard'))
     
-    # Fallback to a generic dashboard if user type is not recognized
     return render_template('Html/dashboard.html', user=current_user)
 
 @dashboard_views.route('/workshops')
@@ -724,6 +723,76 @@ def create_sample_jobs():
                     ('Leadership', 3),
                     ('Communication', 2),
                     ('Team Work', 2)
+                ]
+            },
+            {
+                'title': 'UI/UX Designer',
+                'description': 'Create intuitive and visually appealing user interfaces for web and mobile applications.',
+                'required_rank': 2,
+                'competencies': [
+                    ('Design Thinking', 2),
+                    ('Communication', 2),
+                    ('Creativity', 2)
+                ]
+            },
+            {
+                'title': 'DevOps Engineer',
+                'description': 'Implement and maintain CI/CD pipelines and cloud infrastructure.',
+                'required_rank': 3,
+                'competencies': [
+                    ('Cloud Computing', 3),
+                    ('Problem Solving', 2),
+                    ('System Administration', 2)
+                ]
+            },
+            {
+                'title': 'Business Analyst',
+                'description': 'Bridge the gap between business needs and technical solutions.',
+                'required_rank': 2,
+                'competencies': [
+                    ('Business Analysis', 2),
+                    ('Communication', 2),
+                    ('Problem Solving', 2)
+                ]
+            },
+            {
+                'title': 'Quality Assurance Engineer',
+                'description': 'Ensure software quality through comprehensive testing and automation.',
+                'required_rank': 2,
+                'competencies': [
+                    ('Testing', 2),
+                    ('Attention to Detail', 2),
+                    ('Problem Solving', 1)
+                ]
+            },
+            {
+                'title': 'Database Administrator',
+                'description': 'Manage and optimize database systems and ensure data security.',
+                'required_rank': 3,
+                'competencies': [
+                    ('Database Management', 3),
+                    ('Security', 2),
+                    ('Problem Solving', 2)
+                ]
+            },
+            {
+                'title': 'Technical Writer',
+                'description': 'Create clear and comprehensive technical documentation and user guides.',
+                'required_rank': 2,
+                'competencies': [
+                    ('Technical Writing', 2),
+                    ('Communication', 3),
+                    ('Documentation', 2)
+                ]
+            },
+            {
+                'title': 'Cybersecurity Analyst',
+                'description': 'Protect systems and networks from security threats and vulnerabilities.',
+                'required_rank': 3,
+                'competencies': [
+                    ('Security', 3),
+                    ('Problem Solving', 2),
+                    ('Risk Assessment', 2)
                 ]
             }
         ]
