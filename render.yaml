@@ -12,6 +12,8 @@ services:
       value: production
     - key: PYTHONPATH
       value: .
+    - key: SECRET_KEY
+      generateValue: true
   autoDeploy: true
 
 envVarGroups:
