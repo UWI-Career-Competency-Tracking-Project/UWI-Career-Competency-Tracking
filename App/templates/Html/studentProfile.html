@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='Css/footer.css') }}">
   <link rel="stylesheet" href="../../static/Css/loader.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='Css/loader.css') }}">
+  <link rel="stylesheet" href="../../static/Css/jobmatch.css">
   <script src="../../static/JavaScript/loader.js" defer></script>
   <script src="{{ url_for('static', filename='JavaScript/loader.js') }}" defer></script>
 </head>
@@ -37,8 +38,10 @@
             <span class="site-title">Career Competency Tracker</span>
           </a>
         <div class="nav-items">
-          <a href="{{ url_for('dashboard_views.student_dashboard') }}">Home</a>
+          <a href="{{ url_for('dashboard_views.student_dashboard') }}">My Sessions</a>
           <a href="{{ url_for('dashboard_views.workshops') }}">Workshops</a>
+          <a href="{{ url_for('dashboard_views.student_dashboard') }}">Tracked Comps</a>
+          <a href="{{ url_for('dashboard_views.student_dashboard') }}">Badges & Certificates</a>
           <div class="profile-dropdown" tabindex="0">
             <div class="profile-trigger">
               <img src="https://via.placeholder.com/40" alt="User Profile">
@@ -62,7 +65,7 @@
 
       <main class="content">
         <div class="profile-right title">
-            <h3>Profile Options</h3>
+            <h3>Profile Information</h3>
         </div>
         <div class="profile-page">
             <!-- Left Column -->
@@ -80,7 +83,11 @@
                 </div>
                 <!-- Actual Profile Info -->
                 <div class="profile-card-body">
-                  <h2 class="profile-name">Josiah Phillip <img src="https://via.placeholder.com/20" alt="Flag" class="flag-icon"></h2>
+                  <!-- New avatar container -->
+                  <div class="profile-avatar">
+                    <img src="https://via.placeholder.com/80" alt="Profile Picture" class="avatar-image">
+                  </div>
+                  <h2 class="profile-name">Josiah Phillip</h2>
                   <p class="profile-username">@josiahphillip72</p>
                 </div>
               </div>
@@ -123,6 +130,27 @@
               <a href="#" class="big-option">Tracker Competencies</a>
             </div>
           </div>
+
+          <section class="job-matching">
+            <h3>Job Matches</h3>
+            <div class="job-cards">
+              <div class="job-card">
+                <h4>Front-End Developer</h4>
+                <p>Competencies: HTML, CSS, JavaScript</p>
+                <a href="#">Learn More</a>
+              </div>
+              <div class="job-card">
+                <h4>UI/UX Designer</h4>
+                <p>Competencies: Design, Prototyping, Adobe XD</p>
+                <a href="#">Learn More</a>
+              </div>
+              <div class="job-card">
+                <h4>Back-End Developer</h4>
+                <p>Competencies: Python, Databases, APIs</p>
+                <a href="#">Learn More</a>
+              </div>
+            </div>
+          </section>
       </main>
     
       <!-- Footer with animated loading bar -->

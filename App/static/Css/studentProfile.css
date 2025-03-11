@@ -57,29 +57,88 @@
   }
   
   .profile-right h3 {
-    text-align: center;
+    /* Wrap text so the background & border only cover the words */
+    display: inline-block;
+    padding: 10px 20px;
     margin-bottom: 20px;
     font-size: 1.5rem;
     font-weight: 700;
+    color: #00adb5; /* Teal color to match theme */
+    text-align: center;
     text-transform: uppercase;
+  
+    /* Semi-transparent gradient background */
+    background: linear-gradient(
+      45deg,
+      rgba(0, 173, 181, 0.2) 0%,
+      rgba(0, 173, 181, 0.4) 100%
+    );
+    border-radius: 8px;
+  
+    /* Thin, translucent border & glass-like effect */
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 10px rgba(0, 173, 181, 0.3);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+  
+    /* Smooth transitions for hover states */
+    transition:
+      transform 0.3s ease,
+      background 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+  
+  .profile-right h3:hover {
+    transform: translateY(-3px);
+    background: linear-gradient(
+      45deg,
+      rgba(0, 173, 181, 0.4) 0%,
+      rgba(0, 173, 181, 0.6) 100%
+    );
+    box-shadow: 0 0 12px rgba(0, 173, 181, 0.5);
   }
   
   /* Card styling */
   .profile-card {
-    background-color: #1e1e1e;
+    /* Existing properties (from your code) */
+    background-color: rgba(30, 30, 30, 0.5); /* More transparent for glass effect */
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     color: #fff;
     padding: 16px;
     position: relative;
+    /* Additional new styles */
+    border: 1px solid rgba(255, 255, 255, 0.2); 
+    backdrop-filter: blur(8px);
+    /* Subtle load-in animation */
+    animation: fadeInUp 0.6s ease forwards;
+    margin-bottom: 5px; /* small gap from card to card if needed */
   }
   
-  /* Card header: label + optional edit icon */
-  .profile-card-header {
+  /* Card header label text gets a subtle gradient for a fancier look */
+  .profile-card-header .label-icon {
+    font-weight: 600;
+    font-size: 0.95rem;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
+    gap: 6px;
+    /* gradient text trick */
+    background: linear-gradient(to right, #00adb5, #b1f4f8);
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+  
+  /* For the "edit" icon on hover, let's make it pop */
+  .profile-card-header .edit-icon:hover {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+  
+  /* If you want the entire card to have a hover effect, you can add this */
+  .profile-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 173, 181, 0.4);
+    transform: translateY(-2px);
+    transition: 0.3s ease;
   }
   
   .label-icon {
@@ -109,6 +168,34 @@
   .profile-card-body {
     font-size: 0.9rem;
   }
+
+  /* New styles for the circular avatar */
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 12px;
+    position: relative;
+  }
+  
+  /* A ring around the avatar */
+  .profile-avatar::before {
+    content: "";
+    position: absolute;
+    top: -4px; left: -4px;
+    width: 88px; height: 88px;
+    border: 2px solid rgba(0, 173, 181, 0.6);
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 173, 181, 0.4);
+  }
+  
+  .avatar-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    z-index: 1;
+    position: relative;
+  }
   
   /* Profile name and username styling */
   .profile-name {
@@ -135,17 +222,40 @@
   .personal-info i {
     margin-right: 8px;
     color: #00adb5;
+    transition: transform 0.2s;
+  }
+
+  .personal-info i:hover {
+    transform: scale(1.2);
   }
   
-  /* Resume card link */
-  .resume-link {
-    text-decoration: none;
-    color: #00adb5;
-    font-weight: 500;
-  }
-  .resume-link:hover {
-    text-decoration: underline;
-  }
+  /* Animated underline for the resume link */
+.resume-link {
+  position: relative;
+  text-decoration: none;
+  color: #00adb5;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.resume-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 2px;
+  background-color: #00adb5;
+  transition: width 0.3s ease;
+}
+
+.resume-link:hover {
+  color: #ffffff; /* Or some lighter color */
+}
+
+.resume-link:hover::after {
+  width: 100%;
+}
 
   .profile-right.title {
     display: flex;
@@ -153,16 +263,29 @@
     align-items: center;       /* Center vertically if a height is set */
     height: 100px;             /* Example fixed height */
   }
+
+  .profile-right.title h3 {
+    font-size: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    color: #00adb5;
+    margin-bottom: 20px;
+  }
   
   /* Big teal boxes on the right */
   .big-option {
-    background-color: #00adb5;
+    /* A partially transparent teal gradient */
+    background: linear-gradient(
+      135deg,
+      rgba(0, 173, 181, 0.7) 0%,
+      rgba(0, 173, 181, 0.9) 100%
+    );
     color: #fff;
     text-decoration: none;
     border-radius: 8px;
     padding: 40px;
     font-size: 1.2rem;
-    transition: transform 0.3s ease, background-color 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -171,10 +294,57 @@
     font-weight: 600;
     letter-spacing: 1px;
     text-transform: uppercase;
+  
+    /* Make text pop off backgrounds */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+  
+    /* Subtle border */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  
+    /* Smooth transitions for hover states */
+    transition:
+      transform 0.3s ease,
+      background-color 0.3s ease,
+      box-shadow 0.3s ease;
+  
+    /* Frosted glass behind it (optional) */
+    backdrop-filter: blur(5px);
+  
+    /* Fade-in scale animation */
+    animation: fadeIn 0.8s ease forwards;
+    opacity: 0; /* start invisible, fadeIn anim sets to 1 */
   }
   
+  /* Hover effect: shift, scale, glow, rotate text? Up to you! */
   .big-option:hover {
-    background-color: #00949a;
-    transform: translateY(-5px);
+    background: linear-gradient(
+      135deg,
+      rgba(0, 173, 181, 0.85) 0%,
+      rgba(0, 173, 181, 1) 100%
+    );
+    transform: translateY(-5px) scale(1.04) rotateX(3deg);
+    box-shadow: 0 0 15px rgba(0, 173, 181, 0.6);
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
   
