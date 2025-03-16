@@ -3,193 +3,210 @@
 /* ------------------------- */
 
 .navbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 24px;
-    background: linear-gradient(135deg, #00adb5, #00949a);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    color: #fff;
-    position: relative;  /* Ensures it stays on top of the background video */
-    z-index: 2;
-  }
-  
-  .navbar .logo {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-  }
-  
-  .navbar .logo img {
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
-  }
-  
-  .navbar .logo .site-title {
-    margin-left: 8px;      /* Spacing between image and text */
-    font-family: 'Poppins', sans-serif; /* Optional: if you want to use the fancy font */
-    font-size: 1.2rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    color: #007d80;        /* Same colour as part of the loading bar gradient */
-  }
-  
-  
-  /* Navigation items */
-  .nav-items {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-  }
-  
-  .nav-items a {
-    position: relative; /* Allows the pseudo-element to be positioned relative to the link */
-    text-decoration: none;
-    color: #fff;
-    font-size: 1.1em;
-    padding: 4px 8px;
-    border-radius: 4px;
-    display: inline-block;
-    overflow: hidden; /* Ensures the pseudo-element doesn't spill outside the link */
-  }
-  
-  /* Create a pseudo-element with the gradient background */
-  .nav-items a::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, #007d80, #004f52, #007d80);
-    opacity: 0;
-    transition: opacity 1s ease; /* Adjust timing here for a slower fade */
-    z-index: -1; /* Place it behind the text */
-  }
-  
-  /* On hover, fade in the pseudo-element */
-  .nav-items a:hover::before {
-    opacity: 1;
-  }
-  
-  /* ------------------------- */
-  /*   PROFILE DROPDOWN MENU   */
-  /* ------------------------- */
-  
-  
-  .profile-dropdown {
-    position: relative;
-    display: inline-block;
-    outline: none; /* Remove default focus outline if desired */
-  }
-  
-  /* When .profile-dropdown (or any child) is focused, show the dropdown */
-  .profile-dropdown:focus-within .dropdown-content {
-    display: block;
-  }
-  
-  /* Trigger: circular image and text */
-  .profile-trigger {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-  }
-  
-  .profile-trigger img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-  
-  .profile-name {
-    font-size: 1em;
-    color: #fff;
-  }
-  
-  /* Dropdown content (hidden by default) */
-  .dropdown-content {
-    display: none;
-    position: absolute;
-    right: 0;
-    top: 50px;
-    background-color: #00949a;
-    min-width: 160px;
-    border-radius: 4px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 3;
-    overflow: hidden;
-  }
-  
-  /* Dropdown header: username with loading-style separator */
-  .dropdown-header {
-    padding: 12px 16px;
-  }
-  
-  .dropdown-username {
-    display: block;
-    font-size: 1em;
-    font-weight: bold;
-    color: #fff;
-    margin-bottom: 8px;
-  }
-  
-  .dropdown-separator {
-    width: 0;
-    height: 2px;
-    background-color: #fff;
-    animation: loadingLine 1s ease-out forwards;
-  }
-  
-  @keyframes loadingLine {
-    from { width: 0; }
-    to { width: 100%; }
-  }
-  
-  /* Dropdown links */
-  .dropdown-content a {
-    display: block;
-    padding: 12px 16px;
-    font-size: 1em;
-    color: #fff;
-    text-decoration: none;
-    transition: background-color 0.2s ease;
-  }
-  
-  .dropdown-content a:hover {
-    background-color: #007d80;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #00adb5, #00949a);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: #fff;
+  position: relative;  /* Ensures it stays on top of the background video */
+  z-index: 2;
+  /* New glass-like effect */
+  backdrop-filter: blur(8px);
+  transition: background 0.3s ease;
+}
 
-  /* Ensure each button is positioned relatively so the pseudo-element is anchored */
-  .options .button {
-    position: relative;
-  }
-  
-  /* Animated loading bar spanning the entire button width, positioned a little under the text */
-  .options .button::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;  /* Adjust this value to position the loading bar further down */
-    left: 0;
-    width: 100%;
-    height: 4px;       /* Thickness of the loading bar */
-    background: linear-gradient(90deg, #007d80, #004f52, #007d80);
-    background-size: 200% auto;
-    animation: loading 2s linear infinite;
-  }
-  
-  /* Keyframes for the background-position animation */
-  @keyframes loading {
-    0% {
-      background-position: 200% center;
-    }
-    100% {
-      background-position: -200% center;
-    }
-  }
-  
-  
-  
-  
+.navbar .logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+}
+
+.navbar .logo:hover {
+  transform: scale(1.05);
+}
+
+.navbar .logo img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.navbar .logo .site-title {
+  margin-left: 8px;      /* Spacing between image and text */
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  /* Gradient text with subtle shadow */
+  background: linear-gradient(to right, #00adb5, #b1f4f8);
+  -webkit-background-clip: text;
+  color: transparent;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Navigation items */
+.nav-items {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-items a {
+  position: relative; /* Allows the pseudo-element to be positioned relative to the link */
+  text-decoration: none;
+  color: #fff;
+  white-space: normal;
+  font-size: 1.1em;
+  line-height: 1.2em;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  overflow: hidden; /* Ensures the pseudo-element doesn't spill outside the link */
+  transition: transform 0.3s ease;
+}
+
+.nav-items a:hover {
+  transform: scale(1.05);
+}
+
+/* Create a pseudo-element with the gradient background */
+.nav-items a::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #007d80, #004f52, #007d80);
+  opacity: 0;
+  transition: opacity 1s ease;
+  z-index: -1;
+}
+
+/* On hover, fade in the pseudo-element */
+.nav-items a:hover::before {
+  opacity: 1;
+}
+
+/* ------------------------- */
+/*   PROFILE DROPDOWN MENU   */
+/* ------------------------- */
+
+.profile-dropdown {
+  position: relative;
+  display: inline-block;
+  outline: none;
+}
+
+/* Transitionable dropdown menu */
+.dropdown-content {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  position: absolute;
+  right: 0;
+  top: 50px;
+  background-color: #00949a;
+  min-width: 160px;
+  border-radius: 4px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 3;
+  overflow: hidden;
+}
+
+.profile-dropdown:focus-within .dropdown-content {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Trigger: circular image and text */
+.profile-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.profile-trigger img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: box-shadow 0.3s ease;
+}
+
+.profile-trigger img:hover {
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+}
+
+.profile-name {
+  font-size: 1em;
+  color: #fff;
+}
+
+/* Dropdown header with animated separator */
+.dropdown-header {
+  padding: 12px 16px;
+}
+
+.dropdown-username {
+  display: block;
+  font-size: 1em;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.dropdown-separator {
+  width: 0;
+  height: 2px;
+  background-color: #fff;
+  animation: loadingLine 1s ease-out forwards;
+}
+
+@keyframes loadingLine {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+/* Dropdown links */
+.dropdown-content a {
+  display: block;
+  padding: 12px 16px;
+  font-size: 1em;
+  color: #fff;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-content a:hover {
+  background-color: #007d80;
+}
+
+/* Optional button styling for dropdown items */
+.options .button {
+  position: relative;
+}
+
+/* Animated loading bar for buttons */
+.options .button::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #007d80, #004f52, #007d80);
+  background-size: 200% auto;
+  animation: loading 2s linear infinite;
+}
+
+@keyframes loading {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
