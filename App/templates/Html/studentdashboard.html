@@ -49,7 +49,7 @@
             <span class="dropdown-username">John Doe</span>
             <div class="dropdown-separator"></div>
           </div>
-          <a href="#">Profile</a>
+          <a href="{{ url_for('dashboard_views.student_profile') }}">Profile</a>
           <a href="{{ url_for('auth_views.logout_action') }}">Sign Out</a>
         </div>
       </div>

@@ -30,7 +30,7 @@
     z-index: 1;           /* Optional: explicitly set a positive z-index */
   }
   
-  /* Profile page layout */
+  /* Profile page layout - replaced by profile-container */
   .profile-page {
     display: flex;
     max-width: 1200px;
@@ -40,12 +40,36 @@
     /* No negative z-index here */
   }
   
-  /* Left column with cards */
+  /* Left column with cards - replaced by profile-left-column */
   .profile-left {
     width: 320px; 
     display: flex;
     flex-direction: column;
     gap: 20px;
+  }
+  
+  /* New profile container */
+  .profile-container {
+    display: flex;
+    max-width: 1400px;
+    margin: 20px auto;
+    gap: 30px;
+    padding: 0 20px;
+  }
+  
+  .profile-left-column {
+    width: 320px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .profile-right-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
   }
   
   /* Right column with teal boxes */
@@ -345,6 +369,366 @@
     100% {
       opacity: 1;
       transform: scale(1);
+    }
+  }
+  
+  /* Section Styles */
+  .profile-section {
+    background-color: rgba(30, 30, 30, 0.4);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    animation: fadeInUp 0.6s ease forwards;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+  }
+
+  .section-header h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #00adb5;
+    text-transform: uppercase;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  }
+
+  .view-all {
+    padding: 6px 12px;
+    background-color: rgba(0, 173, 181, 0.2);
+    color: #00adb5;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    border: 1px solid rgba(0, 173, 181, 0.3);
+    font-size: 0.85rem;
+  }
+
+  .view-all:hover {
+    background-color: rgba(0, 173, 181, 0.4);
+    transform: translateY(-2px);
+  }
+
+  /* Competency Cards */
+  .competency-cards {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .competency-card {
+    flex: 1;
+    min-width: 180px;
+    padding: 20px;
+    background-color: rgba(30, 30, 30, 0.5);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+  }
+
+  .competency-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 173, 181, 0.5);
+  }
+
+  .competency-card h4 {
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    color: #f5f5f5;
+  }
+
+  .rank-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 10px;
+  }
+
+  .rank-1 .rank-badge {
+    background-color: rgba(52, 152, 219, 0.2);
+    color: #3498db;
+    border: 1px solid rgba(52, 152, 219, 0.3);
+  }
+
+  .rank-2 .rank-badge {
+    background-color: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+    border: 1px solid rgba(46, 204, 113, 0.3);
+  }
+
+  .rank-3 .rank-badge {
+    background-color: rgba(241, 196, 15, 0.2);
+    color: #f1c40f;
+    border: 1px solid rgba(241, 196, 15, 0.3);
+  }
+
+  .certificate-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(155, 89, 182, 0.2);
+    color: #9b59b6;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid rgba(155, 89, 182, 0.3);
+  }
+
+  /* Workshop Cards */
+  .workshop-cards {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .workshop-card {
+    flex: 1;
+    min-width: 200px;
+    background-color: rgba(30, 30, 30, 0.5);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .workshop-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 173, 181, 0.5);
+  }
+
+  .workshop-image {
+    height: 140px;
+    overflow: hidden;
+  }
+
+  .workshop-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .workshop-card:hover .workshop-image img {
+    transform: scale(1.05);
+  }
+
+  .workshop-info {
+    padding: 15px;
+  }
+
+  .workshop-info h4 {
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    color: #f5f5f5;
+  }
+
+  .workshop-date {
+    font-size: 0.85rem;
+    color: #00adb5;
+    margin-bottom: 5px;
+  }
+
+  .workshop-instructor {
+    font-size: 0.85rem;
+    color: #aaa;
+  }
+
+  /* Count badge */
+  .count-badge {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 0.8rem;
+    margin-left: 8px;
+    font-weight: 600;
+  }
+
+  /* More card */
+  .more-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 150px;
+    height: 150px;
+    background-color: rgba(30, 30, 30, 0.3);
+    border-radius: 8px;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    gap: 10px;
+  }
+
+  .more-card span {
+    font-size: 1.2rem;
+    color: #ccc;
+  }
+
+  .more-card a {
+    padding: 6px 12px;
+    background-color: rgba(0, 173, 181, 0.2);
+    color: #00adb5;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    border: 1px solid rgba(0, 173, 181, 0.3);
+  }
+
+  .more-card a:hover {
+    background-color: rgba(0, 173, 181, 0.4);
+  }
+
+  /* No items message */
+  .no-items {
+    color: #aaa;
+    font-style: italic;
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+  }
+  
+  /* Profile header */
+  .profile-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 20px 0;
+  }
+
+  .profile-header h3 {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #00adb5;
+    text-transform: uppercase;
+    background: linear-gradient(
+      45deg,
+      rgba(0, 173, 181, 0.2) 0%,
+      rgba(0, 173, 181, 0.4) 100%
+    );
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 10px rgba(0, 173, 181, 0.3);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .profile-header h3:hover {
+    transform: translateY(-3px);
+    background: linear-gradient(
+      45deg,
+      rgba(0, 173, 181, 0.4) 0%,
+      rgba(0, 173, 181, 0.6) 100%
+    );
+    box-shadow: 0 0 12px rgba(0, 173, 181, 0.5);
+  }
+
+  /* Certificate Cards */
+  .certificate-cards {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .certificate-card {
+    flex: 1;
+    min-width: 200px;
+    padding: 20px;
+    background-color: rgba(30, 30, 30, 0.5);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .certificate-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(155, 89, 182, 0.5);
+  }
+
+  .certificate-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #9b59b6;
+    font-size: 1.5rem;
+  }
+
+  .certificate-info {
+    margin-top: 10px;
+  }
+
+  .certificate-info h4 {
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    color: #f5f5f5;
+  }
+
+  .certificate-rank {
+    color: #9b59b6;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+  }
+
+  .view-certificate {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: rgba(155, 89, 182, 0.2);
+    color: #9b59b6;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    border: 1px solid rgba(155, 89, 182, 0.3);
+    margin-top: auto;
+  }
+
+  .view-certificate:hover {
+    background-color: rgba(155, 89, 182, 0.4);
+    transform: translateY(-2px);
+  }
+
+  /* Responsive layout */
+  @media (max-width: 1024px) {
+    .profile-container {
+      flex-direction: column;
+    }
+    
+    .profile-left-column {
+      width: 100%;
+    }
+    
+    .competency-card, .workshop-card, .certificate-card {
+      min-width: 100%;
     }
   }
   

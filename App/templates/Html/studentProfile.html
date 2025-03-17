@@ -9,18 +9,218 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
   <!-- Link to your CSS file -->
-  <link rel="stylesheet" href="../../static/Css/studentProfile.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='Css/studentProfile.css') }}">
   <!-- Navbar CSS -->
-  <link rel="stylesheet" href="../../static/Css/navbar.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='Css/navbar.css') }}">
   <!-- Footer CSS -->
-  <link rel="stylesheet" href="../../static/Css/footer.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='Css/footer.css') }}">
-  <link rel="stylesheet" href="../../static/Css/loader.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='Css/loader.css') }}">
-  <link rel="stylesheet" href="../../static/Css/jobmatch.css">
-  <script src="../../static/JavaScript/loader.js" defer></script>
   <script src="{{ url_for('static', filename='JavaScript/loader.js') }}" defer></script>
+  
+  <style>
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+    }
+    
+    .modal-content {
+      background-color: rgba(30, 30, 30, 0.9);
+      margin: 10% auto;
+      padding: 30px;
+      border-radius: 8px;
+      max-width: 500px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #f5f5f5;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 10px;
+    }
+    
+    .modal-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #00adb5;
+    }
+    
+    .close {
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+    
+    .close:hover {
+      color: #00adb5;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      color: #ddd;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 4px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 1rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: #00adb5;
+      box-shadow: 0 0 0 2px rgba(0, 173, 181, 0.3);
+    }
+    
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 20px;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      border: none;
+    }
+    
+    .btn-primary {
+      background-color: #00adb5;
+      color: #fff;
+    }
+    
+    .btn-primary:hover {
+      background-color: #00c2cc;
+      transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #ddd;
+    }
+    
+    .btn-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    /* Two column layout */
+    .profile-container {
+      display: flex;
+      max-width: 1400px;
+      margin: 0 auto;
+      gap: 30px;
+      padding: 0 20px;
+    }
+
+    .profile-left-column {
+      width: 320px;
+      flex-shrink: 0;
+    }
+
+    .profile-right-column {
+      flex: 1;
+    }
+
+    @media (max-width: 1024px) {
+      .profile-container {
+        flex-direction: column;
+      }
+      
+      .profile-left-column {
+        width: 100%;
+      }
+    }
+  </style>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Profile picture upload
+      const profilePicInput = document.getElementById('profile-pic-input');
+      const profilePicForm = document.getElementById('profile-pic-form');
+      const profilePicEditBtn = document.getElementById('profile-pic-edit');
+      
+      if (profilePicEditBtn) {
+        profilePicEditBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          profilePicInput.click();
+        });
+      }
+      
+      if (profilePicInput) {
+        profilePicInput.addEventListener('change', function() {
+          if (this.files && this.files[0]) {
+            profilePicForm.submit();
+          }
+        });
+      }
+      
+      // Personal info modal
+      const personalInfoModal = document.getElementById('personalInfoModal');
+      const personalInfoEditBtn = document.getElementById('personal-info-edit');
+      const closeModalBtn = document.getElementsByClassName('close')[0];
+      
+      if (personalInfoEditBtn) {
+        personalInfoEditBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          personalInfoModal.style.display = 'block';
+        });
+      }
+      
+      if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', function() {
+          personalInfoModal.style.display = 'none';
+        });
+      }
+      
+      // Close modal on outside click
+      window.addEventListener('click', function(event) {
+        if (event.target == personalInfoModal) {
+          personalInfoModal.style.display = 'none';
+        }
+      });
+      
+      // Cancel button
+      const cancelBtn = document.getElementById('cancel-edit');
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', function() {
+          personalInfoModal.style.display = 'none';
+        });
+      }
+    });
+  </script>
 </head>
 <body>
     <div id="loader">
@@ -34,24 +234,28 @@
       <!-- Navbar (already implemented) -->
       <nav class="navbar">
         <a href="{{ url_for('dashboard_views.student_dashboard') }}" class="logo">
-            <img src="../../static/Images/logo.png">
+            <img src="{{ url_for('static', filename='Images/logo.png') }}">
             <span class="site-title">Career Competency Tracker</span>
           </a>
         <div class="nav-items">
           <a href="{{ url_for('dashboard_views.student_dashboard') }}">My Sessions</a>
           <a href="{{ url_for('dashboard_views.workshops') }}">Workshops</a>
-          <a href="{{ url_for('dashboard_views.student_dashboard') }}">Tracked Comps</a>
-          <a href="{{ url_for('dashboard_views.student_dashboard') }}">Badges & Certificates</a>
+          <a href="{{ url_for('dashboard_views.competencies') }}">Tracked Comps</a>
+          <a href="{{ url_for('dashboard_views.earned_badges') }}">Badges & Certificates</a>
           <div class="profile-dropdown" tabindex="0">
             <div class="profile-trigger">
-              <img src="https://via.placeholder.com/40" alt="User Profile">
+              {% if user.profile_pic %}
+                <img src="{{ url_for('static', filename='profile_pics/' + user.profile_pic) }}" alt="User Profile">
+              {% else %}
+                <img src="https://via.placeholder.com/40" alt="User Profile">
+              {% endif %}
             </div>
             <div class="dropdown-content">
               <div class="dropdown-header">
-                <span class="dropdown-username">John Doe</span>
+                <span class="dropdown-username">{{ user.first_name }} {{ user.last_name }}</span>
                 <div class="dropdown-separator"></div>
               </div>
-              <a href="#">Profile</a>
+              <a href="{{ url_for('dashboard_views.student_profile') }}">Profile</a>
               <a href="{{ url_for('auth_views.logout_action') }}">Sign Out</a>
             </div>
           </div>
@@ -60,97 +264,200 @@
     
       <!-- Background video element -->
       <video autoplay muted loop id="bg-video">
-        <source src="../../static/Videos/dna.mp4" type="video/mp4">
+        <source src="{{ url_for('static', filename='Videos/dna.mp4') }}" type="video/mp4">
       </video>
 
       <main class="content">
-        <div class="profile-right title">
+        <div class="profile-header">
             <h3>Profile Information</h3>
         </div>
-        <div class="profile-page">
-            <!-- Left Column -->
-            <div class="profile-left">
-              <!-- Profile Card -->
-              <div class="profile-card profile-card-top">
-                <!-- Top row with "Profile Picture" label and edit icon -->
-                <div class="profile-card-header">
-                  <span class="label-icon">
-                    <i class="fa-solid fa-user"></i> Profile Picture
-                  </span>
-                  <a href="#" class="edit-icon" title="Edit Profile">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                  </a>
-                </div>
-                <!-- Actual Profile Info -->
-                <div class="profile-card-body">
-                  <!-- New avatar container -->
-                  <div class="profile-avatar">
+        
+        <div class="profile-container">
+          <!-- Left Column - Profile Information -->
+          <div class="profile-left-column">
+            <!-- Profile Card -->
+            <div class="profile-card profile-card-top">
+              <!-- Top row with "Profile Picture" label and edit icon -->
+              <div class="profile-card-header">
+                <span class="label-icon">
+                  <i class="fa-solid fa-user"></i> Profile Picture
+                </span>
+                <a href="#" id="profile-pic-edit" class="edit-icon" title="Edit Profile Picture">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </a>
+              </div>
+              <!-- Actual Profile Info -->
+              <div class="profile-card-body">
+                <!-- Profile picture form -->
+                <form id="profile-pic-form" action="{{ url_for('dashboard_views.update_profile_pic') }}" method="post" enctype="multipart/form-data">
+                  <input type="file" id="profile-pic-input" name="profile_pic" accept="image/*" style="display: none;">
+                </form>
+                <!-- New avatar container -->
+                <div class="profile-avatar">
+                  {% if user.profile_pic %}
+                    <img src="{{ url_for('static', filename='profile_pics/' + user.profile_pic) }}" alt="Profile Picture" class="avatar-image">
+                  {% else %}
                     <img src="https://via.placeholder.com/80" alt="Profile Picture" class="avatar-image">
-                  </div>
-                  <h2 class="profile-name">Josiah Phillip</h2>
-                  <p class="profile-username">@josiahphillip72</p>
+                  {% endif %}
                 </div>
-              </div>
-          
-              <!-- Personal Information Card -->
-              <div class="profile-card personal-info">
-                <div class="profile-card-header">
-                  <span class="label-icon">
-                    <i class="fa-solid fa-user"></i> Personal Information
-                  </span>
-                  <a href="#" class="edit-icon" title="Edit Personal Information">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                  </a>
-                </div>
-                <div class="profile-card-body">
-                  <p><i class="fa-solid fa-envelope"></i> josiahphillip72@gmail.com</p>
-                  <p><i class="fa-solid fa-phone"></i> Add your mobile number</p>
-                  <p><i class="fa-solid fa-location-dot"></i> Trinidad and Tobago</p>
-                </div>
-              </div>
-          
-              <!-- Resume Card -->
-              <div class="profile-card resume-card">
-                <div class="profile-card-header">
-                  <span class="label-icon">
-                    <i class="fa-solid fa-file"></i> My Resume
-                  </span>
-                </div>
-                <div class="profile-card-body">
-                  <p>Add your resume here</p>
-                  <a href="#" class="resume-link">+ Add Resume</a>
-                </div>
+                <h2 class="profile-name">{{ user.first_name }} {{ user.last_name }}</h2>
+                <p class="profile-username">@{{ user.username }}</p>
               </div>
             </div>
-          
-            <!-- Right Column (Big Teal Options) -->
-            <div class="profile-right">
-              <a href="#" class="big-option">My Competencies</a>
-              <a href="#" class="big-option">My Workshops</a>
-              <a href="#" class="big-option">Tracker Competencies</a>
+        
+            <!-- Personal Information Card -->
+            <div class="profile-card personal-info">
+              <div class="profile-card-header">
+                <span class="label-icon">
+                  <i class="fa-solid fa-user"></i> Personal Information
+                </span>
+                <a href="#" id="personal-info-edit" class="edit-icon" title="Edit Personal Information">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </a>
+              </div>
+              <div class="profile-card-body">
+                <p><i class="fa-solid fa-envelope"></i> {{ user.email }}</p>
+                <p><i class="fa-solid fa-phone"></i> {% if user.phone %}{{ user.phone }}{% else %}Add your mobile number{% endif %}</p>
+                <p><i class="fa-solid fa-location-dot"></i> {% if user.location %}{{ user.location }}{% else %}Trinidad and Tobago{% endif %}</p>
+              </div>
+            </div>
+        
+            <!-- Resume Card -->
+            <div class="profile-card resume-card">
+              <div class="profile-card-header">
+                <span class="label-icon">
+                  <i class="fa-solid fa-file"></i> My Resume
+                </span>
+              </div>
+              <div class="profile-card-body">
+                {% if user.resume %}
+                  <p>Resume uploaded</p>
+                  <a href="{{ url_for('dashboard_views.download_resume') }}" class="resume-link">View Resume</a>
+                {% else %}
+                  <p>Add your resume here</p>
+                  <form id="resume-form" action="{{ url_for('dashboard_views.update_resume') }}" method="post" enctype="multipart/form-data">
+                    <input type="file" id="resume-input" name="resume" style="display: none;">
+                    <a href="#" onclick="document.getElementById('resume-input').click(); return false;" class="resume-link">+ Add Resume</a>
+                  </form>
+                  <script>
+                    document.getElementById('resume-input').addEventListener('change', function() {
+                      if (this.files && this.files[0]) {
+                        document.getElementById('resume-form').submit();
+                      }
+                    });
+                  </script>
+                {% endif %}
+              </div>
             </div>
           </div>
 
-          <section class="job-matching">
-            <h3>Job Matches</h3>
-            <div class="job-cards">
-              <div class="job-card">
-                <h4>Front-End Developer</h4>
-                <p>Competencies: HTML, CSS, JavaScript</p>
-                <a href="#">Learn More</a>
+          <!-- Right Column - Content Sections -->
+          <div class="profile-right-column">
+            <!-- My Competencies Section -->
+            <section class="profile-section">
+              <div class="section-header">
+                <h3>My Competencies</h3>
+                <a href="{{ url_for('dashboard_views.competencies') }}" class="view-all">View All</a>
               </div>
-              <div class="job-card">
-                <h4>UI/UX Designer</h4>
-                <p>Competencies: Design, Prototyping, Adobe XD</p>
-                <a href="#">Learn More</a>
+              <div class="competency-cards">
+                {% if earned_competencies %}
+                  {% for comp in earned_competencies[:3] %}
+                    <div class="competency-card rank-{{ comp.rank }}">
+                      <h4>{{ comp.name }}</h4>
+                      <div class="rank-badge">{{ comp.rank_name }}</div>
+                      {% if comp.certificate_status == 'approved' %}
+                        <div class="certificate-badge">
+                          <i class="fas fa-certificate"></i> Certified
+                        </div>
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                  {% if earned_competencies|length > 3 %}
+                    <div class="more-card">
+                      <span>+{{ earned_competencies|length - 3 }} more</span>
+                      <a href="{{ url_for('dashboard_views.competencies') }}">View All</a>
+                    </div>
+                  {% endif %}
+                {% else %}
+                  <p class="no-items">No competencies tracked yet. Enroll in workshops to gain competencies!</p>
+                {% endif %}
               </div>
-              <div class="job-card">
-                <h4>Back-End Developer</h4>
-                <p>Competencies: Python, Databases, APIs</p>
-                <a href="#">Learn More</a>
+            </section>
+
+            <!-- My Workshops Section -->
+            <section class="profile-section">
+              <div class="section-header">
+                <h3>My Workshops</h3>
+                <a href="{{ url_for('dashboard_views.my_workshops') }}" class="view-all">View All</a>
               </div>
-            </div>
-          </section>
+              <div class="workshop-cards">
+                {% if workshops %}
+                  {% for workshop in workshops[:3] %}
+                    <div class="workshop-card">
+                      {% if workshop.image_path %}
+                        <div class="workshop-image">
+                          <img src="{{ url_for('static', filename=workshop.image_path) }}" alt="{{ workshop.workshopName }}">
+                        </div>
+                      {% endif %}
+                      <div class="workshop-info">
+                        <h4>{{ workshop.workshopName }}</h4>
+                        <p class="workshop-date">{{ workshop.workshopDate.strftime('%B %d, %Y') }}</p>
+                        <p class="workshop-instructor">{{ workshop.instructor }}</p>
+                      </div>
+                    </div>
+                  {% endfor %}
+                  {% if workshops|length > 3 %}
+                    <div class="more-card">
+                      <span>+{{ workshops|length - 3 }} more</span>
+                      <a href="{{ url_for('dashboard_views.my_workshops') }}">View All</a>
+                    </div>
+                  {% endif %}
+                {% else %}
+                  <p class="no-items">You are not enrolled in any workshops yet.</p>
+                {% endif %}
+              </div>
+            </section>
+
+            <!-- My Certificates Section -->
+            <section class="profile-section">
+              <div class="section-header">
+                <h3>My Certificates</h3>
+                <a href="{{ url_for('dashboard_views.earned_badges') }}" class="view-all">View All</a>
+              </div>
+              <div class="certificate-cards">
+                {% set certified_competencies = [] %}
+                {% for comp in earned_competencies %}
+                  {% if comp.certificate_status == 'approved' %}
+                    {% set _ = certified_competencies.append(comp) %}
+                  {% endif %}
+                {% endfor %}
+                
+                {% if certified_competencies %}
+                  {% for comp in certified_competencies[:3] %}
+                    <div class="certificate-card">
+                      <div class="certificate-icon">
+                        <i class="fas fa-certificate"></i>
+                      </div>
+                      <div class="certificate-info">
+                        <h4>{{ comp.name }}</h4>
+                        <p class="certificate-rank">{{ comp.rank_name }}</p>
+                        <a href="{{ url_for('dashboard_views.view_certificate', competency=comp.name) }}" class="view-certificate">View Certificate</a>
+                      </div>
+                    </div>
+                  {% endfor %}
+                  {% if certified_competencies|length > 3 %}
+                    <div class="more-card">
+                      <span>+{{ certified_competencies|length - 3 }} more</span>
+                      <a href="{{ url_for('dashboard_views.earned_badges') }}">View All</a>
+                    </div>
+                  {% endif %}
+                {% else %}
+                  <p class="no-items">You don't have any certificates yet. Advanced competencies can be certified.</p>
+                {% endif %}
+              </div>
+            </section>
+          </div>
+        </div>
       </main>
     
       <!-- Footer with animated loading bar -->
@@ -160,5 +467,29 @@
           <div class="loading-bar"></div>
         </div>
       </footer>
+
+      <!-- Personal Information Modal -->
+      <div id="personalInfoModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title">Edit Personal Information</h2>
+            <span class="close">&times;</span>
+          </div>
+          <form action="{{ url_for('dashboard_views.update_personal_info') }}" method="post">
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="text" id="phone" name="phone" value="{{ user.phone or '' }}" placeholder="Enter your phone number">
+            </div>
+            <div class="form-group">
+              <label for="location">Location</label>
+              <input type="text" id="location" name="location" value="{{ user.location or 'Trinidad and Tobago' }}" placeholder="Enter your location">
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="cancel-edit" class="btn btn-secondary">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
 </body>
 </html>
