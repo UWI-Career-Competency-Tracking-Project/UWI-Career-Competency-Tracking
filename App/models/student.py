@@ -12,6 +12,10 @@ class Student(User):
     id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     student_id = db.Column(db.String(20), unique=True)
     _competencies = db.Column('competencies', db.JSON, default=dict)
+    profile_pic = db.Column(db.String(255))
+    resume = db.Column(db.String(255))
+    phone = db.Column(db.String(20))
+    location = db.Column(db.String(100))
     
     enrollments = db.relationship('Enrollment', back_populates='student', lazy=True, cascade='all, delete-orphan')
     student_competencies = db.relationship('StudentCompetency', back_populates='student', lazy=True, cascade='all, delete-orphan')
@@ -19,11 +23,20 @@ class Student(User):
     __mapper_args__ = {
         'polymorphic_identity': 'student',
     }
+    
+    # Add table_args to make these columns nullable
+    __table_args__ = {
+        'extend_existing': True
+    }
 
     def __init__(self, username, password, email, first_name, last_name, student_id):
         super().__init__(username=username, password=password, email=email, first_name=first_name, last_name=last_name, user_type='student')
         self.student_id = student_id
         self._competencies = {}
+        self.profile_pic = None
+        self.resume = None
+        self.phone = None
+        self.location = None
 
     @property
     def competencies(self):
@@ -150,6 +163,10 @@ class Student(User):
         data = super().get_json()
         data.update({
             'student_id': self.student_id,
-            'competencies': self.competencies
+            'competencies': self.competencies,
+            'profile_pic': self.profile_pic,
+            'resume': self.resume,
+            'phone': self.phone,
+            'location': self.location
         })
         return data

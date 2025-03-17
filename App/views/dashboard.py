@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
+from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, send_from_directory
 from flask_login import login_required, current_user
 from ..models.workshop import Workshop
 from ..models.enrollment import Enrollment
@@ -854,6 +854,235 @@ def job_matches():
         traceback.print_exc()
         flash('Error loading job matches.', 'error')
         return redirect(url_for('dashboard_views.dashboard'))
+
+@dashboard_views.route('/profile')
+@login_required
+def student_profile():
+    if current_user.user_type != 'student':
+        flash('Access denied. Students only.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+        
+    try:
+        student = Student.get_by_id(current_user.id)
+        if not student:
+            flash('Student account not found.', 'error')
+            return redirect(url_for('dashboard_views.dashboard'))
+        
+        # Get enrolled workshops
+        enrolled_workshops = Workshop.query.join(Enrollment).filter(
+            Enrollment.student_id == student.id
+        ).all()
+        
+        # Get earned competencies
+        earned_competencies = []
+        if student.competencies:
+            for comp_name, comp_data in student.competencies.items():
+                rank = comp_data.get('rank', 0)
+                certificate_status = comp_data.get('certificate_status', None)
+                feedback = comp_data.get('feedback', '')
+                
+                if rank > 0:  
+                    earned_competencies.append({
+                        'name': comp_name,
+                        'rank': rank,
+                        'rank_name': ['Beginner', 'Intermediate', 'Advanced'][rank-1],
+                        'certificate_status': certificate_status,
+                        'feedback': feedback
+                    })
+        
+        # Get job matches (limited to top 3)
+        create_sample_jobs()
+        job_matches = JobRole.get_matching_jobs(student)[:3]
+        
+        return render_template('Html/studentProfile.html', 
+                             user=student,
+                             earned_competencies=earned_competencies,
+                             workshops=enrolled_workshops,
+                             job_matches=job_matches)
+                             
+    except Exception as e:
+        print(f"Error loading profile: {e}")
+        import traceback
+        traceback.print_exc()
+        flash('Error loading profile.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+
+@dashboard_views.route('/update-profile-pic', methods=['POST'])
+@login_required
+def update_profile_pic():
+    if current_user.user_type != 'student':
+        flash('Access denied. Students only.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+    
+    try:
+        if 'profile_pic' not in request.files:
+            flash('No file part', 'error')
+            return redirect(url_for('dashboard_views.student_profile'))
+        
+        file = request.files['profile_pic']
+        if file.filename == '':
+            flash('No selected file', 'error')
+            return redirect(url_for('dashboard_views.student_profile'))
+        
+        if file and allowed_file(file.filename):
+            # Create profile pics directory if it doesn't exist
+            profile_pics_dir = 'App/static/profile_pics'
+            if not os.path.exists(profile_pics_dir):
+                os.makedirs(profile_pics_dir)
+            
+            # Generate unique filename
+            filename = secure_filename(file.filename)
+            # Add timestamp to prevent caching issues
+            filename = f"{current_user.id}_{int(datetime.now().timestamp())}_{filename}"
+            file_path = os.path.join(profile_pics_dir, filename)
+            file.save(file_path)
+            
+            # Update student record
+            student = Student.get_by_id(current_user.id)
+            if student:
+                # Delete old profile pic if exists
+                if student.profile_pic:
+                    old_pic_path = os.path.join(profile_pics_dir, student.profile_pic)
+                    if os.path.exists(old_pic_path):
+                        try:
+                            os.remove(old_pic_path)
+                        except:
+                            pass
+                
+                # Update with new profile pic
+                student.profile_pic = filename
+                db.session.commit()
+                flash('Profile picture updated successfully!', 'success')
+            else:
+                flash('Student record not found', 'error')
+        else:
+            flash('Invalid file type. Please upload an image file.', 'error')
+    
+    except Exception as e:
+        print(f"Error updating profile picture: {e}")
+        db.session.rollback()
+        flash('An error occurred while updating profile picture.', 'error')
+    
+    return redirect(url_for('dashboard_views.student_profile'))
+
+@dashboard_views.route('/update-resume', methods=['POST'])
+@login_required
+def update_resume():
+    if current_user.user_type != 'student':
+        flash('Access denied. Students only.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+    
+    try:
+        if 'resume' not in request.files:
+            flash('No file part', 'error')
+            return redirect(url_for('dashboard_views.student_profile'))
+        
+        file = request.files['resume']
+        if file.filename == '':
+            flash('No selected file', 'error')
+            return redirect(url_for('dashboard_views.student_profile'))
+        
+        # Create resumes directory if it doesn't exist
+        resumes_dir = 'App/static/resumes'
+        if not os.path.exists(resumes_dir):
+            os.makedirs(resumes_dir)
+        
+        # Generate unique filename
+        filename = secure_filename(file.filename)
+        # Add timestamp to prevent caching issues
+        filename = f"{current_user.id}_{int(datetime.now().timestamp())}_{filename}"
+        file_path = os.path.join(resumes_dir, filename)
+        file.save(file_path)
+        
+        # Update student record
+        student = Student.get_by_id(current_user.id)
+        if student:
+            # Delete old resume if exists
+            if student.resume:
+                old_resume_path = os.path.join(resumes_dir, student.resume)
+                if os.path.exists(old_resume_path):
+                    try:
+                        os.remove(old_resume_path)
+                    except:
+                        pass
+            
+            # Update with new resume
+            student.resume = filename
+            db.session.commit()
+            flash('Resume updated successfully!', 'success')
+        else:
+            flash('Student record not found', 'error')
+    
+    except Exception as e:
+        print(f"Error updating resume: {e}")
+        db.session.rollback()
+        flash('An error occurred while updating resume.', 'error')
+    
+    return redirect(url_for('dashboard_views.student_profile'))
+
+@dashboard_views.route('/download-resume')
+@login_required
+def download_resume():
+    if current_user.user_type != 'student':
+        flash('Access denied. Students only.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+    
+    try:
+        student = Student.get_by_id(current_user.id)
+        if not student or not student.resume:
+            flash('Resume not found', 'error')
+            return redirect(url_for('dashboard_views.student_profile'))
+        
+        # Prepare resume file path
+        resumes_dir = 'App/static/resumes'
+        file_path = os.path.join(resumes_dir, student.resume)
+        
+        if not os.path.exists(file_path):
+            flash('Resume file not found', 'error')
+            return redirect(url_for('dashboard_views.student_profile'))
+        
+        # Extract original filename from stored filename
+        original_filename = student.resume.split('_', 2)[2] if len(student.resume.split('_', 2)) > 2 else student.resume
+        
+        # Return file for download
+        return send_from_directory(
+            os.path.abspath(resumes_dir),
+            student.resume,
+            as_attachment=True,
+            download_name=original_filename
+        )
+    
+    except Exception as e:
+        print(f"Error downloading resume: {e}")
+        flash('An error occurred while downloading resume.', 'error')
+        return redirect(url_for('dashboard_views.student_profile'))
+
+@dashboard_views.route('/update-personal-info', methods=['POST'])
+@login_required
+def update_personal_info():
+    if current_user.user_type != 'student':
+        flash('Access denied. Students only.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+    
+    try:
+        phone = request.form.get('phone', '')
+        location = request.form.get('location', '')
+        
+        student = Student.get_by_id(current_user.id)
+        if student:
+            student.phone = phone
+            student.location = location
+            db.session.commit()
+            flash('Personal information updated successfully!', 'success')
+        else:
+            flash('Student record not found', 'error')
+            
+    except Exception as e:
+        print(f"Error updating personal information: {e}")
+        db.session.rollback()
+        flash('An error occurred while updating personal information.', 'error')
+    
+    return redirect(url_for('dashboard_views.student_profile'))
 
 def init_dashboard_routes(app):
     app.register_blueprint(dashboard_views) 
