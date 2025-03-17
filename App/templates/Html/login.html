@@ -57,7 +57,7 @@
             });
         </script>
 
-        <form method="POST" action="{{ url_for('auth_views.login_action') }}">
+        <form method="POST" action="{{ url_for('auth_views.login') }}">
             <input type="text" name="username" class="form-control" placeholder="Username" required>
             <input type="password" name="password" class="form-control" placeholder="Password" required>
             <button type="submit" class="btn">Login</button>
@@ -65,10 +65,11 @@
         <br>
         <p>Don't have an account? <a href="{{ url_for('auth_views.signup') }}">Sign Up</a></p>
     </div>
-
+    <!--
     <footer>
         <p>&copy; 2025 Career Competency Tracking System. All Rights Reserved.</p>
     </footer>
-
+    -->
+    
 </body>
 </html>

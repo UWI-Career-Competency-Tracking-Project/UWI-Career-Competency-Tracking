@@ -1,32 +1,20 @@
-
 services:
 - type: web
-  name: flask-postgres-api
+  name: career-competency-tracker
   env: python
-  repo: https://github.com/uwidcit/flaskmvc.git
+  buildCommand: pip install -r requirements.txt
+  startCommand: gunicorn wsgi:app
   plan: free
-  branch: main
-  healthCheckPath: /healthcheck
-  buildCommand: "pip install -r requirements.txt"
-  startCommand: "gunicorn wsgi:app"
   envVars:
-  - fromGroup: flask-postgres-api-settings
-  - key: POSTGRES_URL
-    fromDatabase:
-      name: flask-postgres-api-db
-      property: host
-  - key: POSTGRES_USER
-    fromDatabase:
-      name: flask-postgres-api-db
-      property: user
-  - key: POSTGRES_PASSWORD
-    fromDatabase:
-      name: flask-postgres-api-db
-      property: password
-  - key: POSTGRES_DB
-    fromDatabase:
-      name: flask-postgres-api-db
-      property: database 
+    - key: FLASK_APP
+      value: wsgi.py
+    - key: ENV
+      value: production
+    - key: PYTHONPATH
+      value: .
+    - key: SECRET_KEY
+      generateValue: true
+  autoDeploy: true
 
 envVarGroups:
 - name: flask-postgres-api-settings

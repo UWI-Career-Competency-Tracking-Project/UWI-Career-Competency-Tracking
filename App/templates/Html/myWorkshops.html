@@ -74,12 +74,12 @@
                 {% for workshop in workshops %}
                 <div class="workshop-card" {% if workshop.image_path %}style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('{{ url_for('static', filename=workshop.image_path) }}');"{% endif %}>
                     <div class="workshop-content">
-                        <h3>{{ workshop.name }}</h3>
-                        <p class="workshop-description">{{ workshop.description }}</p>
+                        <h3>{{ workshop.workshopName }}</h3>
+                        <p class="workshop-description">{{ workshop.workshopDescription }}</p>
                         <div class="workshop-details">
                             <p><i class="fas fa-user"></i> <strong>Instructor:</strong> {{ workshop.instructor }}</p>
-                            <p><i class="fas fa-calendar"></i> <strong>Date:</strong> {{ workshop.date.strftime('%B %d, %Y') }}</p>
-                            <p><i class="fas fa-clock"></i> <strong>Time:</strong> {{ workshop.time }}</p>
+                            <p><i class="fas fa-calendar"></i> <strong>Date:</strong> {{ workshop.workshopDate.strftime('%B %d, %Y') }}</p>
+                            <p><i class="fas fa-clock"></i> <strong>Time:</strong> {{ workshop.workshopTime }}</p>
                             <p><i class="fas fa-location-dot"></i> <strong>Location:</strong> {{ workshop.location }}</p>
                         </div>
                         {% if workshop.competencies %}
@@ -112,5 +112,7 @@
           <div class="loading-bar"></div>
         </div>
       </footer>
+    </footer>
+
 </body>
 </html> 

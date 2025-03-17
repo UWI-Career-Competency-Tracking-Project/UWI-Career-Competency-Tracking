@@ -3,92 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pending Submissions</title>
-    <link rel="stylesheet" href="../../static/Css/adminValidatecomp.css">
+    <title>Pending Certificate Requests</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/adminValidatecomp.css') }}">
 </head>
 <body>
     <header>
         <div class="logo">
-            <img src="../../static/Images/logo.png" alt="Logo">
+            <img src="{{ url_for('static', filename='Images/logo.png') }}" alt="Logo">
         </div>
         <h1>Career Competency Tracking System</h1>
         <nav>
             <ul>
-                <li><a href="#">Dashboard</a></li>
-                <li><a href="#">Workshops</a></li>
-                <li><a href="#">Logout</a></li>
+                <li><a href="{{ url_for('dashboard_views.dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('dashboard_views.workshops') }}">Workshops</a></li>
+                <li><a href="{{ url_for('auth_views.logout_action') }}">Logout</a></li>
             </ul>
         </nav>
     </header>
 
     <main>
-        <h2><strong>Current Pending Submissions</strong></h2>
+        <h2><strong>Certificate Requests</strong></h2>
 
         <div class="submission-container">
-            
-            <div class="submission">
-                <div class="student-pfp">Insert Student PFP</div>
-                <textarea class="student-competencies" placeholder="Insert Student Competencies"></textarea>
-                <div class="approval-buttons">
-                    <button class="reject">REJECT APPROVAL</button>
-                    <input type="radio" name="approval1">
-                    <button class="accept">ACCEPT APPROVAL</button>
-                    <input type="radio" name="approval1">
+            {% if pending_requests %}
+                {% for request in pending_requests %}
+                <div class="submission">
+                    <div class="student-info">
+                        <h3>{{ request.student.first_name }} {{ request.student.last_name }}</h3>
+                        <p>Competency: {{ request.competency }}</p>
+                        <p>Request Date: {{ request.request_date.strftime('%Y-%m-%d') }}</p>
+                    </div>
+                    <form action="{{ url_for('dashboard_views.process_certificate_request', request_id=request.id) }}" method="POST" class="approval-form">
+                        <div class="approval-buttons">
+                            <button type="submit" name="action" value="deny" class="reject">Deny Certificate</button>
+                            <button type="submit" name="action" value="approve" class="accept">Approve Certificate</button>
+                        </div>
+                    </form>
                 </div>
-                <button class="update-button">Update Student Account</button>
-            </div>
-
-            
-            <div class="submission">
-                <div class="student-pfp">Insert Student PFP</div>
-                <textarea class="student-competencies" placeholder="Insert Student Competencies"></textarea>
-                <div class="approval-buttons">
-                    <button class="reject">REJECT APPROVAL</button>
-                    <input type="radio" name="approval2">
-                    <button class="accept">ACCEPT APPROVAL</button>
-                    <input type="radio" name="approval2">
+                {% endfor %}
+            {% else %}
+                <div class="no-requests">
+                    <p>No pending certificate requests.</p>
                 </div>
-                <button class="update-button">Update Student Account</button>
-            </div>
-
-            
-            <div class="submission">
-                <div class="student-pfp">Insert Student PFP</div>
-                <textarea class="student-competencies" placeholder="Insert Student Competencies"></textarea>
-                <div class="approval-buttons">
-                    <button class="reject">REJECT APPROVAL</button>
-                    <input type="radio" name="approval3">
-                    <button class="accept">ACCEPT APPROVAL</button>
-                    <input type="radio" name="approval3">
-                </div>
-                <button class="update-button">Update Student Account</button>
-            </div>
-
-            
-            <div class="submission">
-                <div class="student-pfp">Insert Student PFP</div>
-                <textarea class="student-competencies" placeholder="Insert Student Competencies"></textarea>
-                <div class="approval-buttons">
-                    <button class="reject">REJECT APPROVAL</button>
-                    <input type="radio" name="approval4">
-                    <button class="accept">ACCEPT APPROVAL</button>
-                    <input type="radio" name="approval4">
-                </div>
-                <button class="update-button">Update Student Account</button>
-            </div>
-
-            
-            <div class="submission">
-                <div class="student-pfp">Insert Student PFP</div>
-                <textarea class="student-competencies" placeholder="Insert Student Competencies"></textarea>
-                <div class="approval-buttons">
-                    <button class="reject">REJECT APPROVAL</button>
-                    <input type="radio" name="approval5">
-                    <button class="accept">ACCEPT APPROVAL</button>
-                    <input type="radio" name="approval5">
-                </div>
-                <button class="update-button">Update Student Account</button>
-            </div>
+            {% endif %}
         </div>
     </main>
 
