@@ -4,24 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Certificate Generator</title>
-    <link rel="stylesheet" href="../../static/Css/studentCertificate.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.3.1/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="../../static/Css/studentCertificate.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/studentCertificate.css') }}">
+    <script src="../../static/JavaScript/studentCertificate.js"></script>
+    <script src="{{ url_for('static', filename='JavaScript/studentCertificate.js') }}"></script>
+    <!-- Navbar CSS -->
+    <link rel="stylesheet" href="../../static/Css/navbar.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/navbar.css') }}">
+    <!-- Footer CSS -->
+    <link rel="stylesheet" href="../../static/Css/footer.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/footer.css') }}">
+    <link rel="stylesheet" href="../../static/Css/loader.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/loader.css') }}">
+    <script src="../../static/JavaScript/loader.js" defer></script>
+    <script src="{{ url_for('static', filename='JavaScript/loader.js') }}" defer></script>
 </head>
 <body>
-
-    <!-- HEADER -->
-    <header>
-        <div class="logo">
-            <img src="../../static/Images/logo.png" alt="Logo">
+    <div id="loader">
+        <div class="container">
+          <div class="ring"></div>
+          <div class="ring"></div>
+          <div class="ring"></div>
+          <span class="loading">Loading...</span>
         </div>
-        <h1>Career Competency Tracking System</h1>
-        <nav>
-            <a href="#">Dashboard</a>
-            <a href="#">Workshops</a>
-            <a href="#">Logout</a>
-        </nav>
-    </header>
+      </div>
+      <!-- Navbar (already implemented) -->
+      <nav class="navbar">
+        <a href="{{ url_for('dashboard_views.student_dashboard') }}" class="logo">
+            <img src="../../static/Images/logo.png">
+            <span class="site-title">Career Competency Tracker</span>
+          </a>
+        <div class="nav-items">
+          <a href="{{ url_for('dashboard_views.student_dashboard') }}">My Sessions</a>
+          <a href="{{ url_for('dashboard_views.workshops') }}">Workshops</a>
+          <a href="{{ url_for('dashboard_views.student_dashboard') }}">Tracked Comps</a>
+          <a href="{{ url_for('dashboard_views.student_dashboard') }}">Badges & Certificates</a>
+          <div class="profile-dropdown" tabindex="0">
+            <div class="profile-trigger">
+              <img src="https://via.placeholder.com/40" alt="User Profile">
+            </div>
+            <div class="dropdown-content">
+              <div class="dropdown-header">
+                <span class="dropdown-username">John Doe</span>
+                <div class="dropdown-separator"></div>
+              </div>
+              <a href="#">Profile</a>
+              <a href="{{ url_for('auth_views.logout_action') }}">Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+    
+      <!-- Background video element -->
+      <video autoplay muted loop id="bg-video">
+        <source src="../../static/Videos/certif.mp4" type="video/mp4">
+      </video>
 
     <!-- Certificate Section -->
     <div class="container">
@@ -35,12 +79,15 @@
         </div>
     </div>
 
-    <!-- FOOTER -->
-    <footer>
-        <p>© 2025 Career Competency Tracking System. All Rights Reserved.</p>
-    </footer>
+    <!-- Footer with animated loading bar -->
+    <footer class="footer">
+        <p>&copy; 2025 Career Competency Tracking System. All Rights Reserved.</p>
+        <div class="loading-bar-container">
+          <div class="loading-bar"></div>
+        </div>
+      </footer>
 
-    <script src="../../static/JavaScript/studentCertificate.js"></script>
+    
 
 </body>
 </html>
