@@ -35,17 +35,21 @@
 }
 
 .navbar .logo .site-title {
-  margin-left: 8px;      /* Spacing between image and text */
+  margin-left: 8px;
   font-family: 'Poppins', sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: bold;
   text-transform: uppercase;
-  /* Gradient text with subtle shadow */
-  background: linear-gradient(to right, #00adb5, #b1f4f8);
+
+  /* Gradient: "soft black teal" (left) to "soft white teal" (right) */
+  background: linear-gradient(to right, #00383c, #eefefe);
   -webkit-background-clip: text;
   color: transparent;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+
+  /* Gentle text shadow for readability */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
 }
+
 
 /* Navigation items */
 .nav-items {

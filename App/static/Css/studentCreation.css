@@ -1,246 +1,234 @@
-
-body, h1, h2, p, input, button {
+/* Base Reset and Font */
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Arial', sans-serif;
-}
-
-
-body {
-    background: url('../Images/background.png') no-repeat center center fixed;
-    background-size: cover;
+  }
+  
+  body, h1, h2, p, input, button {
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  body {
+    /* Remove background image; using background-color as fallback */
+    background-color: #121212;
+    color: #f5f5f5;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-}
+    /* The background video (with id "bg-video") will handle the backdrop */
+  }
 
-
-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #0d67a3;
-    color: white;
-    padding: 15px 40px;
-    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-header h1 {
-    font-size: 22px;
-    font-weight: bold;
-}
-
-header nav ul {
-    display: flex;
-    gap: 20px;
-    list-style: none;
-}
-
-header nav ul li a {
-    color: white;
-    font-size: 15px;
-    font-weight: bold;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-header nav ul li a:hover {
-    color: #cce7ff;
-}
-
-header .logo img {
-    height: 45px;
-}
-
-
-.profile-container {
-    background-color: rgba(255, 255, 255, 0.97);
+  /* Background video behind everything */
+  #bg-video {
+    position: fixed;   /* Stays in place even if page is scrolled */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the video covers the entire area */
+    z-index: -1;       /* Places video behind all other elements */
+  }
+  
+  /* Main Profile Creation Container */
+  .profile-container {
+    background-color: rgba(30, 30, 30, 0.7);  /* Dark, glass-like background */
     margin: 50px auto;
     padding: 35px;
     border-radius: 25px;
-    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
     max-width: 780px;
-    border: 3px solid #ccc;
     transition: transform 0.3s;
-}
-
-.profile-container:hover {
+  }
+  
+  .profile-container:hover {
     transform: translateY(-5px);
-}
-
-
-.profile-container h2 {
+  }
+  
+  .profile-container h2 {
     text-align: center;
     font-size: 32px;
     font-weight: bold;
     margin-bottom: 30px;
-}
-
-
-.form-section {
+    color: #00adb5; /* Accent color */
+  }
+  
+  /* Form Section */
+  .form-section {
     display: flex;
     justify-content: space-between;
     margin-bottom: 30px;
-}
-
-
-.left-section {
+  }
+  
+  /* Left Section: Form Fields */
+  .left-section {
     width: 55%;
     display: flex;
     flex-direction: column;
     gap: 20px;
-}
-
-
-.input-field {
+  }
+  
+  /* Input Fields */
+  .input-field {
     width: 100%;
     padding: 12px;
     border-radius: 20px;
-    border: 1px solid #bbb;
+    border: 1px solid rgba(255, 255, 255, 0.3);
     font-size: 14px;
-    background-color: #f0f0f0;
+    background-color: rgba(30, 30, 30, 0.5);
+    color: #f5f5f5;
     transition: box-shadow 0.3s;
-}
-
-.input-field:focus {
+  }
+  
+  .input-field::placeholder {
+    color: #bbb;
+  }
+  
+  .input-field:focus {
     box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.5);
     outline: none;
-}
-
-
-.dob-field {
+  }
+  
+  /* Date of Birth Field */
+  .dob-field {
     padding: 12px;
     border-radius: 15px;
-    background-color: #e5d8eb;
+    background-color: rgba(30, 30, 30, 0.5);
     display: flex;
     align-items: center;
-    border: 2px solid #d5c2e2;
+    border: 2px solid rgba(255, 255, 255, 0.3);
     transition: box-shadow 0.3s;
-}
-
-.date-input {
+  }
+  
+  .date-input {
     border: none;
     font-size: 16px;
     padding: 5px;
     width: 100%;
     background: transparent;
-    color: #333;
-}
-
-.date-input:focus {
+    color: #f5f5f5;
+  }
+  
+  .date-input:focus {
     outline: none;
-}
-
-
-.region-field {
+  }
+  
+  /* Region Field */
+  .region-field {
     position: relative;
-}
-
-.region-icon {
+  }
+  
+  .region-icon {
     position: absolute;
     right: 15px;
     top: 10px;
     font-size: 18px;
     color: #ff0080;
-}
-
-
-.right-section {
+  }
+  
+  /* Right Section: Profile Display and Upload */
+  .right-section {
     width: 40%;
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-
-
-.profile-display {
+  }
+  
+  /* Profile Display */
+  .profile-display {
     width: 150px;
     height: 150px;
-    border: 3px dashed #bbb;
+    border: 3px dashed rgba(255, 255, 255, 0.3);
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    background-color: #f0f0f0;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: rgba(30, 30, 30, 0.5);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
     margin-bottom: 15px;
     transition: transform 0.3s ease-in-out;
-}
-
-.profile-display img {
+  }
+  
+  .profile-display img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-}
-
-
-.upload-container {
+  }
+  
+  /* Upload Container */
+  .upload-container {
     text-align: center;
     margin-bottom: 20px;
-}
-
-.upload-title {
+  }
+  
+  .upload-title {
     font-size: 15px;
     font-weight: bold;
-    color: #444;
+    color: #f5f5f5;
     margin-bottom: 10px;
-}
-
-
-.file-upload {
+  }
+  
+  .file-upload {
     text-align: center;
     margin-bottom: 20px;
-}
-
-
-.gender-box {
-    background-color: #f9f9f9;
-    border: 2px solid #d4d4d4;
+  }
+  
+  /* Gender Box */
+  .gender-box {
+    background-color: rgba(30, 30, 30, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 12px;
     padding: 15px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: left; 
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    text-align: left;
     position: relative;
     margin-top: 20px;
     width: 150px;
-    height: 120px;
+  
+    /* Remove or override any fixed height: */
+    height: auto; /* let the content define the height */
+  
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     padding-top: 10px;
-}
-
-
-.gender-label {
+  }
+  
+  .gender-label {
     font-size: 14px;
     font-weight: bold;
-    color: #333;
+    color: #f5f5f5;
     position: absolute;
     top: 10px;
     left: 10px;
-}
-
-
-.gender-options {
+  }
+  
+  .gender-options {
     font-size: 14px;
     padding: 5px 10px;
-    margin-top: 30px;
     display: flex;
     align-items: center;
     gap: 8px;
-}
-
-
-.gender-box input[type="radio"] {
+  
+    /* If you had margin-top: 30px; remove or reduce it */
+    margin-top: 20px; 
+  }
+  
+  .gender-box input[type="radio"] {
     cursor: pointer;
-}
-
-
-.customize-button {
-    background: linear-gradient(135deg, #000000, #4b4b4b);
-    color: white;
+  }
+  
+  /* Customize Profile Button */
+  .customize-button {
+    /* Replace the black-to-gray gradient with a teal gradient */
+    background: linear-gradient(
+      135deg,
+      rgba(0, 173, 181, 0.7),
+      rgba(0, 173, 181, 0.9)
+    );
+    color: #fff;
     font-size: 16px;
     font-weight: bold;
     padding: 14px;
@@ -251,23 +239,58 @@ header .logo img {
     display: block;
     width: 250px;
     margin: 20px auto;
-    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
-}
-
-.customize-button:hover {
-    background: linear-gradient(135deg, #333333, #555555);
+    /* Subtle teal shadow instead of black */
+    box-shadow: 0px 6px 12px rgba(0, 173, 181, 0.2);
+  }
+  
+  .customize-button:hover {
+    /* Slightly stronger teal gradient on hover */
+    background: linear-gradient(
+      135deg,
+      rgba(0, 173, 181, 0.85),
+      rgba(0, 173, 181, 1)
+    );
     transform: scale(1.05);
-}
-
-
-footer {
-    background-color: #0d67a3;
-    color: white;
+    /* Slightly brighter shadow on hover */
+    box-shadow: 0px 8px 15px rgba(0, 173, 181, 0.4);
+  }
+  
+  .profile-container h2 {
+    /* Wrap text in a glassy box */
+    display: inline-block;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    font-size: 2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #00adb5; /* Teal accent */
     text-align: center;
-    padding: 15px 0;
-    font-size: 14px;
-    width: 100%;
-    margin-top: auto;
-    position: relative;
-    bottom: 0;
-}
+  
+    background: linear-gradient(
+      135deg,
+      rgba(0, 173, 181, 0.2) 0%,
+      rgba(0, 173, 181, 0.4) 100%
+    );
+    border-radius: 8px;
+  
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 10px rgba(0, 173, 181, 0.3);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+  
+    transition:
+      transform 0.3s ease,
+      background 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+  
+  .profile-container h2:hover {
+    transform: translateY(-3px);
+    background: linear-gradient(
+      135deg,
+      rgba(0, 173, 181, 0.4) 0%,
+      rgba(0, 173, 181, 0.6) 100%
+    );
+    box-shadow: 0 0 12px rgba(0, 173, 181, 0.5);
+  }
+  
