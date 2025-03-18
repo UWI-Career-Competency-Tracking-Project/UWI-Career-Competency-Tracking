@@ -22,6 +22,7 @@
     <script src="{{ url_for('static', filename='JavaScript/loader.js') }}" defer></script>
     <script src="{{ url_for('static', filename='JavaScript/workshopSearch.js') }}"></script>
     <script src="../../static/JavaScript/workshopSearch.js"></script>
+    <script src>"{{ url_for('static', filename='JavaScript/Workshops.js') }}"</script>
 
 </head>
 <body>
@@ -40,10 +41,10 @@
             <span class="site-title">Career Competency Tracker</span>
           </a>
         <div class="nav-items">
-          <a href="{{ url_for('dashboard_views.student_dashboard') }}">My Sessions</a>
+          <a href="{{ url_for('dashboard_views.my_workshops') }}">My Sessions</a>
           <a href="{{ url_for('dashboard_views.workshops') }}">Workshops</a>
-          <a href="{{ url_for('dashboard_views.student_dashboard') }}">Tracked Comps</a>
-          <a href="{{ url_for('dashboard_views.student_dashboard') }}">Badges & Certificates</a>
+          <a href="{{ url_for('dashboard_views.competencies') }}">Tracked Comps</a>
+          <a href="{{ url_for('dashboard_views.earned_badges') }}">Badges & Certificates</a>
           <div class="profile-dropdown" tabindex="0">
             <div class="profile-trigger">
               <img src="https://via.placeholder.com/40" alt="User Profile">
@@ -53,7 +54,7 @@
                 <span class="dropdown-username">John Doe</span>
                 <div class="dropdown-separator"></div>
               </div>
-              <a href="#">Profile</a>
+              <a href="{{ url_for('dashboard_views.student_profile') }}">Profile</a>
               <a href="{{ url_for('auth_views.logout_action') }}">Sign Out</a>
             </div>
           </div>
@@ -66,20 +67,26 @@
       </video>
 
     
-    <section class="search-section">
+      <section class="search-section">
         <h2>Available Workshops</h2>
+      
+        <!-- Search container with icon + input -->
         <div class="search-container">
-            <input type="text" 
-                   id="workshop-search" 
-                   name="search" 
-                   placeholder="Search workshops..." 
-                   value="{{ search_query }}"
-                   oninput="debounceSearch(this.value)">
+          <i class="fas fa-search search-icon"></i>
+          <input
+            type="text"
+            id="workshop-search"
+            name="search"
+            placeholder="Search workshops..."
+            value="{{ search_query }}"
+            oninput="debounceSearch(this.value)">
         </div>
+      
+        <!-- Notify checkbox -->
         <label class="notify-checkbox">
-            <input type="checkbox"> Notify me when new workshops are added!
+          <input type="checkbox"> Notify me when new workshops are added!
         </label>
-    </section>
+      </section>
     
     <section class="workshops-container">
         {% for workshop in workshops %}
@@ -103,8 +110,8 @@
                     </div>
                 </div>
                 {% endif %}
-                <a href="{{ url_for('dashboard_views.enroll_workshop', workshop_id=workshop.id) }}" class="enroll-button">Enroll Now</a>
             </div>
+            <a href="{{ url_for('dashboard_views.enroll_workshop', workshop_id=workshop.id) }}" class="enroll-button">Enroll Now</a>
         </div>
         {% endfor %}
     </section>
@@ -117,40 +124,6 @@
           <div class="loading-bar"></div>
         </div>
       </footer>
-
-    <script>
-        let timeoutId;
-        
-        function debounceSearch(value) {
-            clearTimeout(timeoutId);
-            
-            timeoutId = setTimeout(() => {
-                performSearch(value);
-            }, 300); 
-        }
-        
-        function performSearch(query) {
-            let baseUrl = window.location.pathname;
-            
-            let url = baseUrl + (query ? `?search=${encodeURIComponent(query)}` : '');
-            
-            fetch(url)
-                .then(response => response.text())
-                .then(html => {
-                    let temp = document.createElement('div');
-                    temp.innerHTML = html;
-                    
-                    let newWorkshops = temp.querySelector('.workshops-container');
-                    let currentWorkshops = document.querySelector('.workshops-container');
-                    if (newWorkshops && currentWorkshops) {
-                        currentWorkshops.innerHTML = newWorkshops.innerHTML;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        }
-    </script>
 
 </body>
 </html>

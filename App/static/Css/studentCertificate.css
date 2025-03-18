@@ -1,186 +1,85 @@
+/* General Page Styles */
 body {
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #121212;
-    text-align: center;
-    color: #f5f5f5;
-  }
-
-  /* Background video behind everything */
-  #bg-video {
-    position: fixed;   /* Stays in place even if page is scrolled */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Ensures the video covers the entire area */
-    z-index: -1;       /* Places video behind all other elements */
-  }
-  
-  /* Certificate Wrapper */
-  #certificate-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    margin-top: 40px;
-    /* Extra bottom margin */
-    margin-bottom: 60px;
-  }
-  
-  /* Certificate Card */
-  #certificate {
-header {
-    background-color: #0b5ea8;
-    color: white;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #121212;
+  text-align: center;
+  color: #f5f5f5;
 }
 
-header .logo img {
-    width: 60px;
-    margin-left: 15px;
-}
-
-header h1 {
-    margin: 0;
-    font-size: 1.5em;
-}
-
-header nav ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: 20px;
-    margin-right: 15px;
-}
-
-header nav li {
-    display: inline-block;
-}
-
-header nav a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    padding: 5px 10px;
-    transition: color 0.3s;
-}
-
-header nav a:hover {
-    color: #e0e0e0;
-}
-
+/* Certificate Wrapper */
 #certificate-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-    gap: 20px; 
-    flex-direction: row; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 40px; /* Provides space between the navbar and the certificate section */
 }
 
+/* Certificate Card */
 #certificate {
-    position: relative;
-    width: 800px;
-    height: 600px;
-    /* Slightly transparent white for a subtle glass effect */
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 15px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(4px);
-  }
-  
-  /* Certificate Image */
-  .cert-img {
-    width: 100%;
-    height: auto;
-  }
-  
-  /* Text Over Certificate */
-  /* Use dark text here for optimal contrast on a light (glass) certificate */
-  #student-name,
-  #competency {
-    font-weight: bold;
-    color: #000;
-  }
-  
-  #student-name {
+  position: relative;
+  width: 800px;
+  height: 600px;
+  /* Slightly transparent white for a subtle glass effect */
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+/* Certificate Image */
+.cert-img {
+  width: 100%;
+  height: auto;
+}
+
+/* Text Over Certificate */
+/* Use dark text here for optimal contrast on a light (glass) certificate */
+#student-name,
+#competency {
+  font-weight: bold;
+  color: #000;
 }
 
 #student-name {
-    position: absolute;
-    top: 39.5%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 22px;
-  }
-  
-  #competency {
-    position: absolute;
-    top: 50%;
-    left: 38%;
-    transform: translate(-50%, -50%);
-    font-size: 18px;
-  }
-  
-  /* Download Button */
-  #download-btn {
-    background: linear-gradient(135deg, rgba(0,173,181,0.7), rgba(0,173,181,0.9));
-    color: #fff;
-    font-weight: bold;
+  position: absolute;
+  top: 39.5%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 22px;
 }
 
-#date {
-    position: absolute;
-    top: 60%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 16px;
-    font-style: italic;
+#competency {
+  position: absolute;
+  top: 50%;
+  left: 38%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
 }
 
+/* Download Button */
 #download-btn {
-    background-color: #007bff;
-    color: white;
-    padding: 12px 25px;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    border-radius: 5px;
-    margin-top: 20px;
-    transition: background 0.3s, box-shadow 0.3s;
-  }
-  
-  #download-btn:hover {
-    background: linear-gradient(135deg, rgba(0,173,181,0.85), rgba(0,173,181,1));
-    box-shadow: 0 0 15px rgba(0,173,181,0.8);
-  }
-  
-    transition: 0.3s;
-    height: fit-content;
+  background: linear-gradient(135deg, rgba(0,173,181,0.7), rgba(0,173,181,0.9));
+  color: #fff;
+  padding: 12px 25px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+  margin-top: 20px;
+  /* Add extra bottom margin here */
+  margin-bottom: 40px;
+  transition: background 0.3s, box-shadow 0.3s;
 }
 
 #download-btn:hover {
-    background-color: #0056b3;
-    box-shadow: 0px 0px 15px rgba(0, 162, 255, 0.8);
-}
-
-footer {
-    background-color: #0b5ea8;
-    color: white;
-    padding: 10px;
-    text-align: center;
-    position: fixed;
-    width: 100%;
-    bottom: 0;
+  background: linear-gradient(135deg, rgba(0,173,181,0.85), rgba(0,173,181,1));
+  box-shadow: 0 0 15px rgba(0,173,181,0.8);
 }

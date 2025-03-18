@@ -1,188 +1,206 @@
-/* Base Reset and Typography */
+/* Reset & Base Styling */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body, h1, h2, p, input, button {
-    font-family: 'Poppins', sans-serif;
-  }
-  
-  body {
-    background-color: #121212;
-    color: #f5f5f5;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    /* The background video (with id "bg-video") will provide the backdrop */
-  }
-  
-  /* Background Video */
-  #bg-video {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1;
-  }
-  
-  /* ---------- Title Styling for "My Enrolled Workshops" ---------- */
-  .search-section {
-    text-align: center;  /* Ensure content is centered */
-  }
-  
-  .search-section h2 {
-    display: inline-block;
-    margin-top: 40px;   /* Adds space between navbar and title */
-    margin-bottom: 20px;
-    padding: 10px 20px;
-    font-size: 2rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: #00adb5;  /* Teal accent */
-    
-    /* Glass-morphic background */
-    background: linear-gradient(135deg, rgba(0,173,181,0.2) 0%, rgba(0,173,181,0.4) 100%);
-    border-radius: 8px;
-    border: 2px solid rgba(255,255,255,0.3);
-    box-shadow: 0 0 10px rgba(0,173,181,0.3);
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
-    backdrop-filter: blur(4px);
-    
-    transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .search-section h2:hover {
-    transform: translateY(-3px);
-    background: linear-gradient(135deg, rgba(0,173,181,0.4) 0%, rgba(0,173,181,0.6) 100%);
-    box-shadow: 0 0 12px rgba(0,173,181,0.5);
-  }
-  
-  /* ---------- Workshops Container & Cards ---------- */
-  .workshops-container {
-    padding: 2rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-  
-  .workshop-card {
-    position: relative;
-    height: 450px;
-    border-radius: 10px;
-    overflow: hidden;
-    /* Glass-morphic dark background */
-    background-color: rgba(30,30,30,0.7);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    border: 1px solid rgba(255,255,255,0.2);
-    backdrop-filter: blur(8px);
-    background-size: cover;
-    background-position: center;
-    transition: transform 0.3s ease;
-  }
-  
-  .workshop-card:hover {
-    transform: translateY(-5px);
-  }
-  
-  .workshop-content {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 1.5rem;
-    color: #f5f5f5;
-    /* Dark gradient overlay */
-    background: linear-gradient(transparent, rgba(0,0,0,0.9));
-  }
-  
-  .workshop-content h3 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-  
-  .workshop-description {
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-    opacity: 0.9;
-  }
-  
-  .workshop-details {
-    margin: 1rem 0;
-  }
-  
-  .workshop-details p {
-    margin: 0.5rem 0;
-    font-size: 0.9rem;
-  }
-  
-  .workshop-details i {
-    width: 20px;
-    margin-right: 5px;
-  }
-  
-  /* Competencies Section */
-  .competencies {
-    margin-top: 1rem;
-  }
-  
-  .competencies h4 {
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-  }
-  
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  
-  .tag {
-    background: rgba(255,255,255,0.2);
-    padding: 0.3rem 0.8rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
-  }
-  
-  /* Unenroll Button */
-  .unenroll-button {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 15px;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .unenroll-button:hover {
-    background-color: #c82333;
-  }
-  
-  /* No-Enrolled Workshops Message */
-  .no-workshops p {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  .no-workshops a.enroll-button {
-    background: #00adb5;
-    color: white;
-    padding: 0.8rem 1.5rem;
-    border-radius: 5px;
-    text-decoration: none;
-    transition: background-color 0.3s;
-  }
-  
-  .no-workshops a.enroll-button:hover {
-    background: #008e9a;
-  }
-  
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, h1, h2, p, input, button {
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background-color: #121212;
+  color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Background Video */
+#bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+/* Title Section for "My Enrolled Workshops" */
+.search-section {
+  text-align: center;
+  margin: 1rem;
+  background: rgba(30, 30, 30, 0.7);
+  padding: 2rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+}
+
+.search-section h2 {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  padding: 10px 20px;
+  font-size: 2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #00adb5;
+
+  /* Glassy teal gradient background */
+  background: linear-gradient(
+    135deg,
+    rgba(0,173,181,0.2),
+    rgba(0,173,181,0.4)
+  );
+  border-radius: 8px;
+  border: 2px solid rgba(255,255,255,0.3);
+  box-shadow: 0 0 10px rgba(0,173,181,0.3);
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+
+  transition: transform 0.3s, background 0.3s, box-shadow 0.3s;
+}
+
+.search-section h2:hover {
+  transform: translateY(-3px);
+  background: linear-gradient(
+    135deg,
+    rgba(0,173,181,0.4),
+    rgba(0,173,181,0.6)
+  );
+  box-shadow: 0 0 12px rgba(0,173,181,0.5);
+}
+
+/* Workshops Container */
+.workshops-container {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  /* If you want each row's cards to match the tallest card in that row:
+     grid-auto-rows: 1fr;
+     align-items: stretch;
+  */
+}
+
+/* Workshop Card */
+.workshop-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 450px; /* Matches your taller "Leadership" card size */
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: rgba(30,30,30,0.7);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(8px);
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.3s ease;
+}
+
+.workshop-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Workshop Content (no absolute positioning) */
+.workshop-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* Grows to fill the card's vertical space */
+  padding: 1.5rem;
+  color: #f5f5f5;
+  background: linear-gradient(transparent, rgba(0,0,0,0.9));
+}
+
+.workshop-content h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.workshop-description {
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.workshop-details {
+  margin: 1rem 0;
+}
+
+.workshop-details p {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.workshop-details i {
+  width: 20px;
+  margin-right: 5px;
+}
+
+/* Competencies Section */
+.competencies {
+  margin-top: 1rem;
+}
+
+.competencies h4 {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  background: rgba(255,255,255,0.2);
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+}
+
+/* Unenroll Button at bottom of the content */
+.unenroll-button {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: auto; /* pushes button to bottom if there's extra space */
+  margin-bottom: 1rem; /* optional spacing from bottom edge */
+  font-size: 14px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.unenroll-button:hover {
+  background-color: #c82333;
+}
+
+/* If user not enrolled in any workshops */
+.no-workshops p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.no-workshops a.enroll-button {
+  background: #00adb5;
+  color: #fff;
+  padding: 0.8rem 1.5rem;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.no-workshops a.enroll-button:hover {
+  background: #008e9a;
+}
