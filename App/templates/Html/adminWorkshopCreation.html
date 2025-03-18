@@ -4,74 +4,128 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workshop Creation</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='Css/adminWorkshopCreation.css') }}">
-    <!-- <link rel="stylesheet" href="../../static/Css/adminWorkshopCreation.css"> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- Navbar CSS -->
+    <link rel="stylesheet" href="../../static/Css/navbar.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/navbar.css') }}">
+    <!-- Footer CSS -->
+    <link rel="stylesheet" href="../../static/Css/footer.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/footer.css') }}">
+    <link rel="stylesheet" href="../../static/Css/loader.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/loader.css') }}">
+    <script src="../../static/JavaScript/loader.js" defer></script>
+    <script src="{{ url_for('static', filename='JavaScript/loader.js') }}" defer></script>
+    
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="../../static/Css/adminWorkshopCreation.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/admin_workshop_creation.css') }}">
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <img src="{{ url_for('static', filename='Images/logo.png') }}" alt="Logo">
+    <div id="loader">
+        <div class="container">
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <span class="loading">Loading...</span>
         </div>
-        <h1>Career Competency Tracking System</h1>
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('dashboard_views.dashboard') }}">Dashboard</a></li>
-                <li><a href="{{ url_for('dashboard_views.workshops') }}">Workshops</a></li>
-                <li><a href="{{ url_for('auth_views.logout_action') }}">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="{{ url_for('dashboard_views.student_dashboard') }}" class="logo">
+            <img src="../../static/Images/logo.png">
+            <span class="site-title">Career Competency Tracker</span>
+        </a>
+        <div class="nav-items">
+            <a href="{{ url_for('dashboard_views.manage_workshops') }}">Manage Workshops</a>
+            <a href="{{ url_for('dashboard_views.admin_workshop_creation') }}">Create Workshops</a>
+            <a href="{{ url_for('dashboard_views.admin_badges') }}">Award Badges</a>
+            <a href="{{ url_for('dashboard_views.validate_certificates') }}">Validate Certificates</a>
+            <a href="{{ url_for('auth_views.logout_action') }}">Logout</a>
+        </div>
+    </nav>
+
+    <!-- Background Video -->
+    <video autoplay muted loop id="bg-video">
+        <source src="../../static/Videos/stdashboardvid.mp4" type="video/mp4">
+    </video>
 
     <main>
         <div class="workshop-container">
+          <div class="form-row">
             <h2>Workshop Creation</h2>
+            <div class="form-group checkbox-group">
+                    <input type="checkbox" id="notify" name="notify_students">
+                    <label for="notify">Notify Students</label>
+                  </div>
+            </div>
+            
             <form method="POST" action="{{ url_for('dashboard_views.admin_workshop_creation') }}" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label>Workshop Code</label>
-                    <input type="text" name="id" required>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Workshop Code</label>
+                        <input type="text" name="id" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Workshop Date & Time</label>
+                        <input type="date" name="date" required>
+                        <input type="time" name="time" required>
+                    </div>
                 </div>
-                <div class="form-group">
+                <div class="form-row">
+                  <div class="form-group">
                     <label>Workshop Title</label>
                     <input type="text" name="name" required>
+                  </div>
+                  <div class="form-group">
+                        <label>Workshop Instructor</label>
+                        <input type="text" name="instructor" required>
+                    </div>
                 </div>
-                <div class="form-group full-width">
-                    <label>Workshop Description</label>
-                    <textarea name="description" required></textarea>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Workshop Description</label>
+                        <textarea name="description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Workshop Location</label>
+                        <input type="text" name="location" required>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Workshop Instructor</label>
-                    <input type="text" name="instructor" required>
-                </div>
-                <div class="form-group">
-                    <label>Workshop Location</label>
-                    <input type="text" name="location" required>
-                </div>
-                <div class="form-group date-time">
-                    <label>Workshop Date & Time</label>
-                    <input type="date" name="date" required>
-                    <input type="time" name="time" required>
-                </div>
-                <div class="form-group">
+
+                <div class="form-row"> 
+                  <div class="form-group">
                     <label>Workshop Image</label>
                     <input type="file" name="workshop_image" accept="image/*">
                     <small>Select an image to be used as workshop background (Recommended size: 1200x800px)</small>
-                </div>
-                <div class="form-group">
+                  </div>
+
+                  <div class="form-group">
                     <label>Competencies (comma-separated)</label>
                     <input type="text" name="competencies" placeholder="e.g. Leadership, Communication, Technical Skills">
                     <small>Enter competencies that students will gain from this workshop</small>
+                  </div>
                 </div>
-                <div class="form-group checkbox-group">
-                    <input type="checkbox" id="notify" name="notify_students">
-                    <label for="notify">Notify Students</label>
+
+                <div class="form-row">
+                  <button type="submit">Create Workshop</button>
                 </div>
-                <button type="submit">Create Workshop</button>
             </form>
         </div>
     </main>
 
-    <footer>
+    <!-- Footer -->
+    <footer class="footer">
         <p>&copy; 2025 Career Competency Tracking System. All Rights Reserved.</p>
+        <div class="loading-bar-container">
+            <div class="loading-bar"></div>
+        </div>
     </footer>
 </body>
 </html>
