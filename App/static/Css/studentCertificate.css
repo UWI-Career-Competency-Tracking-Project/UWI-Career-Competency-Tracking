@@ -1,55 +1,75 @@
-/* General Page Styles */
-body {
-  font-family: 'Poppins', sans-serif;
+/* Hide horizontal overflow to prevent sideways scrolling */
+html, body {
   margin: 0;
   padding: 0;
+  overflow-x: hidden; /* Key to stop horizontal scroll if an element slightly overflows */
+  font-family: 'Poppins', sans-serif;
   background-color: #121212;
-  text-align: center;
   color: #f5f5f5;
+  text-align: center;
+  min-height: 100vh;
+}
+
+/* Background video behind everything */
+#bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+  z-index: 0;
 }
 
 /* Certificate Wrapper */
 #certificate-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
-  margin-top: 40px; /* Provides space between the navbar and the certificate section */
+  align-items: center;
+  margin-top: 40px; /* space between navbar and certificate section */
 }
 
 /* Certificate Card */
 #certificate {
   position: relative;
-  width: 800px;
-  height: 600px;
-  /* Slightly transparent white for a subtle glass effect */
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 15px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  width: 90%;
+  max-width: 800px;
+  height: auto;           /* or 600px if you prefer fixed height */
+  margin: 0 auto;
+  
+  /* Remove the gray box behind the certificate: */
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  
+  /* Keep your layout for text layering */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(4px);
+  overflow: visible;       /* Let content flow freely */
 }
 
 /* Certificate Image */
 .cert-img {
+  display: block;
   width: 100%;
   height: auto;
+  border-radius: 0; /* match the card’s corners if the image covers entire area */
 }
 
-/* Text Over Certificate */
-/* Use dark text here for optimal contrast on a light (glass) certificate */
+/* Text Over Certificate (still absolutely positioned) */
 #student-name,
 #competency {
   font-weight: bold;
   color: #000;
+  position: absolute;
 }
 
+/* Example positions (adjust as needed):
+   Note: If the certificate’s height changes, these absolute coords
+   might need adjusting or a more responsive approach. */
 #student-name {
-  position: absolute;
   top: 39.5%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -57,7 +77,6 @@ body {
 }
 
 #competency {
-  position: absolute;
   top: 50%;
   left: 38%;
   transform: translate(-50%, -50%);
@@ -74,7 +93,6 @@ body {
   font-size: 16px;
   border-radius: 5px;
   margin-top: 20px;
-  /* Add extra bottom margin here */
   margin-bottom: 40px;
   transition: background 0.3s, box-shadow 0.3s;
 }
