@@ -17,13 +17,13 @@ body {
     flex-direction: column;
 }
 
-/* Background video behind everything */
+/* Background Video */
 #bg-video {
     position: fixed;
-    top: 0px;                    /* Start right below a 60px-tall navbar */
+    top: 0;
     left: 0;
     width: 100%;
-    height: calc(100% - 60px);    /* Reduce video height by the navbar's height */
+    height: 100%;
     object-fit: cover;
     z-index: -1;
   }
@@ -38,6 +38,7 @@ main {
 .competencies-container {
     max-width: 1200px;
     margin: 0 auto;
+    text-align: center;
 }
 
 /* Title Styling for Competencies Page */
@@ -178,51 +179,4 @@ h2:hover {
 
 .cta-button:hover {
     background-color: #008a94;
-}
-
-footer {
-    background: #0d67a3;
-    color: white;
-    text-align: center;
-    padding: 1rem;
-    margin-top: auto;
-} 
-
-.certificate-button {
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: none;
-    margin-top: 10px;
-    width: 100%;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-}
-
-.certificate-button.request {
-    background-color: #4CAF50;
-    color: white;
-}
-
-.certificate-button.request:hover {
-    background-color: #45a049;
-}
-
-.certificate-button.pending {
-    background-color: #ff9800;
-    color: white;
-    cursor: not-allowed;
-    opacity: 0.8;
-}
-
-.certificate-button.view {
-    background-color: #2196F3;
-    color: white;
-}
-
-.certificate-button.view:hover {
-    background-color: #1976D2;
 }

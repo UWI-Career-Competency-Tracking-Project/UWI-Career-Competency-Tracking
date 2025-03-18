@@ -39,10 +39,10 @@
             <span class="site-title">Career Competency Tracker</span>
           </a>
         <div class="nav-items">
-          <a href="{{ url_for('dashboard_views.student_dashboard') }}">My Sessions</a>
+          <a href="{{ url_for('dashboard_views.my_workshops') }}">My Sessions</a>
           <a href="{{ url_for('dashboard_views.workshops') }}">Workshops</a>
-          <a href="{{ url_for('dashboard_views.student_dashboard') }}">Tracked Comps</a>
-          <a href="{{ url_for('dashboard_views.student_dashboard') }}">Badges & Certificates</a>
+          <a href="{{ url_for('dashboard_views.competencies') }}">Tracked Comps</a>
+          <a href="{{ url_for('dashboard_views.earned_badges') }}">Badges & Certificates</a>
           <div class="profile-dropdown" tabindex="0">
             <div class="profile-trigger">
               <img src="https://via.placeholder.com/40" alt="User Profile">
@@ -52,7 +52,7 @@
                 <span class="dropdown-username">John Doe</span>
                 <div class="dropdown-separator"></div>
               </div>
-              <a href="#">Profile</a>
+              <a href="{{ url_for('dashboard_views.student_profile') }}">Profile</a>
               <a href="{{ url_for('auth_views.logout_action') }}">Sign Out</a>
             </div>
           </div>
@@ -92,8 +92,8 @@
                             </div>
                         </div>
                         {% endif %}
-                        <button onclick="unenrollWorkshop('{{ workshop.id }}')" class="unenroll-button">Unenroll from Workshop</button>
                     </div>
+                    <button onclick="unenrollWorkshop('{{ workshop.id }}')" class="unenroll-button">Unenroll from Workshop</button>
                 </div>
                 {% endfor %}
             {% else %}

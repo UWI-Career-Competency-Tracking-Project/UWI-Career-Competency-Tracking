@@ -1,308 +1,239 @@
-/* Reset and Base Styling */
+/* Reset & Base */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #121212;
-    color: #f5f5f5;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  #bg-video {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1;
-  }
-  
-  /* Search Section */
-  .search-section {
-    background: rgba(30, 30, 30, 0.7);
-    padding: 2rem;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    margin: 1rem;
-  }
-  
-  .search-section h2 {
-    color: #00adb5;
-    margin-bottom: 1.5rem;
-    font-size: 2rem;
-    font-weight: 700;
-    text-transform: uppercase;
-  }
-  
-  /* Search Bar */
-  .search-bar {
-    max-width: 600px;
-    margin: 0 auto;
-    display: flex;
-  }
-  
-  .search-bar form {
-    width: 100%;
-    display: flex;
-  }
-  
-  .search-bar input {
-    flex: 1;
-    padding: 0.8rem;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 4px 0 0 4px;
-    font-size: 1rem;
-    background: transparent;
-    color: #f5f5f5;
-  }
-  
-  .search-bar input::placeholder {
-    color: #bbb;
-  }
-  
-  .search-button {
-    padding: 0.8rem 1.5rem;
-    background: #00adb5;
-    color: #fff;
-    border: none;
-    border-radius: 0 4px 4px 0;
-    cursor: pointer;
-  }
-  
-  /* Workshops Container */
-  .workshops-container {
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #121212;
+  color: #f5f5f5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Background Video */
+#bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+/* Search Section */
 .search-section {
-    background: white;
-    padding: 2.5rem 2rem;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-bottom: 2rem;
+  background: rgba(30, 30, 30, 0.7);
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.2);
+  margin: 1rem;
+  border-radius: 10px;
 }
 
+/* Glassy Teal Title */
 .search-section h2 {
-    color: #0d67a3;
-    margin-bottom: 1.5rem;
-    font-size: 2rem;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  padding: 10px 20px;
+  font-size: 2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #00adb5;
+  background: linear-gradient(135deg, rgba(0,173,181,0.2), rgba(0,173,181,0.4));
+  border-radius: 8px;
+  border: 2px solid rgba(255,255,255,0.3);
+  box-shadow: 0 0 10px rgba(0,173,181,0.3);
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  transition: transform 0.3s, background 0.3s, box-shadow 0.3s;
 }
 
+.search-section h2:hover {
+  transform: translateY(-3px);
+  background: linear-gradient(135deg, rgba(0,173,181,0.4), rgba(0,173,181,0.6));
+  box-shadow: 0 0 12px rgba(0,173,181,0.5);
+}
+
+/* Example single-input search container (optional) */
 .search-container {
-    max-width: 800px;
-    margin: 0 auto;
-    position: relative;
+  max-width: 600px;
+  margin: 0 auto 1rem auto;
+  position: relative;       /* Needed to position the icon absolutely */
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 0 8px rgba(0,173,181,0.2);
 }
 
-.search-container input[type="text"] {
-    width: 100%;
-    padding: 1rem 1.5rem;
-    font-size: 1.1rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 50px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 12px;              /* Adjust to control horizontal spacing from the edge */
+  transform: translateY(-50%);
+  color: #bbb;            /* Icon color */
+  font-size: 1.2rem;      /* Adjust icon size if needed */
+  pointer-events: none;   /* Ensures clicks go to the input, not the icon */
 }
 
-.search-container input[type="text"]:focus {
-    outline: none;
-    border-color: #0d67a3;
-    box-shadow: 0 3px 8px rgba(13, 103, 163, 0.15);
+.search-container input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  /* Extra left padding so text doesn't overlap icon */
+  padding-left: 2.5rem;    /* Enough space for the icon + some buffer */
+  border: none;
+  font-size: 1rem;
+  background: rgba(30,30,30,0.5);
+  color: #f5f5f5;
+  outline: none;
+  transition: box-shadow 0.3s;
 }
 
-.search-container input[type="text"]::placeholder {
-    color: #999;
-    font-style: italic;
+.search-container input::placeholder {
+  color: #bbb;
 }
 
-.workshops-container {
-    padding: 2rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-  
-  /* Workshop Card */
-  .workshop-card {
-    position: relative;
-    height: 450px;
-    border-radius: 10px;
-    overflow: hidden;
-    background-color: rgba(30, 30, 30, 0.7);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(8px);
-    background-size: cover;
-    background-position: center;
-    transition: transform 0.3s ease;
-  }
-  
-  .workshop-card:hover {
-    transform: translateY(-5px);
-  }
-  
-  /* Workshop Content */
-  .workshop-content {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 1.5rem;
-    color: #f5f5f5;
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
-  }
-  
-  .workshop-content h3 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-  
-  .workshop-description {
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-    opacity: 0.9;
-  }
-  
-  .workshop-details {
-    margin: 1rem 0;
-  }
-  
-  .workshop-details p {
-    margin: 0.5rem 0;
-    font-size: 0.9rem;
-  }
-  
-  .workshop-details i {
-    width: 20px;
-    margin-right: 5px;
-  }
-  
-  /* Competencies Section */
-  .competencies {
-    margin-top: 1rem;
-  }
-  
-  .competencies h4 {
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-  }
-  
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  
-  .tag {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 0.3rem 0.8rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
-  }
-  
-  /* Enroll Button */
-  .enroll-button {
-    display: inline-block;
-    background: #00adb5;
-    color: white;
-    padding: 0.8rem 1.5rem;
-    border-radius: 5px;
-    text-decoration: none;
-    margin-top: 1rem;
-    transition: background-color 0.3s;
-  }
-  
-  .enroll-button:hover {
-    background: #008e9a;
-  }
-  
-  /* Unenroll Button */
-  .unenroll-button {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 15px;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .unenroll-button:hover {
-    background-color: #c82333;
-  }
-  
-  /* Notify Checkbox */
-  .notify-checkbox {
-    margin-top: 1rem;
-    display: inline-block;
-    color: #bbb;
-  }
-  
-  .search-section h2 {
-    /* Wrap text so background & border only cover the heading text */
-    display: inline-block;
-    padding: 10px 20px;
-    margin-bottom: 20px;
-    font-size: 2rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: #00adb5; /* Teal accent */
-    text-align: center;
-  
-    /* Semi-transparent gradient background */
-    background: linear-gradient(
-      135deg,
-      rgba(0, 173, 181, 0.2) 0%,
-      rgba(0, 173, 181, 0.4) 100%
-    );
-    border-radius: 8px;
-  
-    /* Thin, translucent border & glass-like effect */
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 0 10px rgba(0, 173, 181, 0.3);
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(4px);
-  
-    /* Smooth transitions for hover states */
-    transition:
-      transform 0.3s ease,
-      background 0.3s ease,
-      box-shadow 0.3s ease;
-  }
-  
-  .search-section h2:hover {
-    transform: translateY(-3px);
-    background: linear-gradient(
-      135deg,
-      rgba(0, 173, 181, 0.4) 0%,
-      rgba(0, 173, 181, 0.6) 100%
-    );
-    box-shadow: 0 0 12px rgba(0, 173, 181, 0.5);
-  }
-  
+.search-container input:focus {
+  box-shadow: inset 0 0 6px rgba(0,173,181,0.5);
 }
 
-footer {
-    background: #0d67a3;
-    color: white;
-    text-align: center;
-    padding: 1rem;
-    margin-top: auto;
-}
-
+/* Notify Checkbox */
 .notify-checkbox {
-    margin-top: 1.5rem;
-    display: inline-block;
-    color: #666;
-    font-size: 0.95rem;
+  margin-top: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  color: #bbb;
+}
+
+/* Workshops Container:
+   - grid-auto-rows: auto => row height based on largest item
+   - align-items: stretch => each item fills row height
+*/
+.workshops-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-auto-rows: auto;
+  align-items: stretch;
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Workshop Card:
+   - No fixed or min-height; let the left card define row height
+   - height: 100% so each card matches the row's final height
+*/
+.workshop-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: rgba(30,30,30,0.7);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(8px);
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.3s ease;
+}
+
+.workshop-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Workshop Content:
+   flex: 1 ensures the content grows to fill vertical space
+   pushing the bottom edge or button to the bottom
+*/
+.workshop-content {
+  flex: 1;
+  padding: 1.5rem;
+  color: #f5f5f5;
+  background: linear-gradient(transparent, rgba(0,0,0,0.9));
+}
+
+.workshop-content h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.workshop-description {
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.workshop-details {
+  margin: 1rem 0;
+}
+
+.workshop-details p {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.workshop-details i {
+  width: 20px;
+  margin-right: 5px;
+}
+
+/* Competencies */
+.competencies {
+  margin-top: 1rem;
+}
+
+.competencies h4 {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  background: rgba(255,255,255,0.2);
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+}
+
+/* Enroll/Unenroll Buttons inside .workshop-content */
+.enroll-button,
+.unenroll-button {
+  background: #00adb5;
+  color: #fff;
+  padding: 0.8rem 1.5rem;
+  border-radius: 5px;
+  text-decoration: none;
+  margin-top: auto; /* pushes button to bottom if there's extra content */
+  margin-bottom: 0; /* keep the button inside the content area */
+  font-size: 1rem;
+  text-align: center;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.enroll-button:hover {
+  background: #008e9a;
+}
+
+.unenroll-button {
+  background-color: #dc3545;
+}
+
+.unenroll-button:hover {
+  background-color: #c82333;
 }
