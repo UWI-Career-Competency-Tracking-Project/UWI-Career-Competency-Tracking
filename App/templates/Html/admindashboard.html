@@ -38,21 +38,11 @@
         <span class="site-title">Career Competency Tracker</span>
       </a>
     <div class="nav-items">
-      <a href="{{ url_for('dashboard_views.admin_dashboard') }}">Home</a>
-      <a href="{{ url_for('dashboard_views.workshops') }}">Workshops</a>
-      <div class="profile-dropdown" tabindex="0">
-        <div class="profile-trigger">
-          <img src="https://via.placeholder.com/40" alt="User Profile">
-        </div>
-        <div class="dropdown-content">
-          <div class="dropdown-header">
-            <span class="dropdown-username">John Doe</span>
-            <div class="dropdown-separator"></div>
-          </div>
-          <a href="#">Profile</a>
-          <a href="#">Sign Out</a>
-        </div>
-      </div>
+      <a href="{{ url_for('dashboard_views.manage_workshops') }}">Manage Workshops</a>
+        <a href="{{ url_for('dashboard_views.admin_workshop_creation') }}">Create Workshops</a>
+        <a href="{{ url_for('dashboard_views.admin_badges') }}">Award Badges</a>
+        <a href="{{ url_for('dashboard_views.validate_certificates') }}">Validate Certificates</a>
+        <a href="{{ url_for('auth_views.logout_action') }}">Logout</a>
     </div>
   </nav>
 
