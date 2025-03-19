@@ -1,40 +1,30 @@
+/* Base Reset and Font */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+body, h1, h2, p, input, button {
+    font-family: 'Poppins', sans-serif;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background: #f5f5f5;
-    min-height: 100vh;
+    background-color: #121212;
+    color: #f5f5f5;
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
 }
 
-header {
-    background-color: #0d67a3;
-    color: white;
-    padding: 1rem 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.logo img {
-    height: 45px;
-}
-
-nav ul {
-    display: flex;
-    gap: 2rem;
-    list-style: none;
-}
-
-nav a {
-    color: white;
-    text-decoration: none;
-    font-size: 1.1rem;
+#bg-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
 }
 
 main {
@@ -79,28 +69,35 @@ h2 {
 }
 
 .qualification-container {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.2rem;
 }
 
+/* Updated Card Styling */
 .qualification {
     background: white;
-    border-radius: 10px;
-    padding: 2rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.qualification:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
 
 .student-info {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
 }
 
 .student-pfp {
-    width: 60px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     object-fit: cover;
 }
@@ -108,31 +105,33 @@ h2 {
 .student-details h3 {
     color: #333;
     margin-bottom: 0.25rem;
+    font-size: 0.9rem;
 }
 
 .student-details p {
     color: #666;
-    font-size: 0.9rem;
+    font-size: 0.7rem;
 }
 
 .qualification-details {
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.8rem;
 }
 
 .qualification-details h3 {
     color: #0d67a3;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.3rem;
+    font-size: 0.9rem;
 }
 
 .current-rank {
     color: #666;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 .badges {
     display: flex;
-    gap: 2rem;
-    margin-bottom: 1.5rem;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
     justify-content: center;
 }
 
@@ -140,27 +139,39 @@ h2 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.3rem;
 }
 
 .badge img {
-    width: 60px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
     object-fit: contain;
+}
+
+.badge label {
+    color: black;
+    font-size: 0.7rem;
+}
+
+/* Feedback Section */
+.form-group label {
+    color: black;
+    font-size: 0.8rem;
+    font-weight: bold;
 }
 
 .feedback {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.3rem;
 }
 
 .feedback textarea {
     width: 100%;
-    height: 100px;
-    padding: 0.8rem;
+    height: 60px;
+    padding: 0.5rem;
     border: 2px solid #ddd;
-    border-radius: 4px;
+    border-radius: 6px;
     resize: vertical;
 }
 
@@ -168,29 +179,23 @@ h2 {
     align-self: flex-end;
     background: #0d67a3;
     color: white;
-    padding: 0.8rem 1.5rem;
+    padding: 0.6rem 1.2rem;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.2s;
+    font-size: 0.8rem;
 }
 
 .feedback button:hover {
     background: #085185;
+    transform: scale(1.05);
 }
 
 .no-results {
     text-align: center;
-    padding: 3rem;
+    padding: 2rem;
     background: white;
     border-radius: 10px;
     color: #666;
-}
-
-footer {
-    background: #0d67a3;
-    color: white;
-    text-align: center;
-    padding: 1rem;
-    margin-top: 2rem;
 }
