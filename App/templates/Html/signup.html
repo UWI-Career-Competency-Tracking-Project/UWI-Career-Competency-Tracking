@@ -3,60 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Creation</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Navbar CSS -->
+    <link rel="stylesheet" href="../../static/Css/navbar.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/navbar.css') }}">
+    <!-- Footer CSS -->
+    <link rel="stylesheet" href="../../static/Css/footer.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/footer.css') }}">
+    <link rel="stylesheet" href="../../static/Css/loader.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/loader.css') }}">
+    <script src="../../static/JavaScript/loader.js" defer></script>
+    <script src="{{ url_for('static', filename='JavaScript/loader.js') }}" defer></script>
+    <!-- Page CSS / JS ref Change to page accordingly -->
+    <link rel="stylesheet" href="../../static/Css/signup.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/signup.css') }}">
-    <title>Sign Up</title>
 </head>
 <body>
-
+    <div id="loader">
+        <div class="container">
+          <div class="ring"></div>
+          <div class="ring"></div>
+          <div class="ring"></div>
+          <span class="loading">Loading...</span>
+        </div>
+    </div>
     
-    <video autoplay loop muted playsinline class="live-background">
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="{{ url_for('dashboard_views.student_dashboard') }}" class="logo">
+            <img src="../../static/Images/logo.png">
+            <span class="site-title">Career Competency Tracker</span>
+        </a>
+        <div class="nav-items">
+            <a href="{{ url_for('main_views.home') }}">Home</a>
+            <a href="{{ url_for('auth_views.login') }}">Login</a>
+        </div>
+    </nav>
+
+    <!-- Background video element -->
+    <video autoplay muted loop id="bg-video">
         <source src="../../static/Videos/livebackground.mp4" type="video/mp4">
     </video>
 
-    <header>
-        <div class="logo">
-            <img src="../../static/Images/logo.png" alt="Logo">
-        </div>
-        <h1>Career Competency Tracking System</h1>
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('main_views.home') }}">Home</a></li>
-                <li><a href="{{ url_for('auth_views.login') }}">Login</a></li>
-            </ul>
-        </nav>
-    </header>
+    <main>
+        <!-- Page content -->
+        <div class="container">
+          
+          {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                  {% for message in messages %}
+                      <div class="alert">{{ message }}</div>
+                  {% endfor %}
+              {% endif %}
+          {% endwith %}
 
-    <div class="container">
-        <h2>Sign Up</h2>
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-        <form method="POST" action="{{ url_for('auth_views.signup') }}">
-            <input type="text" name="username" class="form-control" placeholder="Username" required>
-            <input type="text" name="first_name" class="form-control" placeholder="First Name" required>
-            <input type="text" name="last_name" class="form-control" placeholder="Last Name" required>
-            <input type="email" name="email" class="form-control" placeholder="Email" required>
-            <input type="password" name="password" class="form-control" placeholder="Password" required>
-            <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" required>
-            <select name="user_type" class="form-control">
-                <option value="student">Student</option>
-                <option value="admin">Administrator</option>
-                <option value="employer">Employer</option>
-            </select>
-            <button type="submit" class="btn">Sign Up</button>
-        </form>
-        <br>
-        <p>Already have an account? <a href="{{ url_for('auth_views.login') }}" class="glow-red">Login</a></p>
-    </div>
-    <!--
-    <footer>
-        <p>&copy; 2025 Career Competency Tracking System. All Rights Reserved.</p>
-    </footer>
-    -->
-    
+          <form method="POST" action="{{ url_for('auth_views.signup') }}">
+              <h2>Sign Up</h2>
+
+              <input type="text" name="username" class="form-control" placeholder="Username" required>
+
+              <!-- First Name & Last Name in one row -->
+              <div class="row">
+                  <input type="text" name="first_name" class="form-control" placeholder="First Name" required>
+                  <input type="text" name="last_name" class="form-control" placeholder="Last Name" required>
+              </div>
+
+              <input type="email" name="email" class="form-control" placeholder="Email" required>
+
+              <!-- Password & Confirm Password in one row -->
+              <div class="row">
+                  <input type="password" name="password" class="form-control" placeholder="Password" required>
+                  <input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" required>
+              </div>
+
+              <select name="user_type" class="form-control">
+                  <option value="student">Student</option>
+                  <option value="admin">Administrator</option>
+                  <option value="employer">Employer</option>
+              </select>
+
+              <p>Already have an account? <a href="{{ url_for('auth_views.login') }}" class="glow-red">Login</a></p>
+
+              <button type="submit" class="btn">Sign Up</button>
+          </form>
+        </div>
+    </main>
+
 </body>
+
+<!-- Footer with animated loading bar -->
+<footer class="footer">
+    <p>&copy; 2025 Career Competency Tracking System. All Rights Reserved.</p>
+    <div class="loading-bar-container">
+        <div class="loading-bar"></div>
+    </div>
+</footer>
+
 </html>
