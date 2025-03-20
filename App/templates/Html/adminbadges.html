@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Creation</title>
+    <title>Badge Allocation</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,6 +52,8 @@
       </video>
 
     <main>
+        <h2>Award Student Badges</h2>
+
         <!-- main page body here -->
         <div class="search-bar">
           <form method="GET" action="{{ url_for('dashboard_views.admin_badges') }}">
@@ -59,8 +61,6 @@
               <button type="submit">🔍</button>
           </form>
       </div>
-
-      <h2>Award Student Badges</h2>
 
       <div class="qualification-container">
           {% for item in student_competencies %}

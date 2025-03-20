@@ -5,6 +5,10 @@
     box-sizing: border-box;
   }
   
+  body, h1, h2, p, input, button {
+    font-family: 'Poppins', sans-serif;
+  }
+
   body {
     background-color: #121212;
     color: #000000;
