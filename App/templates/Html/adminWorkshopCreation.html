@@ -56,26 +56,30 @@
 
     <main>
         <div class="workshop-container">
-          <div class="form-row">
-            <h2>Workshop Creation</h2>
-            <div class="form-group checkbox-group">
-                    <input type="checkbox" id="notify" name="notify_students">
-                    <label for="notify">Notify Students</label>
-                  </div>
-            </div>
+            <div class="title-row">
+                <h2>Workshop Creation</h2>
+              </div>
+              
+              <!-- Notify Row (alone) -->
+              <div class="notify-row">
+                <div class="checkbox-group">
+                  <label for="notify">Notify Students</label>
+                  <input type="checkbox" id="notify" name="notify_students">
+                </div>
+              </div>
             
-            <form method="POST" action="{{ url_for('dashboard_views.admin_workshop_creation') }}" enctype="multipart/form-data">
-                
+              <form method="POST" action="{{ url_for('dashboard_views.admin_workshop_creation') }}" enctype="multipart/form-data">
+                <!-- Your existing .form-row blocks for code, date/time, etc. -->
                 <div class="form-row">
-                    <div class="form-group">
-                        <label>Workshop Code</label>
-                        <input type="text" name="id" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Workshop Date & Time</label>
-                        <input type="date" name="date" required>
-                        <input type="time" name="time" required>
-                    </div>
+                  <div class="form-group">
+                    <label>Workshop Code</label>
+                    <input type="text" name="id" required>
+                  </div>
+                  <div class="form-group">
+                    <label>Workshop Date & Time</label>
+                    <input type="date" name="date" required>
+                    <input type="time" name="time" required>
+                  </div>
                 </div>
                 <div class="form-row">
                   <div class="form-group">
