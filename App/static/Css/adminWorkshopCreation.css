@@ -1,135 +1,175 @@
 /* Reset styles */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body, h1, h2, p, input, button {
-    font-family: 'Poppins', sans-serif;
-  }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-  body {
-    background-color: #121212;
-    color: #000000;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
-  
-  /* Background Video */
-  #bg-video {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1;
-  }
-  
-  /* Main Layout */
-  main {
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    padding: 20px;
-  }
-  
-  /* Workshop Form Container */
-  .workshop-container {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    max-width: 95%;  /* Increase width to better fit the screen */
-    width: 95%;
-    text-align: center;
-    border: 3px solid black;
-    position: relative;
-  }
-  
-  /* Form Layout */
-  .form-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 15px;
-    width: 100%;
-  }
-  
-  .form-row .form-group {
-    flex: 1;
-    min-width: 200px;
-  }
-  
-  .form-group {
-    margin-bottom: 8px; /* Reduce spacing */
-    text-align: left;
-    width: 100%;
-  }
-  
-  label {
-    display: block;
-    font-size: 14px;
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-  
-  input, textarea {
-    width: 100%;
-    padding: 8px;
-    border-radius: 6px;
-    border: 2px solid black;
-    font-size: 14px;
-  }
-  
-  /* Date-Time Fields */
-  .form-group input[type="date"],
-  .form-group input[type="time"] {
-    display: inline-block;
-    width: 48%;
-  }
-  
-  /* Checkbox Alignment */
-  .checkbox-group {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end; /* Align to the right */
-    width: 100%;
-    margin-top: 5px;
-  }
-  
-  .checkbox-group input {
-    margin-left: 700px;
-  }
-  
-  /* Button Centering */
-  button {
-    width: 80%;  /* Reduce button width slightly */
-    background: black;
-    color: white;
-    padding: 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: 0.3s;
-    display: block;
-    margin: 10px auto; /* Center button */
-  }
-  
-  button:hover {
-    background: #333;
-  }
-  
-  /* Footer */
-  footer {
-    background-color: #0d67a3;
-    color: white;
-    text-align: center;
-    padding: 15px;
-    font-size: 14px;
-    width: 100%;
-  }
-  
+body, h1, h2, p, input, button, textarea, label {
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background-color: #121212;
+  color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Background Video */
+#bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+/* Main Layout */
+main {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 20px;
+}
+
+/* Workshop Container */
+.workshop-container {
+  background: rgba(30,30,30,0.8); 
+  backdrop-filter: blur(8px);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+  max-width: 95%;
+  width: 95%;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.3);
+  position: relative;
+}
+
+/* Title Row: h2 alone, centered */
+.title-row {
+  display: flex;
+  justify-content: center; /* centers the h2 horizontally */
+  margin-bottom: 1rem;
+}
+
+/* Glassy Teal h2 */
+.title-row h2 {
+  margin: 0;
+  padding: 10px 20px;
+  font-size: 2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #00adb5;
+  background: linear-gradient(135deg, rgba(0,173,181,0.2), rgba(0,173,181,0.4));
+  border-radius: 8px;
+  border: 2px solid rgba(255,255,255,0.3);
+  box-shadow: 0 0 10px rgba(0,173,181,0.3);
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  transition: transform 0.3s, background 0.3s, box-shadow 0.3s;
+}
+
+.title-row h2:hover {
+  transform: translateY(-3px);
+  background: linear-gradient(135deg, rgba(0,173,181,0.4), rgba(0,173,181,0.6));
+  box-shadow: 0 0 12px rgba(0,173,181,0.5);
+}
+
+/* Notify Row: label + checkbox in the center */
+.notify-row {
+  display: flex;
+  justify-content: center; /* centers the entire group horizontally */
+  margin-bottom: 1rem;
+}
+
+/* checkbox-group: label left, checkbox right */
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+/* Remove extra margin on the checkbox if needed */
+.checkbox-group input[type="checkbox"] {
+  margin: 0;
+}
+
+/* Multi-column form layout for the rest */
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 15px;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.form-row .form-group {
+  flex: 1;
+  min-width: 200px;
+  text-align: left;
+  margin-bottom: 8px;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #f5f5f5;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 2px solid rgba(255,255,255,0.3);
+  font-size: 14px;
+  background: rgba(30,30,30,0.5);
+  color: #f5f5f5;
+  transition: border-color 0.2s;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #bbb;
+}
+
+input:focus, textarea:focus {
+  border-color: #00adb5;
+  outline: none;
+}
+
+/* Date-Time Fields (inline) */
+.form-group input[type="date"],
+.form-group input[type="time"] {
+  display: inline-block;
+  width: 48%;
+}
+
+/* Button: teal gradient */
+button {
+  width: 80%;
+  background: linear-gradient(135deg, rgba(0,173,181,0.7), rgba(0,173,181,0.9));
+  color: #fff;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s ease;
+  display: block;
+  margin: 10px auto;
+  border: none;
+}
+
+button:hover {
+  background: linear-gradient(135deg, rgba(0,173,181,0.85), rgba(0,173,181,1));
+}
+

@@ -4,77 +4,138 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Workshop</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='Css/Layout.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='Css/adminWorkshopCreation.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Navbar CSS -->
+    <link rel="stylesheet" href="../../static/Css/navbar.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/navbar.css') }}">
+    <!-- Footer CSS -->
+    <link rel="stylesheet" href="../../static/Css/footer.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/footer.css') }}">
+    <link rel="stylesheet" href="../../static/Css/loader.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/loader.css') }}">
+    <script src="../../static/JavaScript/loader.js" defer></script>
+    <script src="{{ url_for('static', filename='JavaScript/loader.js') }}" defer></script>
+    <!-- Page CSS / JS ref Change to page accordingly -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/editWorkshop.css') }}">
 </head>
+    
 <body>
-    <header>
-        <div class="logo">
-            <img src="{{ url_for('static', filename='Images/logo.png') }}" alt="Logo">
+    <div id="loader">
+        <div class="container">
+          <div class="ring"></div>
+          <div class="ring"></div>
+          <div class="ring"></div>
+          <span class="loading">Loading...</span>
         </div>
-        <h1>Career Competency Tracking System</h1>
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('dashboard_views.dashboard') }}">Dashboard</a></li>
-                <li><a href="{{ url_for('dashboard_views.workshops') }}">Workshops</a></li>
-                <li><a href="{{ url_for('auth_views.logout_action') }}">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
+      </div>
+      <!-- Navbar (already implemented) -->
+      <nav class="navbar">
+        <a href="{{ url_for('dashboard_views.student_dashboard') }}" class="logo">
+            <img src="../../static/Images/logo.png">
+            <span class="site-title">Career Competency Tracker</span>
+          </a>
+        <div class="nav-items"><!-- add in the respective page links -->
+          <a href="{{ url_for('dashboard_views.manage_workshops') }}">Manage Workshops</a>
+          <a href="{{ url_for('dashboard_views.admin_workshop_creation') }}">Create Workshops</a>
+          <a href="{{ url_for('dashboard_views.admin_badges') }}">Award Badges</a>
+          <a href="{{ url_for('dashboard_views.validate_certificates') }}">Validate Certificates</a>
+          <a href="{{ url_for('auth_views.logout_action') }}">Logout</a>
+        </div>
+      </nav>
 
-    <main>
+      <!-- Background video element -->
+      <video autoplay muted loop id="bg-video">
+        <source src="../../static/Videos/stdashboardvid.mp4" type="video/mp4">
+      </video>
+
+      <main>
         <div class="workshop-container">
             <h2>Edit Workshop</h2>
+            
             <form method="POST" action="{{ url_for('dashboard_views.edit_workshop', workshop_id=workshop.id) }}" enctype="multipart/form-data">
+              
+              <!-- Row 1: Code & Title -->
+              <div class="form-row">
                 <div class="form-group">
-                    <label>Workshop Code</label>
-                    <input type="text" name="id" value="{{ workshop.workshopID }}" readonly>
-                </div>
-                <div class="form-group">
-                    <label>Workshop Title</label>
-                    <input type="text" name="name" value="{{ workshop.workshopName }}" required>
-                </div>
-                <div class="form-group full-width">
-                    <label>Workshop Description</label>
-                    <textarea name="description" required>{{ workshop.workshopDescription }}</textarea>
+                  <label>Workshop Code</label>
+                  <input type="text" name="id" value="{{ workshop.workshopID }}" readonly>
                 </div>
                 <div class="form-group">
-                    <label>Workshop Instructor</label>
-                    <input type="text" name="instructor" value="{{ workshop.instructor }}" required>
+                  <label>Workshop Title</label>
+                  <input type="text" name="name" value="{{ workshop.workshopName }}" required>
+                </div>
+              </div>
+              
+              <!-- Row 2: Instructor & Location -->
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Workshop Instructor</label>
+                  <input type="text" name="instructor" value="{{ workshop.instructor }}" required>
                 </div>
                 <div class="form-group">
-                    <label>Workshop Location</label>
-                    <input type="text" name="location" value="{{ workshop.location }}" required>
+                  <label>Workshop Location</label>
+                  <input type="text" name="location" value="{{ workshop.location }}" required>
                 </div>
-                <div class="form-group date-time">
-                    <label>Workshop Date & Time</label>
-                    <input type="date" name="date" value="{{ workshop.workshopDate.strftime('%Y-%m-%d') }}" required>
-                    <input type="time" name="time" value="{{ workshop.workshopTime }}" required>
+              </div>
+              
+              <!-- Row 3: Date & Time -->
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Workshop Date</label>
+                  <input type="date" name="date" value="{{ workshop.workshopDate.strftime('%Y-%m-%d') }}" required>
                 </div>
                 <div class="form-group">
-                    <label>Workshop Image</label>
-                    <input type="file" name="workshop_image" accept="image/*">
-                    <small>Select an image to be used as workshop background (Recommended size: 1200x800px)</small>
-                    {% if workshop.image_path %}
-                        <p>Current image: {{ workshop.image_path }}</p>
-                    {% endif %}
+                  <label>Workshop Time</label>
+                  <input type="time" name="time" value="{{ workshop.workshopTime }}" required>
+                </div>
+              </div>
+              
+              <!-- Row 4: Description spans full width -->
+              <div class="form-row full-width">
+                <div class="form-group">
+                  <label>Workshop Description</label>
+                  <textarea name="description" required>{{ workshop.workshopDescription }}</textarea>
+                </div>
+              </div>
+              
+              <!-- Row 5: Image & Competencies -->
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Workshop Image</label>
+                  <input type="file" name="workshop_image" accept="image/*">
+                  <small>Select an image to be used as workshop background (Recommended size: 1200x800px)</small>
+                  {% if workshop.image_path %}
+                    <p>Current image: {{ workshop.image_path }}</p>
+                  {% endif %}
                 </div>
                 <div class="form-group">
-                    <label>Competencies (comma-separated)</label>
-                    <input type="text" name="competencies" value="{{ ','.join(workshop.competencies) }}" placeholder="e.g. Leadership, Communication, Technical Skills">
-                    <small>Enter competencies that students will gain from this workshop</small>
+                  <label>Competencies (comma-separated)</label>
+                  <input type="text" name="competencies" value="{{ ','.join(workshop.competencies) }}" placeholder="e.g. Leadership, Communication, Technical Skills">
+                  <small>Enter competencies that students will gain from this workshop</small>
                 </div>
-                <div class="form-group checkbox-group">
-                    <input type="checkbox" id="notify" name="notify_students">
-                    <label for="notify">Notify Students of Changes</label>
+              </div>
+              
+              <!-- Row 6: Checkbox & Submit Button -->
+              <div class="form-row checkbox-and-button">
+                <div class="notify-group">
+                  <input type="checkbox" id="notify" name="notify_students">
+                  <label for="notify">Notify Students of Changes</label>
                 </div>
                 <button type="submit">Update Workshop</button>
+              </div>
             </form>
-        </div>
+          </div>
     </main>
 
-    <footer>
+    <!-- Footer with animated loading bar -->
+    <footer class="footer">
         <p>&copy; 2025 Career Competency Tracking System. All Rights Reserved.</p>
-    </footer>
+        <div class="loading-bar-container">
+          <div class="loading-bar"></div>
+        </div>
+      </footer>
 </body>
 </html> 
