@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Profile Page</title>
+  <title>Profile</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -38,8 +38,8 @@
             <span class="site-title">Career Competency Tracker</span>
           </a>
         <div class="nav-items">
-          <a href="{{ url_for('dashboard_views.student_dashboard') }}">My Sessions</a>
-          <a href="{{ url_for('dashboard_views.workshops') }}">Workshops</a>
+          <a href="{{ url_for('dashboard_views.my_workshops') }}">My Workshops</a>
+          <a href="{{ url_for('dashboard_views.workshops') }}">Available Workshops</a>
           <a href="{{ url_for('dashboard_views.competencies') }}">Tracked Comps</a>
           <a href="{{ url_for('dashboard_views.earned_badges') }}">Badges & Certificates</a>
           <div class="profile-dropdown" tabindex="0">

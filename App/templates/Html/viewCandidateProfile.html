@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Candidate Profile</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <!-- Link to your CSS file -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='Css/studentProfile.css') }}">
+  <!-- View Candidate Profile specific CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='Css/viewCandidateProfile.css') }}">
+  <!-- Navbar CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='Css/navbar.css') }}">
+  <!-- Footer CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='Css/footer.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='Css/loader.css') }}">
+  <script src="{{ url_for('static', filename='JavaScript/loader.js') }}" defer></script>
+</head>
+<body>
+    <div id="loader">
+        <div class="container">
+          <div class="ring"></div>
+          <div class="ring"></div>
+          <div class="ring"></div>
+          <span class="loading">Loading...</span>
+        </div>
+    </div>
+    
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="{{ url_for('dashboard_views.employer_dashboard') }}" class="logo">
+            <img src="{{ url_for('static', filename='Images/logo.png') }}">
+            <span class="site-title">Career Competency Tracker</span>
+        </a>
+        <div class="nav-items">
+            <a href="{{ url_for('dashboard_views.search_candidates') }}">Search Candidates</a>
+            <a href="{{ url_for('auth_views.logout_action') }}">Logout</a>
+        </div>
+    </nav>
+
+    <!-- Background video element -->
+    <video autoplay muted loop id="bg-video">
+        <source src="{{ url_for('static', filename='Videos/dna.mp4') }}" type="video/mp4">
+    </video>
+
+    <main class="content">
+        <div class="profile-header">
+            <h3>Candidate Profile</h3>
+            <a href="{{ url_for('dashboard_views.search_candidates') }}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Search
+            </a>
+        </div>
+        
+        <div class="profile-container">
+            <!-- Left Column - Profile Information -->
+            <div class="profile-left-column">
+                <!-- Profile Card -->
+                <div class="profile-card profile-card-top">
+                    <div class="profile-card-header">
+                        <span class="label-icon">
+                            <i class="fa-solid fa-user"></i> Profile Information
+                        </span>
+                    </div>
+                    <div class="profile-card-body">
+                        <div class="profile-avatar">
+                            {% if student.profile_pic %}
+                                <img src="{{ url_for('static', filename='profile_pics/' + student.profile_pic) }}" alt="Profile Picture" class="avatar-image">
+                            {% else %}
+                                <img src="https://via.placeholder.com/80" alt="Profile Picture" class="avatar-image">
+                            {% endif %}
+                        </div>
+                        <h2 class="profile-name">{{ student.first_name }} {{ student.last_name }}</h2>
+                        <p class="profile-username">@{{ student.username }}</p>
+                    </div>
+                </div>
+                
+                <!-- Contact Information Card -->
+                <div class="profile-card personal-info">
+                    <div class="profile-card-header">
+                        <span class="label-icon">
+                            <i class="fa-solid fa-address-card"></i> Contact Information
+                        </span>
+                    </div>
+                    <div class="profile-card-body">
+                        <p><i class="fa-solid fa-envelope"></i> {{ student.email }}</p>
+                        {% if student.phone %}
+                            <p><i class="fa-solid fa-phone"></i> {{ student.phone }}</p>
+                        {% endif %}
+                        {% if student.location %}
+                            <p><i class="fa-solid fa-location-dot"></i> {{ student.location }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Resume Card -->
+                <div class="profile-card resume-card">
+                    <div class="profile-card-header">
+                        <span class="label-icon">
+                            <i class="fa-solid fa-file"></i> Resume
+                        </span>
+                    </div>
+                    <div class="profile-card-body">
+                        {% if student.resume %}
+                            <p>Resume available</p>
+                            <!-- Note: employers won't have direct access to download resume for privacy -->
+                            <p>Contact candidate for resume details</p>
+                        {% else %}
+                            <p>No resume uploaded yet</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Content Sections -->
+            <div class="profile-right-column">
+                <!-- Competencies Section -->
+                <section class="profile-section">
+                    <div class="section-header">
+                        <h3>Competencies</h3>
+                    </div>
+                    <div class="competency-cards">
+                        {% if earned_competencies %}
+                            {% for comp in earned_competencies %}
+                                <div class="competency-card rank-{{ comp.rank }}">
+                                    <h4>{{ comp.name }}</h4>
+                                    <div class="rank-badge">{{ comp.rank_name }}</div>
+                                    {% if comp.certificate_status == 'approved' %}
+                                        <div class="certificate-badge">
+                                            <i class="fas fa-certificate"></i> Certified
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="no-items">This candidate has not acquired any competencies yet.</p>
+                        {% endif %}
+                    </div>
+                </section>
+
+                <!-- Workshops Section -->
+                <section class="profile-section">
+                    <div class="section-header">
+                        <h3>Completed Workshops</h3>
+                    </div>
+                    <div class="workshop-cards">
+                        {% if workshops %}
+                            {% for workshop in workshops %}
+                                <div class="workshop-card">
+                                    {% if workshop.image_path %}
+                                        <div class="workshop-image">
+                                            <img src="{{ url_for('static', filename=workshop.image_path) }}" alt="{{ workshop.workshopName }}">
+                                        </div>
+                                    {% endif %}
+                                    <div class="workshop-info">
+                                        <h4>{{ workshop.workshopName }}</h4>
+                                        <p class="workshop-date">{{ workshop.workshopDate.strftime('%B %d, %Y') }}</p>
+                                        <p class="workshop-instructor">{{ workshop.instructor }}</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="no-items">This candidate has not enrolled in any workshops yet.</p>
+                        {% endif %}
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Footer with animated loading bar -->
+    <footer class="footer">
+        <p>&copy; 2025 Career Competency Tracking System. All Rights Reserved.</p>
+        <div class="loading-bar-container">
+            <div class="loading-bar"></div>
+        </div>
+    </footer>
+</body>
+</html> 

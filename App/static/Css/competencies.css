@@ -83,11 +83,17 @@ h2:hover {
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    min-height: 250px;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .competency-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
 }
 
 .competency-card h3 {
@@ -102,6 +108,7 @@ h2:hover {
     color: #bbb;
     margin-bottom: 5px;
     font-weight: 500;
+    text-align: left;
 }
 
 .progress-bar {
@@ -109,51 +116,68 @@ h2:hover {
     height: 10px;
     background-color: rgba(255,255,255,0.2);
     border-radius: 5px;
-    margin: 5px 0;
+    margin: 5px 0 15px 0;
+    overflow: hidden;
 }
 
 .progress-fill {
     height: 100%;
     border-radius: 5px;
-    background-color: #00adb5;
     transition: width 0.3s ease;
 }
 
 .progress-unranked {
     width: 0%;
+    background-color: #777;
 }
 
 .progress-beginner {
     width: 33.33%;
+    background-color: #00adb5;
+    box-shadow: 0 0 8px rgba(0, 173, 181, 0.5);
 }
 
 .progress-intermediate {
     width: 66.66%;
+    background-color: #3498db;
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.5);
 }
 
 .progress-advanced {
     width: 100%;
+    background-color: #9b59b6;
+    box-shadow: 0 0 8px rgba(155, 89, 182, 0.5);
 }
 
 .rank-label {
     font-size: 0.9em;
     color: #bbb;
-    margin-top: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
     font-weight: 500;
+    text-align: left;
 }
 
 .rank-text {
-    font-weight: normal;
+    font-weight: 600;
+    color: #f5f5f5;
 }
 
 /* Feedback */
 .feedback {
     margin-top: 10px;
     padding: 10px;
-    background-color: rgba(255,255,255,0.2);
+    background-color: rgba(255,255,255,0.08);
     border-radius: 4px;
     font-size: 0.9em;
     color: #ddd;
+    text-align: left;
+    border-left: 3px solid #00adb5;
+    margin-bottom: 15px;
+}
+
+.feedback strong {
+    color: #00adb5;
 }
 
 /* No Competencies Message */
@@ -179,4 +203,53 @@ h2:hover {
 
 .cta-button:hover {
     background-color: #008a94;
+}
+
+/* Certificate Button Styles */
+.certificate-button {
+    display: inline-block;
+    padding: 10px 15px;
+    margin-top: 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-align: center;
+}
+
+.certificate-button.view {
+    background-color: #4169e1; /* Royal Blue */
+    color: white;
+    box-shadow: 0 2px 5px rgba(65, 105, 225, 0.3);
+}
+
+.certificate-button.view:hover {
+    background-color: #3558c4;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(65, 105, 225, 0.4);
+}
+
+.certificate-button.pending {
+    background-color: #ffc107; /* Amber */
+    color: #333;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.certificate-button.request {
+    background-color: #28a745; /* Green */
+    color: white;
+    box-shadow: 0 2px 5px rgba(40, 167, 69, 0.3);
+}
+
+.certificate-button.request:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.4);
 }
