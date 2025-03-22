@@ -100,7 +100,8 @@ def workshops():
         
         return render_template('Html/studentsAvailableWorkshops.html', 
                              workshops=all_workshops,
-                             search_query=search_query)
+                             search_query=search_query,
+                             user=current_user)
                              
     except Exception as e:
         print(f"Error in workshops route: {str(e)}")
@@ -591,6 +592,9 @@ def view_certificate(competency):
     if not certificate_data:
         flash('Certificate not found.', 'error')
         return redirect(url_for('dashboard_views.competencies'))
+    
+    # Add user to certificate_data
+    certificate_data['user'] = current_user
     
     return render_template('Html/studentCertificate.html', **certificate_data)
 
@@ -1083,6 +1087,51 @@ def update_personal_info():
         flash('An error occurred while updating personal information.', 'error')
     
     return redirect(url_for('dashboard_views.student_profile'))
+
+@dashboard_views.route('/view-candidate-profile/<int:student_id>')
+@login_required
+def view_candidate_profile(student_id):
+    if current_user.user_type != 'employer':
+        flash('Access denied. Employers only.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+    
+    try:
+        student = Student.query.get_or_404(student_id)
+        
+        # Get enrolled workshops
+        enrolled_workshops = Workshop.query.join(Enrollment).filter(
+            Enrollment.student_id == student.id
+        ).all()
+        
+        # Get earned competencies
+        earned_competencies = []
+        if student.competencies:
+            for comp_name, comp_data in student.competencies.items():
+                rank = comp_data.get('rank', 0)
+                certificate_status = comp_data.get('certificate_status', None)
+                feedback = comp_data.get('feedback', '')
+                
+                if rank > 0:  
+                    earned_competencies.append({
+                        'name': comp_name,
+                        'rank': rank,
+                        'rank_name': ['Beginner', 'Intermediate', 'Advanced'][rank-1],
+                        'certificate_status': certificate_status,
+                        'feedback': feedback
+                    })
+        
+        return render_template('Html/viewCandidateProfile.html', 
+                              student=student,
+                              earned_competencies=earned_competencies,
+                              workshops=enrolled_workshops,
+                              user=current_user)
+                              
+    except Exception as e:
+        print(f"Error loading candidate profile: {e}")
+        import traceback
+        traceback.print_exc()
+        flash('Error loading candidate profile.', 'error')
+        return redirect(url_for('dashboard_views.search_candidates'))
 
 def init_dashboard_routes(app):
     app.register_blueprint(dashboard_views) 

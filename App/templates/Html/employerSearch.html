@@ -50,17 +50,6 @@
 
     <main>
         <!-- main page body here -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="flash-messages">
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}" role="alert">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
 
         <div class="search-container">
             <h2>Search Candidates</h2>
@@ -91,7 +80,7 @@
                 {% for student in students %}
                     <div class="candidate-card">
                         <div class="candidate-info">
-                            <h3>{{ student.first_name }} {{ student.last_name }}</h3>
+                            <h3><a href="{{ url_for('dashboard_views.view_candidate_profile', student_id=student.id) }}" class="student-name-link">{{ student.first_name }} {{ student.last_name }}</a></h3>
                             <p class="email"><i class="fas fa-envelope"></i> {{ student.email }}</p>
                         </div>
                         {% if student.competencies %}

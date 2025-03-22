@@ -107,6 +107,18 @@ main {
     font-size: 1.1rem;
 }
 
+/* Student name link styling */
+.student-name-link {
+    color: #0d67a3;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.student-name-link:hover {
+    color: #074a77;
+    text-decoration: underline;
+}
+
 .email {
     color: #666;
     font-size: 0.9rem;

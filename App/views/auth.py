@@ -104,11 +104,11 @@ def login():
             
             # Redirect based on user type
             if user.user_type == 'student':
-                return redirect(url_for('dashboard_views.student_dashboard'))
+                return redirect(url_for('dashboard_views.student_profile'))
             elif user.user_type == 'admin':
                 return redirect(url_for('dashboard_views.admin_dashboard'))
             elif user.user_type == 'employer':
-                return redirect(url_for('dashboard_views.employer_dashboard'))
+                return redirect(url_for('dashboard_views.search_candidates'))
             
             # Fallback to main dashboard if user type is not recognized
             return redirect(url_for('dashboard_views.dashboard'))

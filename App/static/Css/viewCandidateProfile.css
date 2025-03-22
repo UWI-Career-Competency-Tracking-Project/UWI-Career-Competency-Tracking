@@ -1,0 +1,61 @@
+/* Back Link Styling */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    background-color: rgba(0, 173, 181, 0.2);
+    color: #00adb5;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    border: 1px solid rgba(0, 173, 181, 0.3);
+    margin-left: 20px;
+}
+
+.back-link i {
+    margin-right: 6px;
+}
+
+.back-link:hover {
+    background-color: rgba(0, 173, 181, 0.4);
+    transform: translateY(-2px);
+}
+
+.profile-header {
+    text-align: center;
+    margin: 30px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Competency rank styles */
+.competency-card.rank-1 {
+    border-left: 4px solid #cd7f32; /* Bronze color for Beginner */
+}
+
+.competency-card.rank-2 {
+    border-left: 4px solid #a0a0a0; /* Silver color for Intermediate */
+}
+
+.competency-card.rank-3 {
+    border-left: 4px solid #ffd700; /* Gold color for Advanced */
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.certificate-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #ffd700;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background-color: rgba(50, 50, 50, 0.7);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+} 

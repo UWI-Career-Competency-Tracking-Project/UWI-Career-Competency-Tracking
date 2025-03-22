@@ -31,22 +31,26 @@
       </div>
       <!-- Navbar (already implemented) -->
       <nav class="navbar">
-        <a href="#" class="logo">
-            <img src="../../static/Images/logo.png">
+        <a href="{{ url_for('dashboard_views.student_dashboard') }}" class="logo">
+            <img src="{{ url_for('static', filename='Images/logo.png') }}">
             <span class="site-title">Career Competency Tracker</span>
           </a>
         <div class="nav-items">
-          <a href="{{ url_for('dashboard_views.my_workshops') }}">My Sessions</a>
-          <a href="{{ url_for('dashboard_views.workshops') }}">Workshops</a>
+          <a href="{{ url_for('dashboard_views.my_workshops') }}">My Workshops</a>
+          <a href="{{ url_for('dashboard_views.workshops') }}">Available Workshops</a>
           <a href="{{ url_for('dashboard_views.competencies') }}">Tracked Comps</a>
           <a href="{{ url_for('dashboard_views.earned_badges') }}">Badges & Certificates</a>
           <div class="profile-dropdown" tabindex="0">
             <div class="profile-trigger">
-              <img src="https://via.placeholder.com/40" alt="User Profile">
+              {% if user.profile_pic %}
+                <img src="{{ url_for('static', filename='profile_pics/' + user.profile_pic) }}" alt="User Profile">
+              {% else %}
+                <img src="https://via.placeholder.com/40" alt="User Profile">
+              {% endif %}
             </div>
             <div class="dropdown-content">
               <div class="dropdown-header">
-                <span class="dropdown-username">John Doe</span>
+                <span class="dropdown-username">{{ user.first_name }} {{ user.last_name }}</span>
                 <div class="dropdown-separator"></div>
               </div>
               <a href="{{ url_for('dashboard_views.student_profile') }}">Profile</a>
@@ -58,22 +62,10 @@
 
       <!-- Background video element -->
       <video autoplay muted loop id="bg-video">
-        <source src="../../static/Videos/badges.mp4" type="video/mp4">
+        <source src="{{ url_for('static', filename='Videos/badges.mp4') }}" type="video/mp4">
       </video>
 
     <main>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="flash-messages">
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}" role="alert">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
-
         <div class="badges-container">
             <h2>Your Earned Badges & Certificates</h2>
             
