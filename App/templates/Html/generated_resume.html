@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user.first_name }} {{ user.last_name }} - Resume</title>
+    <style>
+        @page {
+            size: letter;
+            margin: 1cm;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+            font-size: 12px;
+        }
+        .resume-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #00adb5;
+            padding-bottom: 15px;
+        }
+        .name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .contact-info {
+            font-size: 12px;
+        }
+        .section {
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 12px;
+            color: #00adb5;
+        }
+        .competency {
+            margin-bottom: 12px;
+            page-break-inside: avoid;
+        }
+        .competency-name {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        .competency-level {
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 3px;
+        }
+        .workshop {
+            margin-bottom: 12px;
+            page-break-inside: avoid;
+        }
+        .workshop-name {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        .workshop-details {
+            font-size: 12px;
+            color: #555;
+        }
+        .certified-badge {
+            display: inline-block;
+            background-color: #f1c40f;
+            color: #fff;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-left: 8px;
+        }
+        p {
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="resume-container">
+        <div class="header">
+            <div class="name">{{ user.first_name }} {{ user.last_name }}</div>
+            <div class="contact-info">
+                {{ user.email }} 
+                {% if user.phone %} | {{ user.phone }} {% endif %}
+                {% if user.location %} | {{ user.location }} {% endif %}
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">SUMMARY</div>
+            <p>
+                A highly skilled individual with a diverse set of competencies and certifications from the UWI Career Competency Tracking System. 
+                Experienced in multiple areas with a focus on continuous professional development.
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">COMPETENCIES</div>
+            {% if competencies %}
+                {% for comp in competencies %}
+                    <div class="competency">
+                        <div class="competency-name">
+                            {{ comp.name }}
+                            {% if comp.certificate_status == 'approved' %}
+                                <span class="certified-badge">Certified</span>
+                            {% endif %}
+                        </div>
+                        <div class="competency-level">Level: {{ comp.rank_name }}</div>
+                        <p>
+                            {% if comp.rank == 1 %}
+                                Basic knowledge and understanding of {{ comp.name }} concepts.
+                            {% elif comp.rank == 2 %}
+                                Practical application and intermediate knowledge of {{ comp.name }}.
+                            {% elif comp.rank == 3 %}
+                                Advanced expertise and comprehensive knowledge of {{ comp.name }} with demonstrated proficiency.
+                            {% endif %}
+                        </p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No competencies listed.</p>
+            {% endif %}
+        </div>
+
+        <div class="section">
+            <div class="section-title">WORKSHOPS & TRAINING</div>
+            {% if workshops %}
+                {% for workshop in workshops %}
+                    <div class="workshop">
+                        <div class="workshop-name">{{ workshop.workshopName }}</div>
+                        <div class="workshop-details">
+                            Date: {{ workshop.workshopDate.strftime('%B %d, %Y') }} | 
+                            Instructor: {{ workshop.instructor }} | 
+                            Location: {{ workshop.location }}
+                        </div>
+                        {% if workshop.workshopDescription %}
+                            <p>{{ workshop.workshopDescription }}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No workshops or training listed.</p>
+            {% endif %}
+        </div>
+
+        <div class="section">
+            <div class="section-title">EDUCATION</div>
+            <div class="education">
+                <div class="competency-name">University of the West Indies</div>
+                <div class="competency-level">Degree Program: [Student's Degree]</div>
+                <p>Participated in the UWI Career Competency Tracking System to develop and validate professional skills.</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">ADDITIONAL INFORMATION</div>
+            <p>This resume was automatically generated based on verified competencies and completed workshops 
+            tracked through the UWI Career Competency Tracking System. All listed competencies have been 
+            validated by instructors and administrators.</p>
+        </div>
+    </div>
+</body>
+</html> 

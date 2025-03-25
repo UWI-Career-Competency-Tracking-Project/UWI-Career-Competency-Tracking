@@ -73,11 +73,15 @@ def get_certificate_data(student_id, competency):
         comp_data = student.competencies.get(competency)
         if not comp_data or comp_data.get('certificate_status') != 'approved':
             return None
+        
+        certificate_date = comp_data.get('certificate_date')
+        if not certificate_date:
+            certificate_date = datetime.now().strftime('%B %d, %Y')
             
         return {
             'student_name': f"{student.first_name} {student.last_name}",
             'competency': competency,
-            'issue_date': comp_data.get('certificate_date'),
+            'date': certificate_date,
             'student_id': student.student_id
         }
         
