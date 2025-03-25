@@ -261,6 +261,9 @@
   color: #00adb5;
   font-weight: 500;
   transition: color 0.3s ease;
+  margin-right: 10px;
+  display: inline-block;
+  margin-bottom: 8px;
 }
 
 .resume-link::after {
@@ -280,6 +283,25 @@
 
 .resume-link:hover::after {
   width: 100%;
+}
+
+.resume-remove {
+  color: #e74c3c;
+}
+
+.resume-remove:hover {
+  color: #ff6b6b;
+}
+
+.resume-remove::after {
+  background-color: #e74c3c;
+}
+
+/* Resume actions container */
+.resume-actions {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
 }
 
   .profile-right.title {

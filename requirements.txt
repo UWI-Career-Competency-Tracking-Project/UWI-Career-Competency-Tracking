@@ -11,13 +11,12 @@ Werkzeug==2.2.3
 SQLAlchemy==1.4.46
 alembic==1.9.2
 gunicorn==20.1.0
-gevent==22.10.2
 python-dotenv==0.21.1
 email-validator==2.0.0
 Jinja2==3.1.2
 itsdangerous==2.1.2
-greenlet==2.0.2
 pytest==7.0.1
-Pillow==9.4.0
 python-dateutil==2.8.2
-psycopg2-binary==2.9.3
+pypdf2==3.0.1
+reportlab==4.3.1
+pillow==10.0.0

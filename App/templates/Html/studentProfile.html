@@ -132,13 +132,21 @@
               <div class="profile-card-body">
                 {% if user.resume %}
                   <p>Resume uploaded</p>
-                  <a href="{{ url_for('dashboard_views.download_resume') }}" class="resume-link">View Resume</a>
+                  <div class="resume-actions">
+                    <a href="{{ url_for('dashboard_views.download_resume') }}" class="resume-link">View Resume</a>
+                    <a href="{{ url_for('dashboard_views.generate_resume') }}" class="resume-link">Generate New Resume</a>
+                    <a href="{{ url_for('dashboard_views.merge_resume') }}" class="resume-link">Add Competencies to Resume</a>
+                    <a href="{{ url_for('dashboard_views.remove_resume') }}" class="resume-link resume-remove">Remove Resume</a>
+                  </div>
                 {% else %}
                   <p>Add your resume here</p>
-                  <form id="resume-form" action="{{ url_for('dashboard_views.update_resume') }}" method="post" enctype="multipart/form-data">
-                    <input type="file" id="resume-input" name="resume" style="display: none;">
-                    <a href="#" onclick="document.getElementById('resume-input').click(); return false;" class="resume-link">+ Add Resume</a>
-                  </form>
+                  <div class="resume-actions">
+                    <form id="resume-form" action="{{ url_for('dashboard_views.update_resume') }}" method="post" enctype="multipart/form-data">
+                      <input type="file" id="resume-input" name="resume" style="display: none;">
+                      <a href="#" onclick="document.getElementById('resume-input').click(); return false;" class="resume-link">+ Upload Resume</a>
+                    </form>
+                    <a href="{{ url_for('dashboard_views.generate_resume') }}" class="resume-link">Generate Resume from Competencies</a>
+                  </div>
                   <script src="{{url_for('static', filename='JavaScript/resume.js')}}" defer></script>
                 {% endif %}
               </div>

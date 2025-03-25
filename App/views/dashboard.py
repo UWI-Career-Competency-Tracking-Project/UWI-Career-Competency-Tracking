@@ -14,6 +14,12 @@ from ..models.competency import Competency
 from ..controllers import certificate_controller
 from ..models.job_roles import JobRole
 from ..models.job_competency import JobCompetency
+import io
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from PyPDF2 import PdfReader, PdfWriter
 
 dashboard_views = Blueprint('dashboard_views', __name__, template_folder='../templates')
 
@@ -1061,6 +1067,415 @@ def download_resume():
         flash('An error occurred while downloading resume.', 'error')
         return redirect(url_for('dashboard_views.student_profile'))
 
+@dashboard_views.route('/remove-resume')
+@login_required
+def remove_resume():
+    if current_user.user_type != 'student':
+        flash('Access denied. Students only.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+    
+    try:
+        student = Student.get_by_id(current_user.id)
+        if not student or not student.resume:
+            flash('No resume to remove', 'error')
+            return redirect(url_for('dashboard_views.student_profile'))
+        
+        # Get resume file path
+        resumes_dir = 'App/static/resumes'
+        file_path = os.path.join(resumes_dir, student.resume)
+        
+        # Delete the file if it exists
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+                print(f"Deleted resume file: {file_path}")
+            except Exception as file_error:
+                print(f"Error deleting resume file: {file_error}")
+        
+        # Update the student record
+        student.resume = None
+        db.session.commit()
+        flash('Resume removed successfully', 'success')
+        
+    except Exception as e:
+        print(f"Error removing resume: {e}")
+        db.session.rollback()
+        flash('An error occurred while removing the resume', 'error')
+    
+    return redirect(url_for('dashboard_views.student_profile'))
+
+@dashboard_views.route('/generate-resume')
+@login_required
+def generate_resume():
+    if current_user.user_type != 'student':
+        flash('Access denied. Students only.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+    
+    try:
+        student = Student.get_by_id(current_user.id)
+        if not student:
+            flash('Student account not found.', 'error')
+            return redirect(url_for('dashboard_views.student_profile'))
+        
+        earned_competencies = []
+        if student.competencies:
+            for comp_name, comp_data in student.competencies.items():
+                rank = comp_data.get('rank', 0)
+                certificate_status = comp_data.get('certificate_status', None)
+                
+                if rank > 0:  
+                    earned_competencies.append({
+                        'name': comp_name,
+                        'rank': rank,
+                        'rank_name': ['Beginner', 'Intermediate', 'Advanced'][rank-1],
+                        'certificate_status': certificate_status
+                    })
+        
+        enrolled_workshops = Workshop.query.join(Enrollment).filter(
+            Enrollment.student_id == student.id
+        ).all()
+        
+        resumes_dir = 'App/static/resumes'
+        if not os.path.exists(resumes_dir):
+            os.makedirs(resumes_dir)
+        
+        timestamp = int(datetime.now().timestamp())
+        filename = f"{student.id}_{timestamp}_generated_resume.pdf"
+        file_path = os.path.join(resumes_dir, filename)
+        
+        try:
+            doc = SimpleDocTemplate(
+                file_path,
+                pagesize=letter,
+                rightMargin=72,
+                leftMargin=72,
+                topMargin=72,
+                bottomMargin=72
+            )
+            
+            styles = getSampleStyleSheet()
+            title_style = styles['Heading1']
+            heading_style = styles['Heading2']
+            normal_style = styles['Normal']
+            
+            competency_style = ParagraphStyle(
+                'CompetencyStyle',
+                parent=styles['Normal'],
+                spaceAfter=6,
+                bulletIndent=0,
+                leftIndent=0
+            )
+            
+            story = []
+            
+            # Header
+            story.append(Paragraph(f"{student.first_name} {student.last_name}", title_style))
+            contact_info = f"{student.email}"
+            if student.phone:
+                contact_info += f" | {student.phone}"
+            if student.location:
+                contact_info += f" | {student.location}"
+            story.append(Paragraph(contact_info, normal_style))
+            story.append(Spacer(1, 12))
+            
+            # Summary
+            story.append(Paragraph("SUMMARY", heading_style))
+            story.append(Paragraph(
+                "A highly skilled individual with a diverse set of competencies and certifications from the UWI Career Competency Tracking System. "
+                "Experienced in multiple areas with a focus on continuous professional development.",
+                normal_style
+            ))
+            story.append(Spacer(1, 12))
+            
+            # Competencies
+            story.append(Paragraph("COMPETENCIES", heading_style))
+            if earned_competencies:
+                for comp in earned_competencies:
+                    comp_text = f"<b>{comp['name']}</b>"
+                    if comp.get('certificate_status') == 'approved':
+                        comp_text += " (Certified)"
+                    comp_text += f"<br/>Level: {comp['rank_name']}<br/>"
+                    
+                    if comp['rank'] == 1:
+                        desc = f"Basic knowledge and understanding of {comp['name']} concepts."
+                    elif comp['rank'] == 2:
+                        desc = f"Practical application and intermediate knowledge of {comp['name']}."
+                    else:
+                        desc = f"Advanced expertise and comprehensive knowledge of {comp['name']} with demonstrated proficiency."
+                    
+                    comp_text += desc
+                    story.append(Paragraph(comp_text, competency_style))
+                    story.append(Spacer(1, 6))
+            else:
+                story.append(Paragraph("No competencies listed.", normal_style))
+            
+            story.append(Spacer(1, 12))
+            
+            # Workshops
+            story.append(Paragraph("WORKSHOPS & TRAINING", heading_style))
+            if enrolled_workshops:
+                for workshop in enrolled_workshops:
+                    workshop_text = f"<b>{workshop.workshopName}</b><br/>"
+                    workshop_text += f"Date: {workshop.workshopDate.strftime('%B %d, %Y')} | "
+                    workshop_text += f"Instructor: {workshop.instructor} | "
+                    workshop_text += f"Location: {workshop.location}<br/>"
+                    
+                    if workshop.workshopDescription:
+                        workshop_text += workshop.workshopDescription
+                    
+                    story.append(Paragraph(workshop_text, competency_style))
+                    story.append(Spacer(1, 6))
+            else:
+                story.append(Paragraph("No workshops or training listed.", normal_style))
+            
+            story.append(Spacer(1, 12))
+            
+            # Education
+            story.append(Paragraph("EDUCATION", heading_style))
+            education_text = "<b>University of the West Indies</b><br/>"
+            education_text += "Degree Program: [Student's Degree]<br/>"
+            education_text += "Participated in the UWI Career Competency Tracking System to develop and validate professional skills."
+            story.append(Paragraph(education_text, competency_style))
+            
+            story.append(Spacer(1, 12))
+            
+            # Additional Information
+            story.append(Paragraph("ADDITIONAL INFORMATION", heading_style))
+            story.append(Paragraph(
+                "This resume was automatically generated based on verified competencies and completed workshops "
+                "tracked through the UWI Career Competency Tracking System. All listed competencies have been "
+                "validated by instructors and administrators.",
+                normal_style
+            ))
+            
+            # Build the PDF
+            doc.build(story)
+            
+            # Update student record with generated resume
+            student.resume = filename
+            db.session.commit()
+            flash('Resume generated successfully!', 'success')
+            
+            # Redirect to download the generated resume
+            return redirect(url_for('dashboard_views.download_resume'))
+            
+        except Exception as pdf_error:
+            print(f"Error generating PDF: {pdf_error}")
+            import traceback
+            traceback.print_exc()
+            flash('Error generating PDF resume.', 'error')
+            return redirect(url_for('dashboard_views.student_profile'))
+        
+    except Exception as e:
+        print(f"Error generating resume: {e}")
+        import traceback
+        traceback.print_exc()
+        flash('An error occurred while generating resume.', 'error')
+        return redirect(url_for('dashboard_views.student_profile'))
+
+@dashboard_views.route('/merge-resume')
+@login_required
+def merge_resume():
+    if current_user.user_type != 'student':
+        flash('Access denied. Students only.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+    
+    try:
+        student = Student.get_by_id(current_user.id)
+        if not student:
+            flash('Student account not found.', 'error')
+            return redirect(url_for('dashboard_views.student_profile'))
+        
+        if not student.resume:
+            flash('You need to upload a resume first before adding competencies to it.', 'error')
+            return redirect(url_for('dashboard_views.student_profile'))
+        
+        # Get earned competencies
+        earned_competencies = []
+        if student.competencies:
+            for comp_name, comp_data in student.competencies.items():
+                rank = comp_data.get('rank', 0)
+                certificate_status = comp_data.get('certificate_status', None)
+                
+                if rank > 0:  
+                    earned_competencies.append({
+                        'name': comp_name,
+                        'rank': rank,
+                        'rank_name': ['Beginner', 'Intermediate', 'Advanced'][rank-1],
+                        'certificate_status': certificate_status
+                    })
+        
+        if not earned_competencies:
+            flash('You do not have any competencies to add to your resume.', 'info')
+            return redirect(url_for('dashboard_views.student_profile'))
+            
+        # Get enrolled workshops
+        enrolled_workshops = Workshop.query.join(Enrollment).filter(
+            Enrollment.student_id == student.id
+        ).all()
+        
+        # Resumes directory
+        resumes_dir = 'App/static/resumes'
+        
+        # Get existing resume path
+        existing_resume_path = os.path.join(resumes_dir, student.resume)
+        
+        if not os.path.exists(existing_resume_path):
+            flash('Existing resume file not found', 'error')
+            return redirect(url_for('dashboard_views.student_profile'))
+        
+        # Generate unique filename for competency PDF and merged resume
+        timestamp = int(datetime.now().timestamp())
+        merged_filename = f"{student.id}_{timestamp}_enhanced_resume.pdf"
+        competency_pdf_path = os.path.join(resumes_dir, f"temp_competency_{timestamp}.pdf")
+        merged_file_path = os.path.join(resumes_dir, merged_filename)
+        
+        try:
+            # 1. Generate PDF of just the competencies using ReportLab
+            doc = SimpleDocTemplate(
+                competency_pdf_path,
+                pagesize=letter,
+                rightMargin=72,
+                leftMargin=72,
+                topMargin=72,
+                bottomMargin=72
+            )
+            
+            # Define styles
+            styles = getSampleStyleSheet()
+            title_style = styles['Heading1']
+            heading_style = styles['Heading2']
+            normal_style = styles['Normal']
+            
+            # Custom styles
+            competency_style = ParagraphStyle(
+                'CompetencyStyle',
+                parent=styles['Normal'],
+                spaceAfter=6,
+                bulletIndent=0,
+                leftIndent=0
+            )
+            
+            # Build PDF content
+            story = []
+            
+            # Title
+            story.append(Paragraph("COMPETENCY PROFILE", title_style))
+            story.append(Paragraph(f"For {student.first_name} {student.last_name}", normal_style))
+            story.append(Spacer(1, 12))
+            
+            # Competencies
+            story.append(Paragraph("VERIFIED COMPETENCIES", heading_style))
+            if earned_competencies:
+                for comp in earned_competencies:
+                    comp_text = f"<b>{comp['name']}</b>"
+                    if comp.get('certificate_status') == 'approved':
+                        comp_text += " (Certified)"
+                    comp_text += f"<br/>Level: {comp['rank_name']}<br/>"
+                    
+                    if comp['rank'] == 1:
+                        desc = f"Basic knowledge and understanding of {comp['name']} concepts."
+                    elif comp['rank'] == 2:
+                        desc = f"Practical application and intermediate knowledge of {comp['name']}."
+                    else:
+                        desc = f"Advanced expertise and comprehensive knowledge of {comp['name']} with demonstrated proficiency."
+                    
+                    comp_text += desc
+                    story.append(Paragraph(comp_text, competency_style))
+                    story.append(Spacer(1, 6))
+            else:
+                story.append(Paragraph("No competencies listed.", normal_style))
+            
+            story.append(Spacer(1, 12))
+            
+            # Workshops
+            story.append(Paragraph("WORKSHOPS & TRAINING", heading_style))
+            if enrolled_workshops:
+                for workshop in enrolled_workshops:
+                    workshop_text = f"<b>{workshop.workshopName}</b><br/>"
+                    workshop_text += f"Date: {workshop.workshopDate.strftime('%B %d, %Y')} | "
+                    workshop_text += f"Instructor: {workshop.instructor} | "
+                    workshop_text += f"Location: {workshop.location}<br/>"
+                    
+                    if workshop.workshopDescription:
+                        workshop_text += workshop.workshopDescription
+                    
+                    story.append(Paragraph(workshop_text, competency_style))
+                    story.append(Spacer(1, 6))
+            else:
+                story.append(Paragraph("No workshops or training listed.", normal_style))
+            
+            story.append(Spacer(1, 12))
+            
+            # Certification
+            story.append(Paragraph("CERTIFICATION", heading_style))
+            story.append(Paragraph(
+                "The above competencies have been verified by the UWI Career Competency Tracking System. "
+                "This system tracks and validates skills acquired through formal workshops and training sessions.",
+                normal_style
+            ))
+            
+            # Build the PDF
+            doc.build(story)
+            
+            # 2. Merge PDFs using PyPDF2
+            with open(existing_resume_path, 'rb') as file_original:
+                original_pdf = PdfReader(file_original)
+                
+                with open(competency_pdf_path, 'rb') as file_competency:
+                    competency_pdf = PdfReader(file_competency)
+                    
+                    # Create a PDF writer
+                    merger = PdfWriter()
+                    
+                    # Add all pages from both PDFs
+                    for page in original_pdf.pages:
+                        merger.add_page(page)
+                    
+                    for page in competency_pdf.pages:
+                        merger.add_page(page)
+                    
+                    # Write the merged PDF to file
+                    with open(merged_file_path, 'wb') as output_file:
+                        merger.write(output_file)
+            
+            # Remove temporary competency PDF
+            if os.path.exists(competency_pdf_path):
+                os.remove(competency_pdf_path)
+            
+            # Save old resume path to delete it later
+            old_resume_path = os.path.join(resumes_dir, student.resume)
+            
+            # Update student record with merged resume
+            student.resume = merged_filename
+            db.session.commit()
+            
+            # Delete old resume file if different from the new one
+            if os.path.exists(old_resume_path) and old_resume_path != merged_file_path:
+                try:
+                    os.remove(old_resume_path)
+                except Exception as file_error:
+                    print(f"Warning: Could not delete old resume: {file_error}")
+            
+            flash('Your resume has been enhanced with your competencies and skills!', 'success')
+            
+            # Redirect to download the merged resume
+            return redirect(url_for('dashboard_views.download_resume'))
+            
+        except Exception as pdf_error:
+            print(f"Error merging PDF: {pdf_error}")
+            import traceback
+            traceback.print_exc()
+            flash('Error adding competencies to your resume.', 'error')
+            return redirect(url_for('dashboard_views.student_profile'))
+        
+    except Exception as e:
+        print(f"Error merging resume: {e}")
+        import traceback
+        traceback.print_exc()
+        flash('An error occurred while enhancing your resume.', 'error')
+        return redirect(url_for('dashboard_views.student_profile'))
+
 @dashboard_views.route('/update-personal-info', methods=['POST'])
 @login_required
 def update_personal_info():
@@ -1132,6 +1547,43 @@ def view_candidate_profile(student_id):
         traceback.print_exc()
         flash('Error loading candidate profile.', 'error')
         return redirect(url_for('dashboard_views.search_candidates'))
+
+@dashboard_views.route('/view-candidate-resume/<int:student_id>')
+@login_required
+def view_candidate_resume(student_id):
+    if current_user.user_type != 'employer':
+        flash('Access denied. Employers only.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+    
+    try:
+        student = Student.query.get_or_404(student_id)
+        if not student or not student.resume:
+            flash('Resume not found', 'error')
+            return redirect(url_for('dashboard_views.view_candidate_profile', student_id=student_id))
+        
+        # Prepare resume file path
+        resumes_dir = 'App/static/resumes'
+        file_path = os.path.join(resumes_dir, student.resume)
+        
+        if not os.path.exists(file_path):
+            flash('Resume file not found', 'error')
+            return redirect(url_for('dashboard_views.view_candidate_profile', student_id=student_id))
+        
+        # Extract original filename from stored filename
+        original_filename = student.resume.split('_', 2)[2] if len(student.resume.split('_', 2)) > 2 else student.resume
+        
+        # Return file for viewing
+        return send_from_directory(
+            os.path.abspath(resumes_dir),
+            student.resume,
+            as_attachment=False,
+            download_name=original_filename
+        )
+    
+    except Exception as e:
+        print(f"Error viewing candidate resume: {e}")
+        flash('An error occurred while viewing resume.', 'error')
+        return redirect(url_for('dashboard_views.view_candidate_profile', student_id=student_id))
 
 def init_dashboard_routes(app):
     app.register_blueprint(dashboard_views) 
