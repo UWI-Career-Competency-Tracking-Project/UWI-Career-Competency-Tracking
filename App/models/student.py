@@ -16,6 +16,7 @@ class Student(User):
     resume = db.Column(db.String(255))
     phone = db.Column(db.String(20))
     location = db.Column(db.String(100))
+    degree = db.Column(db.String(100))
     
     enrollments = db.relationship('Enrollment', back_populates='student', lazy=True, cascade='all, delete-orphan')
     student_competencies = db.relationship('StudentCompetency', back_populates='student', lazy=True, cascade='all, delete-orphan')
@@ -24,7 +25,6 @@ class Student(User):
         'polymorphic_identity': 'student',
     }
     
-    # Add table_args to make these columns nullable
     __table_args__ = {
         'extend_existing': True
     }
@@ -37,6 +37,7 @@ class Student(User):
         self.resume = None
         self.phone = None
         self.location = None
+        self.degree = None
 
     @property
     def competencies(self):
@@ -167,6 +168,7 @@ class Student(User):
             'profile_pic': self.profile_pic,
             'resume': self.resume,
             'phone': self.phone,
-            'location': self.location
+            'location': self.location,
+            'degree': self.degree
         })
         return data

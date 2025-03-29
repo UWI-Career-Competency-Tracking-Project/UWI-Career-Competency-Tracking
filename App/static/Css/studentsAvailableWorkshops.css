@@ -61,11 +61,10 @@ body {
   box-shadow: 0 0 12px rgba(0,173,181,0.5);
 }
 
-/* Example single-input search container (optional) */
 .search-container {
   max-width: 600px;
   margin: 0 auto 1rem auto;
-  position: relative;       /* Needed to position the icon absolutely */
+  position: relative;     
   border-radius: 4px;
   overflow: hidden;
   box-shadow: 0 0 8px rgba(0,173,181,0.2);
@@ -74,18 +73,17 @@ body {
 .search-icon {
   position: absolute;
   top: 50%;
-  left: 12px;              /* Adjust to control horizontal spacing from the edge */
+  left: 12px;             
   transform: translateY(-50%);
-  color: #bbb;            /* Icon color */
-  font-size: 1.2rem;      /* Adjust icon size if needed */
-  pointer-events: none;   /* Ensures clicks go to the input, not the icon */
+  color: #bbb;         
+  font-size: 1.2rem;  
+  pointer-events: none;   
 }
 
 .search-container input {
   width: 100%;
   padding: 0.8rem 1rem;
-  /* Extra left padding so text doesn't overlap icon */
-  padding-left: 2.5rem;    /* Enough space for the icon + some buffer */
+  padding-left: 2.5rem;    
   border: none;
   font-size: 1rem;
   background: rgba(30,30,30,0.5);
@@ -112,10 +110,6 @@ body {
   color: #bbb;
 }
 
-/* Workshops Container:
-   - grid-auto-rows: auto => row height based on largest item
-   - align-items: stretch => each item fills row height
-*/
 .workshops-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -127,10 +121,6 @@ body {
   margin: 0 auto;
 }
 
-/* Workshop Card:
-   - No fixed or min-height; let the left card define row height
-   - height: 100% so each card matches the row's final height
-*/
 .workshop-card {
   display: flex;
   flex-direction: column;
@@ -150,10 +140,6 @@ body {
   transform: translateY(-5px);
 }
 
-/* Workshop Content:
-   flex: 1 ensures the content grows to fill vertical space
-   pushing the bottom edge or button to the bottom
-*/
 .workshop-content {
   flex: 1;
   padding: 1.5rem;
@@ -217,8 +203,8 @@ body {
   padding: 0.8rem 1.5rem;
   border-radius: 5px;
   text-decoration: none;
-  margin-top: auto; /* pushes button to bottom if there's extra content */
-  margin-bottom: 0; /* keep the button inside the content area */
+  margin-top: auto; 
+  margin-bottom: 0;
   font-size: 1rem;
   text-align: center;
   border: none;
@@ -236,4 +222,43 @@ body {
 
 .unenroll-button:hover {
   background-color: #c82333;
+}
+
+/* No workshops message */
+.no-workshops-message {
+    background-color: rgba(30, 30, 30, 0.6);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 40px;
+    text-align: center;
+    margin: 40px auto;
+    max-width: 800px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.no-workshops-message p {
+    color: #f5f5f5;
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+}
+
+.view-enrolled-button {
+    display: inline-block;
+    background: linear-gradient(135deg, rgba(0, 173, 181, 0.7), rgba(0, 173, 181, 0.9));
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 12px 25px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.view-enrolled-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 173, 181, 0.5);
+    background: linear-gradient(135deg, rgba(0, 173, 181, 0.8), rgba(0, 173, 181, 1));
 }

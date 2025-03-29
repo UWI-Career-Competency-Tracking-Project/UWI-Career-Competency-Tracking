@@ -29,14 +29,13 @@
         </div>
     </div>
     
-    <!-- Navbar -->
     <nav class="navbar">
-        <a href="{{ url_for('dashboard_views.employer_dashboard') }}" class="logo">
+        <a href="{{ url_for('employer_views.employer_dashboard') }}" class="logo">
             <img src="{{ url_for('static', filename='Images/logo.png') }}">
             <span class="site-title">Career Competency Tracker</span>
         </a>
         <div class="nav-items">
-            <a href="{{ url_for('dashboard_views.search_candidates') }}">Search Candidates</a>
+            <a href="{{ url_for('employer_views.search_candidates') }}">Search Candidates</a>
             <a href="{{ url_for('auth_views.logout_action') }}">Logout</a>
         </div>
     </nav>
@@ -49,7 +48,7 @@
     <main class="content">
         <div class="profile-header">
             <h3>Candidate Profile</h3>
-            <a href="{{ url_for('dashboard_views.search_candidates') }}" class="back-link">
+            <a href="{{ url_for('employer_views.search_candidates') }}" class="back-link">
                 <i class="fas fa-arrow-left"></i> Back to Search
             </a>
         </div>
@@ -105,7 +104,7 @@
                     <div class="profile-card-body">
                         {% if student.resume %}
                             <p>Resume available</p>
-                            <a href="{{ url_for('dashboard_views.view_candidate_resume', student_id=student.id) }}" class="resume-link">View Resume</a>
+                            <a href="{{ url_for('employer_views.view_candidate_resume', student_id=student.id) }}" class="resume-link">View Resume</a>
                         {% else %}
                             <p>No resume uploaded yet</p>
                         {% endif %}

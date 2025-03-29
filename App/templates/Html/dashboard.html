@@ -19,7 +19,7 @@
             </div>
             <nav class="topnav">
                 <a href="{{ url_for('dashboard_views.dashboard') }}">Dashboard</a>
-                <a href="{{ url_for('dashboard_views.workshops') }}">Workshops</a>
+                <a href="{{ url_for('student_views.workshops') }}">Workshops</a>
                 <div class="dropdown">
                     <img src="{{ url_for('static', filename='Images/profile-placeholder.png') }}" alt="Profile" class="profile-pic">
                     <div class="dropdown-content">
@@ -68,22 +68,22 @@
         <div class="dashboard-options">
             <section class="options">
                 <h3>Student Options</h3>
-                <a href="{{ url_for('dashboard_views.my_workshops') }}" class="button">My Workshops</a>
-                <a href="{{ url_for('dashboard_views.competencies') }}" class="button">Track Competencies</a>
-                <a href="{{ url_for('dashboard_views.earned_badges') }}" class="button">Earned Badges & Certificates</a>
+                <a href="{{ url_for('student_views.my_workshops') }}" class="button">My Workshops</a>
+                <a href="{{ url_for('student_views.competencies') }}" class="button">Track Competencies</a>
+                <a href="{{ url_for('student_views.earned_badges') }}" class="button">Earned Badges & Certificates</a>
                 <a href="{{ url_for('dashboard_views.workshops') }}" class="button">Workshops</a>
-                <a href="{{ url_for('dashboard_views.job_matches') }}" class="button">Job Matching</a>
+                <a href="{{ url_for('student_views.job_matches') }}" class="button">Job Matching</a>
             </section>
             <section class="options">
                 <h3>Employer Options</h3>
-                <a href="{{ url_for('dashboard_views.search_candidates') }}" class="button">Search Candidates</a>
+                <a href="{{ url_for('employer_views.search_candidates') }}" class="button">Search Candidates</a>
             </section>
             <section class="options">
                 <h3>Administration Options</h3>
-                <a href="{{ url_for('dashboard_views.manage_workshops') }}" class="button">Manage Workshops</a>
-                <a href="{{ url_for('dashboard_views.admin_workshop_creation') }}" class="button">Create Workshops</a>
-                <a href="{{ url_for('dashboard_views.admin_badges') }}" class="button">Award Student Badges/Feedback</a>
-                <a href="{{ url_for('dashboard_views.validate_certificates') }}" class="button">Validate Certificate Requests</a>
+                <a href="{{ url_for('admin_views.manage_workshops') }}" class="button">Manage Workshops</a>
+                <a href="{{ url_for('admin_views.admin_workshop_creation') }}" class="button">Create Workshops</a>
+                <a href="{{ url_for('admin_views.admin_badges') }}" class="button">Award Student Badges/Feedback</a>
+                <a href="{{ url_for('admin_views.validate_certificates') }}" class="button">Validate Certificate Requests</a>
             </section>
         </div>
     </main>

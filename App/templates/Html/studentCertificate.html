@@ -34,6 +34,8 @@
     <script src="../../static/JavaScript/loader.js" defer></script>
     <script src="{{ url_for('static', filename='JavaScript/loader.js') }}" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Notifications JavaScript -->
+    <script src="{{ url_for('static', filename='JavaScript/notifications.js') }}" defer></script>
 </head>
 <body>
     <!-- Loading animation -->
@@ -48,15 +50,34 @@
     
     <!-- Navbar -->
     <nav class="navbar">
-        <a href="{{ url_for('dashboard_views.student_dashboard') }}" class="logo">
+        <a href="{{ url_for('student_views.student_profile') }}" class="logo">
             <img src="{{ url_for('static', filename='Images/logo.png') }}">
             <span class="site-title">Career Competency Tracker</span>
         </a>
         <div class="nav-items">
-            <a href="{{ url_for('dashboard_views.my_workshops') }}">My Workshops</a>
-            <a href="{{ url_for('dashboard_views.workshops') }}">Available Workshops</a>
-            <a href="{{ url_for('dashboard_views.competencies') }}">Tracked Comps</a>
-            <a href="{{ url_for('dashboard_views.earned_badges') }}">Badges & Certificates</a>
+            <a href="{{ url_for('student_views.my_workshops') }}">My Workshops</a>
+            <a href="{{ url_for('student_views.workshops') }}">Available Workshops</a>
+            <a href="{{ url_for('student_views.competencies') }}">Tracked Comps</a>
+            <a href="{{ url_for('student_views.earned_badges') }}">Badges & Certificates</a>
+            
+            <!-- Notifications Dropdown -->
+            <div class="notifications-dropdown" tabindex="0">
+              <div class="notifications-trigger">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notification-count">0</span>
+              </div>
+              <div class="dropdown-content notifications-content">
+                <div class="dropdown-header">
+                  <span class="dropdown-title">Notifications</span>
+                  <button id="mark-all-read" class="mark-all-btn">Mark all as read</button>
+                  <div class="dropdown-separator"></div>
+                </div>
+                <div class="notifications-list" id="notifications-list">
+                  <div class="notification-loading">Loading notifications...</div>
+                </div>
+              </div>
+            </div>
+            
             <div class="profile-dropdown" tabindex="0">
                 <div class="profile-trigger">
                     {% if user.profile_pic %}
@@ -70,7 +91,7 @@
                         <span class="dropdown-username">{{ user.first_name }} {{ user.last_name }}</span>
                         <div class="dropdown-separator"></div>
                     </div>
-                    <a href="{{ url_for('dashboard_views.student_profile') }}">Profile</a>
+                    <a href="{{ url_for('student_views.student_profile') }}">Profile</a>
                     <a href="{{ url_for('auth_views.logout_action') }}">Sign Out</a>
                 </div>
             </div>
@@ -82,7 +103,6 @@
         <source src="{{ url_for('static', filename='Videos/certif2.mp4') }}" type="video/mp4">
       </video>
 
-    <!-- Main content -->
     <div class="container">
         <div id="certificate-container">
             <div id="certificate">

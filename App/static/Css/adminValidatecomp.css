@@ -31,8 +31,14 @@ body {
 /* Main Content */
 main {
   flex-grow: 1;
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 20px;
+  padding-bottom: 80px; /* Add space for fixed footer */
   text-align: center;
+  color: white;
+  position: relative;
+  z-index: 1;
 }
 
 /* Page Title with Glassy Teal Effect and Centered */

@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/global.css') }}">
     <!-- Navbar CSS -->
     <link rel="stylesheet" href="../../static/Css/navbar.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/navbar.css') }}">
@@ -22,111 +24,93 @@
     <script src="{{ url_for('static', filename='JavaScript/loader.js') }}" defer></script>
     <script src="{{ url_for('static', filename='JavaScript/workshopSearch.js') }}"></script>
     <script src="{{ url_for('static', filename='JavaScript/Workshops.js') }}" defer></script>
-
+    <!-- Notifications JavaScript -->
+    <script src="{{ url_for('static', filename='JavaScript/notifications.js') }}" defer></script>
 </head>
 <body>
     <div id="loader">
         <div class="container">
-          <div class="ring"></div>
-          <div class="ring"></div>
-          <div class="ring"></div>
-          <span class="loading">Loading...</span>
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <span class="loading">Loading...</span>
         </div>
-      </div>
-      <!-- Navbar (already implemented) -->
-      <nav class="navbar">
-        <a href="{{ url_for('dashboard_views.student_dashboard') }}" class="logo">
-            <img src="{{ url_for('static', filename='Images/logo.png') }}">
-            <span class="site-title">Career Competency Tracker</span>
-          </a>
-        <div class="nav-items">
-          <a href="{{ url_for('dashboard_views.my_workshops') }}">My Workshops</a>
-          <a href="{{ url_for('dashboard_views.workshops') }}">Available Workshops</a>
-          <a href="{{ url_for('dashboard_views.competencies') }}">Tracked Comps</a>
-          <a href="{{ url_for('dashboard_views.earned_badges') }}">Badges & Certificates</a>
-          <div class="profile-dropdown" tabindex="0">
-            <div class="profile-trigger">
-              {% if user.profile_pic %}
-                <img src="{{ url_for('static', filename='profile_pics/' + user.profile_pic) }}" alt="User Profile">
-              {% else %}
-                <img src="https://via.placeholder.com/40" alt="User Profile">
-              {% endif %}
-            </div>
-            <div class="dropdown-content">
-              <div class="dropdown-header">
-                <span class="dropdown-username">{{ user.first_name }} {{ user.last_name }}</span>
-                <div class="dropdown-separator"></div>
-              </div>
-              <a href="{{ url_for('dashboard_views.student_profile') }}">Profile</a>
-              <a href="{{ url_for('auth_views.logout_action') }}">Sign Out</a>
-            </div>
-          </div>
-        </div>
-      </nav>
+    </div>
+    
+    <!-- Include the navbar template -->
+    {% include 'Html/navbar.html' %}
 
-      <!-- Background video element -->
-      <video autoplay muted loop id="bg-video">
+    <!-- Background video element -->
+    <video autoplay muted loop id="bg-video">
         <source src="{{ url_for('static', filename='Videos/AW_vid.mp4') }}" type="video/mp4">
-      </video>
+    </video>
 
-    
-      <section class="search-section">
-        <h2>Available Workshops</h2>
-      
-        <!-- Search container with icon + input -->
-        <div class="search-container">
-          <i class="fas fa-search search-icon"></i>
-          <input
-            type="text"
-            id="workshop-search"
-            name="search"
-            placeholder="Search workshops..."
-            value="{{ search_query }}"
-            oninput="debounceSearch(this.value)">
-        </div>
-      
-        <!-- Notify checkbox -->
-        <label class="notify-checkbox">
-          <input type="checkbox"> Notify me when new workshops are added!
-        </label>
-      </section>
-    
-    <section class="workshops-container">
-        {% for workshop in workshops %}
-        <div class="workshop-card" {% if workshop.image_path %}style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('{{ url_for('static', filename=workshop.image_path) }}');"{% endif %}>
-            <div class="workshop-content">
-                <h3>{{ workshop.workshopName }}</h3>
-                <p class="workshop-description">{{ workshop.workshopDescription }}</p>
-                <div class="workshop-details">
-                    <p><i class="fas fa-user"></i> <strong>Instructor:</strong> {{ workshop.instructor }}</p>
-                    <p><i class="fas fa-calendar"></i> <strong>Date:</strong> {{ workshop.workshopDate.strftime('%B %d, %Y') }}</p>
-                    <p><i class="fas fa-clock"></i> <strong>Time:</strong> {{ workshop.workshopTime }}</p>
-                    <p><i class="fas fa-location-dot"></i> <strong>Location:</strong> {{ workshop.location }}</p>
-                </div>
-                {% if workshop.competencies %}
-                <div class="competencies">
-                    <h4>Competencies:</h4>
-                    <div class="tags">
-                        {% for competency in workshop.competencies %}
-                        <span class="tag">{{ competency }}</span>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endif %}
+    <main class="content-container">
+        <section class="search-section">
+            <h2>Available Workshops</h2>
+          
+            <!-- Search container with icon + input -->
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input
+                    type="text"
+                    id="workshop-search"
+                    name="search"
+                    placeholder="Search workshops..."
+                    value="{{ search_query }}"
+                    oninput="debounceSearch(this.value)">
             </div>
-            <a href="{{ url_for('dashboard_views.enroll_workshop', workshop_id=workshop.id) }}" class="enroll-button">Enroll Now</a>
-        </div>
-        {% endfor %}
-    </section>
+          
+        </section>
+        
+        <section class="workshops-container">
+            {% if workshops %}
+                {% for workshop in workshops %}
+                <div class="workshop-card" {% if workshop.image_path %}style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('{{ url_for('static', filename=workshop.image_path) }}');"{% endif %}>
+                    <div class="workshop-content">
+                        <h3>{{ workshop.workshopName }}</h3>
+                        <p class="workshop-description">{{ workshop.workshopDescription }}</p>
+                        <div class="workshop-details">
+                            <p><i class="fas fa-user"></i> <strong>Instructor:</strong> {{ workshop.instructor }}</p>
+                            <p><i class="fas fa-calendar"></i> <strong>Date:</strong> {{ workshop.workshopDate.strftime('%B %d, %Y') }}</p>
+                            <p><i class="fas fa-clock"></i> <strong>Time:</strong> {{ workshop.workshopTime }}</p>
+                            <p><i class="fas fa-location-dot"></i> <strong>Location:</strong> {{ workshop.location }}</p>
+                        </div>
+                        {% if workshop.competencies %}
+                        <div class="competencies">
+                            <h4>Competencies:</h4>
+                            <div class="tags">
+                                {% for competency in workshop.competencies %}
+                                <span class="tag">{{ competency }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <a href="{{ url_for('student_views.enroll_workshop', workshop_id=workshop.id) }}" class="enroll-button">Enroll Now</a>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-workshops-message">
+                    {% if search_query %}
+                        <p>No workshops found matching "{{ search_query }}". Try a different search term or check back later.</p>
+                    {% else %}
+                        <p>No available workshops found. You may have enrolled in all current workshops or check back later for new offerings.</p>
+                    {% endif %}
+                    <a href="{{ url_for('student_views.my_workshops') }}" class="view-enrolled-button">View My Enrolled Workshops</a>
+                </div>
+            {% endif %}
+        </section>
+    </main>
 
    
     <!-- Footer with animated loading bar -->
     <footer class="footer">
         <p>&copy; 2025 Career Competency Tracking System. All Rights Reserved.</p>
         <div class="loading-bar-container">
-          <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
         </div>
-      </footer>
+    </footer>
 
 </body>
 </html>

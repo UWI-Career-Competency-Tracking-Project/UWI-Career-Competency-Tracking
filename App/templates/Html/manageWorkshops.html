@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/global.css') }}">
     <!-- Navbar CSS -->
     <link rel="stylesheet" href="../../static/Css/navbar.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/navbar.css') }}">
@@ -34,30 +36,28 @@
         </div>
     </div>
 
-    <!-- Navbar (already implemented) -->
     <nav class="navbar">
-        <a href="{{ url_for('dashboard_views.student_dashboard') }}" class="logo">
+        <a href="{{ url_for('admin_views.admin_dashboard') }}" class="logo">
             <img src="../../static/Images/logo.png">
             <span class="site-title">Career Competency Tracker</span>
         </a>
         <div class="nav-items">
-            <a href="{{ url_for('dashboard_views.manage_workshops') }}">Manage Workshops</a>
-            <a href="{{ url_for('dashboard_views.admin_workshop_creation') }}">Create Workshops</a>
-            <a href="{{ url_for('dashboard_views.admin_badges') }}">Award Badges</a>
-            <a href="{{ url_for('dashboard_views.validate_certificates') }}">Validate Certificates</a>
+            <a href="{{ url_for('admin_views.manage_workshops') }}">Manage Workshops</a>
+            <a href="{{ url_for('admin_views.admin_workshop_creation') }}">Create Workshops</a>
+            <a href="{{ url_for('admin_views.admin_badges') }}">Award Badges</a>
+            <a href="{{ url_for('admin_views.validate_certificates') }}">Validate Certificates</a>
             <a href="{{ url_for('auth_views.logout_action') }}">Logout</a>
         </div>
     </nav>
 
     <!-- Background video -->
     <video autoplay muted loop id="bg-video">
-        <source src="../../static/Videos/stdashboardvid.mp4" type="video/mp4">
+        <source src="{{ url_for('static', filename='Videos/stdashboardvid.mp4') }}" type="video/mp4">
     </video>
 
-    <main>
+    <main class="content-container">
         <h2>Workshops</h2>
 
-        <!-- Workshops container (Updated) -->
         <section class="workshops-container">
             {% if workshops %}
                 {% for workshop in workshops %}
@@ -84,12 +84,11 @@
                         </div>
                         {% endif %}
                         <div class="workshop-actions">
-                            <a href="{{ url_for('dashboard_views.edit_workshop', workshop_id=workshop.id) }}"
-                                class="edit-btn">
-                                <i class="fas fa-edit"></i> Edit Workshop
+                            <a href="{{ url_for('admin_views.edit_workshop', workshop_id=workshop.workshopID) }}" class="action-button edit-btn">
+                                <i class="fas fa-edit"></i> Edit
                             </a>
-                            <button onclick="deleteWorkshop('{{ workshop.id }}')" class="delete-btn">
-                                <i class="fas fa-trash"></i> Delete Workshop
+                            <button class="action-button delete-btn" data-workshop-id="{{ workshop.workshopID }}" {% if workshop.enrollments %}disabled{% endif %}>
+                                <i class="fas fa-trash-alt"></i> Delete
                             </button>
                         </div>
                     </div>

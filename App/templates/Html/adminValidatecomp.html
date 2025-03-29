@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/global.css') }}">
     <!-- Navbar CSS -->
     <link rel="stylesheet" href="../../static/Css/navbar.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/navbar.css') }}">
@@ -31,28 +33,27 @@
           <span class="loading">Loading...</span>
         </div>
       </div>
-      <!-- Navbar (already implemented) -->
+
       <nav class="navbar">
-        <a href="{{ url_for('dashboard_views.student_dashboard') }}" class="logo">
+        <a href="{{ url_for('admin_views.admin_dashboard') }}" class="logo">
             <img src="../../static/Images/logo.png">
             <span class="site-title">Career Competency Tracker</span>
           </a>
-        <div class="nav-items"><!-- add in the respective page links -->
-          <a href="{{ url_for('dashboard_views.manage_workshops') }}">Manage Workshops</a>
-          <a href="{{ url_for('dashboard_views.admin_workshop_creation') }}">Create Workshops</a>
-          <a href="{{ url_for('dashboard_views.admin_badges') }}">Award Badges</a>
-          <a href="{{ url_for('dashboard_views.validate_certificates') }}">Validate Certificates</a>
+        <div class="nav-items">
+          <a href="{{ url_for('admin_views.manage_workshops') }}">Manage Workshops</a>
+          <a href="{{ url_for('admin_views.admin_workshop_creation') }}">Create Workshops</a>
+          <a href="{{ url_for('admin_views.admin_badges') }}">Award Badges</a>
+          <a href="{{ url_for('admin_views.validate_certificates') }}">Validate Certificates</a>
           <a href="{{ url_for('auth_views.logout_action') }}">Logout</a>
         </div>
       </nav>
 
       <!-- Background video element -->
       <video autoplay muted loop id="bg-video">
-        <source src="../../static/Videos/stdashboardvid.mp4" type="video/mp4">
+        <source src="{{ url_for('static', filename='Videos/stdashboardvid.mp4') }}" type="video/mp4">
       </video>
 
-    <main>
-        <!-- main page body here -->
+    <main class="content-container">
         <h2><strong>Certificate Requests</strong></h2>
 
         <div class="submission-container">
@@ -64,7 +65,7 @@
                         <p>Competency: {{ request.competency }}</p>
                         <p>Request Date: {{ request.request_date.strftime('%Y-%m-%d') }}</p>
                     </div>
-                    <form action="{{ url_for('dashboard_views.process_certificate_request', request_id=request.id) }}" method="POST" class="approval-form">
+                    <form action="{{ url_for('admin_views.process_certificate_request', request_id=request.id) }}" method="POST" class="approval-form">
                         <div class="approval-buttons">
                             <button type="submit" name="action" value="deny" class="reject">Deny Certificate</button>
                             <button type="submit" name="action" value="approve" class="accept">Approve Certificate</button>

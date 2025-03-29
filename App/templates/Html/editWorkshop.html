@@ -8,6 +8,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/global.css') }}">
     <!-- Navbar CSS -->
     <link rel="stylesheet" href="../../static/Css/navbar.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/navbar.css') }}">
@@ -18,124 +21,155 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/loader.css') }}">
     <script src="../../static/JavaScript/loader.js" defer></script>
     <script src="{{ url_for('static', filename='JavaScript/loader.js') }}" defer></script>
-    <!-- Page CSS / JS ref Change to page accordingly -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='Css/editWorkshop.css') }}">
-</head>
     
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="../../static/Css/adminWorkshopCreation.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/admin_workshop_creation.css') }}">
+    
+    <!-- Select2 library -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="../../static/JavaScript/adminWorkshopCreation.js" defer></script>
+    <script src="{{ url_for('static', filename='JavaScript/adminWorkshopCreation.js') }}" defer></script>
+</head>
 <body>
     <div id="loader">
         <div class="container">
-          <div class="ring"></div>
-          <div class="ring"></div>
-          <div class="ring"></div>
-          <span class="loading">Loading...</span>
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <div class="ring"></div>
+            <span class="loading">Loading...</span>
         </div>
-      </div>
-      <!-- Navbar (already implemented) -->
-      <nav class="navbar">
-        <a href="{{ url_for('dashboard_views.student_dashboard') }}" class="logo">
+    </div>
+
+    <nav class="navbar">
+        <a href="{{ url_for('admin_views.admin_dashboard') }}" class="logo">
             <img src="../../static/Images/logo.png">
             <span class="site-title">Career Competency Tracker</span>
-          </a>
-        <div class="nav-items"><!-- add in the respective page links -->
-          <a href="{{ url_for('dashboard_views.manage_workshops') }}">Manage Workshops</a>
-          <a href="{{ url_for('dashboard_views.admin_workshop_creation') }}">Create Workshops</a>
-          <a href="{{ url_for('dashboard_views.admin_badges') }}">Award Badges</a>
-          <a href="{{ url_for('dashboard_views.validate_certificates') }}">Validate Certificates</a>
-          <a href="{{ url_for('auth_views.logout_action') }}">Logout</a>
+        </a>
+        <div class="nav-items">
+            <a href="{{ url_for('admin_views.manage_workshops') }}">Manage Workshops</a>
+            <a href="{{ url_for('admin_views.admin_workshop_creation') }}">Create Workshops</a>
+            <a href="{{ url_for('admin_views.admin_badges') }}">Award Badges</a>
+            <a href="{{ url_for('admin_views.validate_certificates') }}">Validate Certificates</a>
+            <a href="{{ url_for('auth_views.logout_action') }}">Logout</a>
         </div>
-      </nav>
+    </nav>
 
-      <!-- Background video element -->
-      <video autoplay muted loop id="bg-video">
-        <source src="../../static/Videos/stdashboardvid.mp4" type="video/mp4">
-      </video>
+    <!-- Background Video -->
+    <video autoplay muted loop id="bg-video">
+        <source src="{{ url_for('static', filename='Videos/stdashboardvid.mp4') }}" type="video/mp4">
+    </video>
 
-      <main>
+    <main class="content-container">
         <div class="workshop-container">
-            <h2>Edit Workshop</h2>
+            <div class="title-row">
+                <h2>Edit Workshop</h2>
+            </div>
+              
+            <!-- Notification message -->
+            <div class="notify-row">
+                <div class="info-message">
+                    <i class="fas fa-bell"></i>
+                    <span>Enrolled students will be automatically notified of any changes</span>
+                </div>
+            </div>
             
-            <form method="POST" action="{{ url_for('dashboard_views.edit_workshop', workshop_id=workshop.id) }}" enctype="multipart/form-data">
-              
-              <!-- Row 1: Code & Title -->
-              <div class="form-row">
-                <div class="form-group">
-                  <label>Workshop Code</label>
-                  <input type="text" name="id" value="{{ workshop.workshopID }}" readonly>
+            <form method="POST" action="{{ url_for('admin_views.edit_workshop', workshop_id=workshop.workshopID) }}" enctype="multipart/form-data" id="workshopForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Workshop Code</label>
+                        <input type="text" name="id" value="{{ workshop.workshopID }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Workshop Date & Time</label>
+                        <input type="date" name="date" value="{{ workshop.workshopDate.strftime('%Y-%m-%d') }}" required>
+                        <input type="time" name="time" value="{{ workshop.workshopTime }}" required>
+                    </div>
                 </div>
-                <div class="form-group">
-                  <label>Workshop Title</label>
-                  <input type="text" name="name" value="{{ workshop.workshopName }}" required>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Workshop Title</label>
+                        <input type="text" name="name" value="{{ workshop.workshopName }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Workshop Instructor</label>
+                        <input type="text" name="instructor" value="{{ workshop.instructor }}" required>
+                    </div>
                 </div>
-              </div>
-              
-              <!-- Row 2: Instructor & Location -->
-              <div class="form-row">
-                <div class="form-group">
-                  <label>Workshop Instructor</label>
-                  <input type="text" name="instructor" value="{{ workshop.instructor }}" required>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Workshop Description</label>
+                        <textarea name="description" required>{{ workshop.workshopDescription }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Workshop Location</label>
+                        <input type="text" name="location" value="{{ workshop.location }}" required>
+                    </div>
                 </div>
-                <div class="form-group">
-                  <label>Workshop Location</label>
-                  <input type="text" name="location" value="{{ workshop.location }}" required>
+
+                <div class="form-row"> 
+                    <div class="form-group">
+                        <label>Workshop Image</label>
+                        <input type="file" name="workshop_image" accept="image/*">
+                        <small>Select an image to be used as workshop background (Recommended size: 1200x800px)</small>
+                        {% if workshop.image_path %}
+                            <p>Current image: {{ workshop.image_path }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label>Competencies</label>
+                        <select name="competencies[]" multiple class="competencies-select">
+                            <option value="Programming" {% if 'Programming' in workshop.competencies %}selected{% endif %}>Programming</option>
+                            <option value="Problem Solving" {% if 'Problem Solving' in workshop.competencies %}selected{% endif %}>Problem Solving</option>
+                            <option value="Team Work" {% if 'Team Work' in workshop.competencies %}selected{% endif %}>Team Work</option>
+                            <option value="Data Analysis" {% if 'Data Analysis' in workshop.competencies %}selected{% endif %}>Data Analysis</option>
+                            <option value="Communication" {% if 'Communication' in workshop.competencies %}selected{% endif %}>Communication</option>
+                            <option value="Leadership" {% if 'Leadership' in workshop.competencies %}selected{% endif %}>Leadership</option>
+                            <option value="Design Thinking" {% if 'Design Thinking' in workshop.competencies %}selected{% endif %}>Design Thinking</option>
+                            <option value="Creativity" {% if 'Creativity' in workshop.competencies %}selected{% endif %}>Creativity</option>
+                            <option value="Cloud Computing" {% if 'Cloud Computing' in workshop.competencies %}selected{% endif %}>Cloud Computing</option>
+                            <option value="System Administration" {% if 'System Administration' in workshop.competencies %}selected{% endif %}>System Administration</option>
+                            <option value="Business Analysis" {% if 'Business Analysis' in workshop.competencies %}selected{% endif %}>Business Analysis</option>
+                            <option value="Testing" {% if 'Testing' in workshop.competencies %}selected{% endif %}>Testing</option>
+                            <option value="Attention to Detail" {% if 'Attention to Detail' in workshop.competencies %}selected{% endif %}>Attention to Detail</option>
+                            <option value="Database Management" {% if 'Database Management' in workshop.competencies %}selected{% endif %}>Database Management</option>
+                            <option value="Security" {% if 'Security' in workshop.competencies %}selected{% endif %}>Security</option>
+                            <option value="Technical Writing" {% if 'Technical Writing' in workshop.competencies %}selected{% endif %}>Technical Writing</option>
+                            <option value="Documentation" {% if 'Documentation' in workshop.competencies %}selected{% endif %}>Documentation</option>
+                        </select>
+                        <small>Click to select multiple competencies (search also available)</small>
+                    </div>
                 </div>
-              </div>
-              
-              <!-- Row 3: Date & Time -->
-              <div class="form-row">
-                <div class="form-group">
-                  <label>Workshop Date</label>
-                  <input type="date" name="date" value="{{ workshop.workshopDate.strftime('%Y-%m-%d') }}" required>
+
+                <div class="form-row">
+                    <button type="submit" id="submitButton">Update Workshop</button>
                 </div>
-                <div class="form-group">
-                  <label>Workshop Time</label>
-                  <input type="time" name="time" value="{{ workshop.workshopTime }}" required>
-                </div>
-              </div>
-              
-              <!-- Row 4: Description spans full width -->
-              <div class="form-row full-width">
-                <div class="form-group">
-                  <label>Workshop Description</label>
-                  <textarea name="description" required>{{ workshop.workshopDescription }}</textarea>
-                </div>
-              </div>
-              
-              <!-- Row 5: Image & Competencies -->
-              <div class="form-row">
-                <div class="form-group">
-                  <label>Workshop Image</label>
-                  <input type="file" name="workshop_image" accept="image/*">
-                  <small>Select an image to be used as workshop background (Recommended size: 1200x800px)</small>
-                  {% if workshop.image_path %}
-                    <p>Current image: {{ workshop.image_path }}</p>
-                  {% endif %}
-                </div>
-                <div class="form-group">
-                  <label>Competencies (comma-separated)</label>
-                  <input type="text" name="competencies" value="{{ ','.join(workshop.competencies) }}" placeholder="e.g. Leadership, Communication, Technical Skills">
-                  <small>Enter competencies that students will gain from this workshop</small>
-                </div>
-              </div>
-              
-              <!-- Row 6: Checkbox & Submit Button -->
-              <div class="form-row checkbox-and-button">
-                <div class="notify-group">
-                  <input type="checkbox" id="notify" name="notify_students">
-                  <label for="notify">Notify Students of Changes</label>
-                </div>
-                <button type="submit">Update Workshop</button>
-              </div>
             </form>
-          </div>
+        </div>
     </main>
 
-    <!-- Footer with animated loading bar -->
+    <!-- Footer -->
     <footer class="footer">
         <p>&copy; 2025 Career Competency Tracking System. All Rights Reserved.</p>
         <div class="loading-bar-container">
-          <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
         </div>
-      </footer>
+    </footer>
+
+    <script>
+        $(document).ready(function() {
+            $('.competencies-select').select2({
+                placeholder: "Select competencies",
+                allowClear: true
+            });
+        });
+    </script>
 </body>
 </html> 

@@ -3,15 +3,20 @@ from flask_login import login_required, current_user
 from ..models.workshop import Workshop
 from ..models.enrollment import Enrollment
 from ..models.student import Student
+from ..models.notification import Notification
+from ..models.certificate_request import CertificateRequest
 from .. import db
 from datetime import datetime
-from sqlalchemy import or_
+from sqlalchemy import or_, func, distinct
 import os
 from werkzeug.utils import secure_filename
 from ..models.user import User
+from ..models.employer import Employer
+from ..models.administrator import Administrator
 from ..models.student_competency import StudentCompetency
 from ..models.competency import Competency
 from ..controllers import certificate_controller
+from ..controllers import notification_controller
 from ..models.job_roles import JobRole
 from ..models.job_competency import JobCompetency
 import io
@@ -20,6 +25,9 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from PyPDF2 import PdfReader, PdfWriter
+from dateutil.relativedelta import relativedelta
+from dateutil.parser import parse
+from ..models.certificate import Certificate
 
 dashboard_views = Blueprint('dashboard_views', __name__, template_folder='../templates')
 
@@ -28,6 +36,38 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Helper function to format timestamps as "time ago" strings
+def format_time_ago(timestamp):
+    """Format a timestamp as a "time ago" string (e.g., "2 hours ago")."""
+    now = datetime.now()
+    
+    if isinstance(timestamp, str):
+        try:
+            timestamp = parse(timestamp)
+        except:
+            return "Unknown time"
+    
+    diff = now - timestamp
+    seconds = diff.total_seconds()
+    
+    if seconds < 60:
+        return "just now"
+    elif seconds < 3600:
+        minutes = int(seconds // 60)
+        return f"{minutes} minute{'s' if minutes > 1 else ''} ago"
+    elif seconds < 86400:
+        hours = int(seconds // 3600)
+        return f"{hours} hour{'s' if hours > 1 else ''} ago"
+    elif seconds < 2592000:  # 30 days
+        days = int(seconds // 86400)
+        return f"{days} day{'s' if days > 1 else ''} ago"
+    elif seconds < 31536000:  # 365 days
+        months = int(seconds // 2592000)
+        return f"{months} month{'s' if months > 1 else ''} ago"
+    else:
+        years = int(seconds // 31536000)
+        return f"{years} year{'s' if years > 1 else ''} ago"
 
 @dashboard_views.route('/student-dashboard')
 @login_required
@@ -43,7 +83,304 @@ def admin_dashboard():
     if current_user.user_type != 'admin':
         flash('Access denied. Administrators only.', 'error')
         return redirect(url_for('dashboard_views.dashboard'))
-    return render_template('Html/admindashboard.html', user=current_user)
+    
+    try:
+        # Get real statistics for the dashboard
+        # 1. Count active workshops
+        workshop_count = Workshop.query.count()
+        
+        # 2. Count enrolled students
+        student_count = Student.query.count()
+        
+        # 3. Count awarded badges
+        try:
+            # Count StudentCompetency records with rank > 0
+            badge_count = db.session.query(func.count(distinct(StudentCompetency.id))).filter(
+                StudentCompetency.rank > 0
+            ).scalar() or 0
+            
+            # Alternative calculation if the above doesn't match real badge count
+            if badge_count == 0:
+                # Count from the Student.competencies JSON field
+                for student in Student.query.all():
+                    if student.competencies:
+                        for comp_name, comp_data in student.competencies.items():
+                            if comp_data.get('rank', 0) > 0:
+                                badge_count += 1
+        except Exception as e:
+            badge_count = 0
+        
+        # 4. Count issued certificates 
+        try:
+            # Try to count from Certificate model
+            certificate_count = db.session.query(func.count(distinct(Certificate.id))).scalar() or 0
+            
+            # If Certificate model count is 0, count from Student's competencies
+            if certificate_count == 0:
+                for student in Student.query.all():
+                    if student.competencies:
+                        for comp_name, comp_data in student.competencies.items():
+                            if comp_data.get('certificate_status') == 'approved':
+                                certificate_count += 1
+        except Exception as e:
+            certificate_count = 0
+        
+        # Get workshop trends data (last 12 months)
+        months = []
+        workshop_creation_data = []
+        workshop_attendance_data = []
+        
+        current_date = datetime.now()
+        for i in range(11, -1, -1):
+            # Calculate date for this data point (going back i months)
+            target_date = current_date - relativedelta(months=i)
+            month_name = target_date.strftime('%b')
+            months.append(month_name)
+            
+            # Get workshops created in this month
+            month_start = datetime(target_date.year, target_date.month, 1)
+            if target_date.month == 12:
+                month_end = datetime(target_date.year + 1, 1, 1) - relativedelta(days=1)
+            else:
+                month_end = datetime(target_date.year, target_date.month + 1, 1) - relativedelta(days=1)
+                
+            # Check if Workshop has created_at field
+            has_created_at = hasattr(Workshop, 'created_at')
+            if has_created_at:
+                try:
+                    created_count = Workshop.query.filter(
+                        Workshop.created_at.between(month_start, month_end)
+                    ).count()
+                except Exception:
+                    created_count = 0
+            else:
+                # If created_at doesn't exist, use a default value
+                created_count = 0
+            workshop_creation_data.append(created_count)
+            
+            # Get total enrollments in this month
+            has_enrollment_date = hasattr(Enrollment, 'enrollment_date')
+            if has_enrollment_date:
+                try:
+                    enrollment_count = db.session.query(func.count(Enrollment.id)).filter(
+                        Enrollment.enrollment_date.between(month_start, month_end)
+                    ).scalar() or 0
+                except Exception:
+                    enrollment_count = 0
+            else:
+                # If enrollment_date doesn't exist, use a default value
+                enrollment_count = 0
+            workshop_attendance_data.append(enrollment_count)
+        
+        # Get competency distribution data
+        competency_data = []
+        competency_labels = []
+        
+        # Get all unique competencies across workshops
+        all_competencies = set()
+        for workshop in Workshop.query.all():
+            if hasattr(workshop, 'competencies') and workshop.competencies:
+                all_competencies.update(workshop.competencies)
+        
+        # Count workshops for each competency
+        for competency in all_competencies:
+            if competency:  # Skip empty competencies
+                count = 0
+                for workshop in Workshop.query.all():
+                    if hasattr(workshop, 'competencies') and workshop.competencies and competency in workshop.competencies:
+                        count += 1
+                if count > 0:
+                    competency_labels.append(competency)
+                    competency_data.append(count)
+        
+        # If no competency data, add a placeholder
+        if not competency_data:
+            competency_labels = ['No Competencies']
+            competency_data = [1]
+        
+        # Get recent activities
+        recent_activities = []
+        
+        # 1. Recent workshops
+        has_created_at = hasattr(Workshop, 'created_at')
+        if has_created_at:
+            try:
+                recent_workshops = Workshop.query.order_by(Workshop.created_at.desc()).limit(3).all()
+            except Exception:
+                recent_workshops = Workshop.query.limit(3).all()
+        else:
+            recent_workshops = Workshop.query.limit(3).all()
+        
+        for workshop in recent_workshops:
+            created_at = getattr(workshop, 'created_at', datetime.now())
+            recent_activities.append({
+                'type': 'workshop',
+                'icon': 'fas fa-chalkboard-teacher',
+                'title': f'New Workshop: {workshop.workshopName}',
+                'time': format_time_ago(created_at)
+            })
+        
+        # 2. Recent badges and certificates from student competencies
+        recent_comp_activities = []
+        
+        for student in Student.query.all():
+            if student.competencies:
+                for comp_name, comp_data in student.competencies.items():
+                    # Check for badges with rank > 0
+                    if comp_data.get('rank', 0) > 0:
+                        updated_at_str = comp_data.get('updated_at')
+                        if updated_at_str:
+                            try:
+                                updated_at = datetime.fromisoformat(updated_at_str.replace('Z', '+00:00'))
+                                student_name = f"{student.first_name} {student.last_name}"
+                                rank_name = ['Beginner', 'Intermediate', 'Advanced'][comp_data.get('rank', 1) - 1]
+                                
+                                recent_comp_activities.append({
+                                    'type': 'badge',
+                                    'icon': 'fas fa-award',
+                                    'title': f'{student_name} earned {comp_name} Badge ({rank_name})',
+                                    'time': format_time_ago(updated_at),
+                                    'date': updated_at  # For sorting
+                                })
+                            except (ValueError, TypeError):
+                                pass
+                    
+                    # Check for approved certificates
+                    if comp_data.get('certificate_status') == 'approved':
+                        cert_date_str = comp_data.get('certificate_date')
+                        if cert_date_str:
+                            try:
+                                try:
+                                    cert_date = datetime.strptime(cert_date_str, '%Y-%m-%d')
+                                except ValueError:
+                                    cert_date = datetime.fromisoformat(cert_date_str.replace('Z', '+00:00'))
+                                
+                                student_name = f"{student.first_name} {student.last_name}"
+                                
+                                recent_comp_activities.append({
+                                    'type': 'certificate',
+                                    'icon': 'fas fa-certificate',
+                                    'title': f'Certificate issued to {student_name} for {comp_name}',
+                                    'time': format_time_ago(cert_date),
+                                    'date': cert_date  # For sorting
+                                })
+                            except (ValueError, TypeError):
+                                pass
+        
+        # Sort by date (newest first) and take top 3
+        recent_comp_activities.sort(key=lambda x: x['date'], reverse=True)
+        recent_comp_activities = recent_comp_activities[:3]
+        
+        # Remove date field used for sorting
+        for activity in recent_comp_activities:
+            activity.pop('date', None)
+        
+        # Add to recent activities
+        recent_activities.extend(recent_comp_activities)
+        
+        # Sort activities by time (most recent first)
+        try:
+            recent_activities.sort(key=lambda x: x['time'], reverse=True)
+        except Exception:
+            # If sorting fails, just take the first 5
+            pass
+        recent_activities = recent_activities[:5]  # Limit to 5 items
+        
+        # Prepare data for student progress chart (last 12 months)
+        progress_labels = months.copy()
+        badges_earned_data = []
+        certificates_issued_data = []
+        
+        for i in range(11, -1, -1):
+            target_date = current_date - relativedelta(months=i)
+            month_start = datetime(target_date.year, target_date.month, 1)
+            if target_date.month == 12:
+                month_end = datetime(target_date.year + 1, 1, 1) - relativedelta(days=1)
+            else:
+                month_end = datetime(target_date.year, target_date.month + 1, 1) - relativedelta(days=1)
+            
+            # Count badges earned in this month
+            badges_count = 0
+            # Count from student competencies updated in this month
+            for student in Student.query.all():
+                if student.competencies:
+                    for comp_name, comp_data in student.competencies.items():
+                        comp_date_str = comp_data.get('updated_at')
+                        if comp_date_str and comp_data.get('rank', 0) > 0:
+                            try:
+                                # Parse the ISO date string
+                                comp_date = datetime.fromisoformat(comp_date_str.replace('Z', '+00:00'))
+                                # Check if it's in the current month
+                                if month_start <= comp_date <= month_end:
+                                    badges_count += 1
+                            except (ValueError, TypeError):
+                                # Skip invalid dates
+                                pass
+            badges_earned_data.append(badges_count)
+            
+            # Count certificates issued in this month
+            certs_count = 0
+            # Count from student competencies with certificate approval in this month
+            for student in Student.query.all():
+                if student.competencies:
+                    for comp_name, comp_data in student.competencies.items():
+                        cert_date_str = comp_data.get('certificate_date')
+                        if cert_date_str and comp_data.get('certificate_status') == 'approved':
+                            try:
+                                # Try parsing the date in different formats
+                                try:
+                                    cert_date = datetime.strptime(cert_date_str, '%Y-%m-%d')
+                                except ValueError:
+                                    cert_date = datetime.fromisoformat(cert_date_str.replace('Z', '+00:00'))
+                                
+                                # Check if it's in the current month
+                                if month_start <= cert_date <= month_end:
+                                    certs_count += 1
+                            except (ValueError, TypeError):
+                                # Skip invalid dates
+                                pass
+            certificates_issued_data.append(certs_count)
+        
+        # Pass all dashboard data to the template
+        return render_template(
+            'Html/admindashboard.html', 
+            user=current_user,
+            workshop_count=workshop_count,
+            student_count=student_count,
+            badge_count=badge_count,
+            certificate_count=certificate_count,
+            recent_activities=recent_activities,
+            # Chart data as JSON
+            workshop_trends_labels=months,
+            workshop_creation_data=workshop_creation_data,
+            workshop_attendance_data=workshop_attendance_data,
+            competency_labels=competency_labels,
+            competency_data=competency_data,
+            progress_labels=progress_labels,
+            badges_earned_data=badges_earned_data,
+            certificates_issued_data=certificates_issued_data
+        )
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        flash(f'Error loading dashboard data: {str(e)}', 'error')
+        return render_template(
+            'Html/admindashboard.html',
+            user=current_user,
+            workshop_count=0,
+            student_count=0,
+            badge_count=0,
+            certificate_count=0,
+            recent_activities=[],
+            workshop_trends_labels=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            workshop_creation_data=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            workshop_attendance_data=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            competency_labels=['No Data'],
+            competency_data=[100],
+            progress_labels=['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            badges_earned_data=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            certificates_issued_data=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        )
 
 @dashboard_views.route('/employer-dashboard')
 @login_required
@@ -80,6 +417,18 @@ def workshops():
             if workshop._competencies is None:
                 workshop._competencies = []
                 db.session.add(workshop)
+        
+        # Filter out workshops the student is already enrolled in
+        if current_user.user_type == 'student':
+            enrolled_workshop_ids = [
+                enrollment.workshop_id for enrollment in 
+                Enrollment.query.filter_by(student_id=current_user.id).all()
+            ]
+            all_workshops = [
+                workshop for workshop in all_workshops 
+                if workshop.id not in enrolled_workshop_ids
+            ]
+            print(f"Filtered out enrolled workshops, {len(all_workshops)} remaining")
         
         if search_query:
             filtered_workshops = []
@@ -127,9 +476,6 @@ def admin_workshop_creation():
     
     if request.method == 'POST':
         try:
-            print("\n=== Workshop Creation Process Started ===")
-            print("1. Form Data Received:", {k: v for k, v in request.form.items()})
-            
             image_path = None
             if 'workshop_image' in request.files:
                 file = request.files['workshop_image']
@@ -142,71 +488,58 @@ def admin_workshop_creation():
                         file_path = os.path.join(UPLOAD_FOLDER, filename)
                         file.save(file_path)
                         image_path = f'workshop_images/{filename}'
-                        print("2. Image saved successfully:", image_path)
                     else:
                         flash('Invalid file type. Please upload an image file.', 'error')
                         return redirect(request.url)
 
-            competencies = [comp.strip() for comp in request.form.get('competencies', '').split(',') if comp.strip()]
-            print("3. Parsed competencies:", competencies)
+            # Get competencies from multi-select dropdown - try different possible name formats
+            competencies = []
+            if 'competencies[]' in request.form:
+                competencies = request.form.getlist('competencies[]')
+            elif 'competencies' in request.form:
+                competencies = request.form.getlist('competencies')
+            else:
+                # Check if we have a single competency value
+                for key in request.form:
+                    if key.startswith('competencies'):
+                        competencies = [request.form[key]]
+                        break
             
-            try:
-                new_workshop = Workshop(
-                    workshopID=request.form.get('id'),
-                    workshopName=request.form.get('name'),
-                    workshopDescription=request.form.get('description'),
-                    workshopDate=datetime.strptime(request.form.get('date'), '%Y-%m-%d').date(),
-                    workshopTime=request.form.get('time'),
-                    instructor=request.form.get('instructor'),
-                    location=request.form.get('location'),
-                    image_path=image_path
-                )
-                print("5. Workshop object created successfully")
+            # Check if list of competencies was provided as a single comma-separated string
+            if len(competencies) == 1 and ',' in competencies[0]:
+                competencies = [comp.strip() for comp in competencies[0].split(',') if comp.strip()]
                 
-                if competencies:
-                    new_workshop.add_competencies(competencies)
-                    print("5a. Added competencies:", competencies)
-                
-            except Exception as model_error:
-                print("ERROR creating Workshop object:", str(model_error))
-                print("Workshop model attributes:", dir(Workshop))
-                raise
+            new_workshop = Workshop(
+                workshopID=request.form.get('id'),
+                workshopName=request.form.get('name'),
+                workshopDescription=request.form.get('description'),
+                workshopDate=datetime.strptime(request.form.get('date'), '%Y-%m-%d').date(),
+                workshopTime=request.form.get('time'),
+                instructor=request.form.get('instructor'),
+                location=request.form.get('location'),
+                image_path=image_path
+            )
             
-            try:
-                db.session.add(new_workshop)
-                print("6. Workshop added to session")
-                db.session.flush()
-                print("7. Session flushed successfully")
-            except Exception as db_error:
-                print("ERROR adding to session:", str(db_error))
-                raise
+            if competencies:
+                new_workshop.add_competencies(competencies)
             
-            try:
-                db.session.commit()
-                print("8. Changes committed to database")
-            except Exception as commit_error:
-                print("ERROR during commit:", str(commit_error))
-                raise
+            db.session.add(new_workshop)
+            db.session.commit()
             
-            try:
-                created_workshop = Workshop.query.get(new_workshop.id)
-                if created_workshop:
-                    print("9. Workshop creation verified:", vars(created_workshop))
-                else:
-                    print("WARNING: Workshop not found after creation!")
-            except Exception as verify_error:
-                print("ERROR during verification:", str(verify_error))
+            # Send notifications to students
+            student_ids = [student.id for student in Student.query.all()]
+            workshop_link = url_for('dashboard_views.workshops', _external=True)
+            notification_controller.create_workshop_notification(
+                student_ids=student_ids,
+                workshop_name=new_workshop.workshopName,
+                action_type='created',
+                link=workshop_link
+            )
             
             flash('Workshop created successfully!', 'success')
             return redirect(url_for('dashboard_views.workshops'))
             
         except Exception as e:
-            print("\n=== Workshop Creation Failed ===")
-            print("Error type:", type(e).__name__)
-            print("Error message:", str(e))
-            import traceback
-            print("Full traceback:")
-            traceback.print_exc()
             db.session.rollback()
             flash(f'Error creating workshop: {str(e)}', 'error')
             return redirect(url_for('dashboard_views.admin_workshop_creation'))
@@ -269,7 +602,7 @@ def enroll_workshop(workshop_id):
 @login_required
 def competencies():
     if current_user.user_type != 'student':
-        flash('Only students can view competencies.', 'error')
+        flash('Access denied. Students only.', 'error')
         return redirect(url_for('dashboard_views.dashboard'))
         
     try:
@@ -277,11 +610,23 @@ def competencies():
         if not student:
             flash('Student account not found.', 'error')
             return redirect(url_for('dashboard_views.dashboard'))
+        
+        # Format competencies data for display
+        for comp_name, comp_data in student.competencies.items():
+            # Ensure the certificate_status field exists
+            if 'certificate_status' not in comp_data:
+                student.competencies[comp_name]['certificate_status'] = None
             
+            # Convert empty string to None for consistency
+            if comp_data.get('certificate_status') == '':
+                student.competencies[comp_name]['certificate_status'] = None
+        
         return render_template('Html/competencies.html', user=student)
         
     except Exception as e:
         print(f"Error loading competencies: {e}")
+        import traceback
+        traceback.print_exc()
         flash('Error loading competencies.', 'error')
         return redirect(url_for('dashboard_views.dashboard'))
 
@@ -367,6 +712,18 @@ def edit_workshop(workshop_id):
                 workshop.add_competencies(competencies)
             
             db.session.commit()
+            
+            # Always send notifications to enrolled students
+            enrolled_students = [enrollment.student_id for enrollment in workshop.enrollments]
+            if enrolled_students:
+                workshop_link = url_for('dashboard_views.workshops', _external=True)
+                notification_controller.create_workshop_notification(
+                    student_ids=enrolled_students,
+                    workshop_name=workshop.workshopName,
+                    action_type='updated',
+                    link=workshop_link
+                )
+            
             flash('Workshop updated successfully!', 'success')
             return redirect(url_for('dashboard_views.manage_workshops'))
             
@@ -451,6 +808,15 @@ def admin_badges():
                 print(f"Updating student competency - Before update: {student.competencies.get(competency)}")
                 student.update_competency_rank(competency, rank, feedback)
                 print(f"After update: {student.competencies.get(competency)}")
+                
+                # Send notification to student about badge update
+                badge_link = url_for('dashboard_views.earned_badges', _external=True)
+                notification_controller.create_badge_notification(
+                    student_id=student_id,
+                    competency_name=competency,
+                    rank=rank,
+                    link=badge_link
+                )
                 
                 db.session.commit()
                 flash('Student competency updated successfully!', 'success')
@@ -584,6 +950,19 @@ def process_certificate_request(request_id):
         return redirect(url_for('dashboard_views.validate_certificates'))
     
     success, message = certificate_controller.process_request(request_id, action)
+    
+    if success:
+        # Get certificate request details to send notification
+        cert_request = CertificateRequest.query.get(request_id)
+        if cert_request:
+            certificate_link = url_for('dashboard_views.earned_badges', _external=True)
+            notification_controller.create_certificate_notification(
+                student_id=cert_request.student_id,
+                competency_name=cert_request.competency,
+                status='approved' if action == 'approve' else 'rejected',
+                link=certificate_link
+            )
+    
     flash(message, 'success' if success else 'error')
     return redirect(url_for('dashboard_views.validate_certificates'))
 
@@ -1233,7 +1612,7 @@ def generate_resume():
             # Education
             story.append(Paragraph("EDUCATION", heading_style))
             education_text = "<b>University of the West Indies</b><br/>"
-            education_text += "Degree Program: [Student's Degree]<br/>"
+            education_text += f"Degree Program: {student.degree or '[Student\'s Degree]'}<br/>"
             education_text += "Participated in the UWI Career Competency Tracking System to develop and validate professional skills."
             story.append(Paragraph(education_text, competency_style))
             
@@ -1486,11 +1865,13 @@ def update_personal_info():
     try:
         phone = request.form.get('phone', '')
         location = request.form.get('location', '')
+        degree = request.form.get('degree', '')
         
         student = Student.get_by_id(current_user.id)
         if student:
             student.phone = phone
             student.location = location
+            student.degree = degree
             db.session.commit()
             flash('Personal information updated successfully!', 'success')
         else:
@@ -1584,6 +1965,129 @@ def view_candidate_resume(student_id):
         print(f"Error viewing candidate resume: {e}")
         flash('An error occurred while viewing resume.', 'error')
         return redirect(url_for('dashboard_views.view_candidate_profile', student_id=student_id))
+
+@dashboard_views.route('/get-notifications')
+@login_required
+def get_notifications():
+    """
+    Get notifications for the current user (API endpoint)
+    """
+    if current_user.user_type != 'student':
+        return jsonify({'error': 'Access denied. Students only.'}), 403
+    
+    limit = request.args.get('limit', 10, type=int)
+    unread_only = request.args.get('unread_only', False, type=bool)
+    
+    notifications = notification_controller.get_notifications(
+        student_id=current_user.id,
+        limit=limit,
+        unread_only=unread_only
+    )
+    
+    unread_count = notification_controller.get_unread_count(current_user.id)
+    
+    return jsonify({
+        'notifications': [
+            {
+                'id': n.id,
+                'message': n.message,
+                'notification_type': n.notification_type,
+                'created_at': n.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                'is_read': n.is_read,
+                'link': n.link
+            } for n in notifications
+        ],
+        'unread_count': unread_count
+    })
+
+@dashboard_views.route('/mark-notification-read/<int:notification_id>', methods=['POST'])
+@login_required
+def mark_notification_read(notification_id):
+    """
+    Mark a notification as read
+    """
+    if current_user.user_type != 'student':
+        return jsonify({'error': 'Access denied. Students only.'}), 403
+    
+    # Ensure the notification belongs to the current user
+    notification = Notification.query.get(notification_id)
+    if not notification or notification.student_id != current_user.id:
+        return jsonify({'error': 'Notification not found or unauthorized.'}), 404
+    
+    success = notification_controller.mark_as_read(notification_id)
+    
+    if success:
+        return jsonify({'success': True})
+    else:
+        return jsonify({'error': 'Error marking notification as read.'}), 500
+
+@dashboard_views.route('/mark-all-notifications-read', methods=['POST'])
+@login_required
+def mark_all_notifications_read():
+    """
+    Mark all notifications as read for the current user
+    """
+    if current_user.user_type != 'student':
+        return jsonify({'error': 'Access denied. Students only.'}), 403
+    
+    count = notification_controller.mark_all_as_read(current_user.id)
+    
+    return jsonify({
+        'success': True,
+        'count': count
+    })
+
+@dashboard_views.route('/test-notification/<int:student_id>/<notification_type>')
+def test_notification(student_id, notification_type):
+    """
+    Test notification creation
+    """
+    try:
+        # Check if student exists
+        student = Student.query.get(student_id)
+        if not student:
+            return jsonify({'error': f'Student with ID {student_id} not found'}), 404
+        
+        # Create different types of notifications based on the notification_type
+        if notification_type == 'workshop':
+            notification = notification_controller.create_workshop_notification(
+                student_id, 
+                workshop_name="Test Workshop", 
+                action_type="created", 
+                link="/my-workshops"
+            )
+            return jsonify({'success': True, 'message': f'Created workshop notification for student {student_id}'})
+            
+        elif notification_type == 'badge':
+            notification = notification_controller.create_badge_notification(
+                student_id, 
+                competency_name="Test Competency", 
+                rank=2, 
+                link="/earned-badges"
+            )
+            return jsonify({'success': True, 'message': f'Created badge notification for student {student_id}'})
+            
+        elif notification_type == 'certificate':
+            notification = notification_controller.create_certificate_notification(
+                student_id, 
+                competency_name="Test Competency", 
+                status="approved", 
+                link="/earned-badges"
+            )
+            return jsonify({'success': True, 'message': f'Created certificate notification for student {student_id}'})
+            
+        else:
+            # Create a generic notification
+            notification = notification_controller.create_notification(
+                student_id=student_id,
+                message=f"This is a test {notification_type} notification",
+                notification_type="general",
+                link="/student-dashboard"
+            )
+            return jsonify({'success': True, 'message': f'Created generic notification for student {student_id}'})
+            
+    except Exception as e:
+        return jsonify({'error': f'Error creating notification: {str(e)}'}), 500
 
 def init_dashboard_routes(app):
     app.register_blueprint(dashboard_views) 

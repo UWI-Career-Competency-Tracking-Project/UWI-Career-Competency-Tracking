@@ -7,20 +7,22 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- Link to your CSS file -->
 
-  <link rel="stylesheet" href="../../static/Css/studentProfile.css">
-
+  <!-- Global CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='Css/global.css') }}">
+  <!-- Profile CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='Css/studentProfile.css') }}">
-  <!-- Navbar CSS -->
+
   <link rel="stylesheet" href="{{ url_for('static', filename='Css/navbar.css') }}">
   <!-- Footer CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='Css/footer.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='Css/loader.css') }}">
   <script src="{{ url_for('static', filename='JavaScript/loader.js') }}" defer></script>
   <script src="{{url_for('static', filename='JavaScript/studentProfile.js')}}" defer></script>
-  
+  <!-- Notifications JavaScript -->
+  <script src="{{ url_for('static', filename='JavaScript/notifications.js') }}" defer></script>
 </head>
 <body>
     <div id="loader">
@@ -31,43 +33,16 @@
           <span class="loading">Loading...</span>
         </div>
       </div>
-      <!-- Navbar (already implemented) -->
-      <nav class="navbar">
-        <a href="{{ url_for('dashboard_views.student_dashboard') }}" class="logo">
-            <img src="{{ url_for('static', filename='Images/logo.png') }}">
-            <span class="site-title">Career Competency Tracker</span>
-          </a>
-        <div class="nav-items">
-          <a href="{{ url_for('dashboard_views.my_workshops') }}">My Workshops</a>
-          <a href="{{ url_for('dashboard_views.workshops') }}">Available Workshops</a>
-          <a href="{{ url_for('dashboard_views.competencies') }}">Tracked Comps</a>
-          <a href="{{ url_for('dashboard_views.earned_badges') }}">Badges & Certificates</a>
-          <div class="profile-dropdown" tabindex="0">
-            <div class="profile-trigger">
-              {% if user.profile_pic %}
-                <img src="{{ url_for('static', filename='profile_pics/' + user.profile_pic) }}" alt="User Profile">
-              {% else %}
-                <img src="https://via.placeholder.com/40" alt="User Profile">
-              {% endif %}
-            </div>
-            <div class="dropdown-content">
-              <div class="dropdown-header">
-                <span class="dropdown-username">{{ user.first_name }} {{ user.last_name }}</span>
-                <div class="dropdown-separator"></div>
-              </div>
-              <a href="{{ url_for('dashboard_views.student_profile') }}">Profile</a>
-              <a href="{{ url_for('auth_views.logout_action') }}">Sign Out</a>
-            </div>
-          </div>
-        </div>
-      </nav>
+      
+      <!-- Include the navbar template -->
+      {% include 'Html/navbar.html' %}
     
       <!-- Background video element -->
       <video autoplay muted loop id="bg-video">
-        <source src="{{ url_for('static', filename='Videos/dna.mp4') }}" type="video/mp4">
+        <source src="{{ url_for('static', filename='Videos/stdashboardvid.mp4') }}" type="video/mp4">
       </video>
 
-      <main class="content">
+      <main class="content content-container">
         <div class="profile-header">
             <h3>Profile Information</h3>
         </div>
@@ -89,7 +64,7 @@
               <!-- Actual Profile Info -->
               <div class="profile-card-body">
                 <!-- Profile picture form -->
-                <form id="profile-pic-form" action="{{ url_for('dashboard_views.update_profile_pic') }}" method="post" enctype="multipart/form-data">
+                <form id="profile-pic-form" action="{{ url_for('student_views.update_profile_pic') }}" method="post" enctype="multipart/form-data">
                   <input type="file" id="profile-pic-input" name="profile_pic" accept="image/*" style="display: none;">
                 </form>
                 <!-- New avatar container -->
@@ -119,6 +94,7 @@
                 <p><i class="fa-solid fa-envelope"></i> {{ user.email }}</p>
                 <p><i class="fa-solid fa-phone"></i> {% if user.phone %}{{ user.phone }}{% else %}Add your mobile number{% endif %}</p>
                 <p><i class="fa-solid fa-location-dot"></i> {% if user.location %}{{ user.location }}{% else %}Trinidad and Tobago{% endif %}</p>
+                <p><i class="fa-solid fa-graduation-cap"></i> {% if user.degree %}{{ user.degree }}{% else %}Add your degree program{% endif %}</p>
               </div>
             </div>
         
@@ -133,19 +109,19 @@
                 {% if user.resume %}
                   <p>Resume uploaded</p>
                   <div class="resume-actions">
-                    <a href="{{ url_for('dashboard_views.download_resume') }}" class="resume-link">View Resume</a>
-                    <a href="{{ url_for('dashboard_views.generate_resume') }}" class="resume-link">Generate New Resume</a>
-                    <a href="{{ url_for('dashboard_views.merge_resume') }}" class="resume-link">Add Competencies to Resume</a>
-                    <a href="{{ url_for('dashboard_views.remove_resume') }}" class="resume-link resume-remove">Remove Resume</a>
+                    <a href="{{ url_for('student_views.download_resume') }}" class="resume-link">View Resume</a>
+                    <a href="{{ url_for('student_views.generate_resume') }}" class="resume-link">Generate New Resume</a>
+                    <a href="{{ url_for('student_views.merge_resume') }}" class="resume-link">Add Competencies to Resume</a>
+                    <a href="{{ url_for('student_views.remove_resume') }}" class="resume-link resume-remove">Remove Resume</a>
                   </div>
                 {% else %}
                   <p>Add your resume here</p>
                   <div class="resume-actions">
-                    <form id="resume-form" action="{{ url_for('dashboard_views.update_resume') }}" method="post" enctype="multipart/form-data">
+                    <form id="resume-form" action="{{ url_for('student_views.update_resume') }}" method="post" enctype="multipart/form-data">
                       <input type="file" id="resume-input" name="resume" style="display: none;">
                       <a href="#" onclick="document.getElementById('resume-input').click(); return false;" class="resume-link">+ Upload Resume</a>
                     </form>
-                    <a href="{{ url_for('dashboard_views.generate_resume') }}" class="resume-link">Generate Resume from Competencies</a>
+                    <a href="{{ url_for('student_views.generate_resume') }}" class="resume-link">Generate Resume from Competencies</a>
                   </div>
                   <script src="{{url_for('static', filename='JavaScript/resume.js')}}" defer></script>
                 {% endif %}
@@ -159,7 +135,7 @@
             <section class="profile-section">
               <div class="section-header">
                 <h3>My Competencies</h3>
-                <a href="{{ url_for('dashboard_views.competencies') }}" class="view-all">View All</a>
+                <a href="{{ url_for('student_views.competencies') }}" class="view-all">View All</a>
               </div>
               <div class="competency-cards">
                 {% if earned_competencies %}
@@ -177,7 +153,7 @@
                   {% if earned_competencies|length > 3 %}
                     <div class="more-card">
                       <span>+{{ earned_competencies|length - 3 }} more</span>
-                      <a href="{{ url_for('dashboard_views.competencies') }}">View All</a>
+                      <a href="{{ url_for('student_views.competencies') }}">View All</a>
                     </div>
                   {% endif %}
                 {% else %}
@@ -190,7 +166,7 @@
             <section class="profile-section">
               <div class="section-header">
                 <h3>My Workshops</h3>
-                <a href="{{ url_for('dashboard_views.my_workshops') }}" class="view-all">View All</a>
+                <a href="{{ url_for('student_views.my_workshops') }}" class="view-all">View All</a>
               </div>
               <div class="workshop-cards">
                 {% if workshops %}
@@ -211,7 +187,7 @@
                   {% if workshops|length > 3 %}
                     <div class="more-card">
                       <span>+{{ workshops|length - 3 }} more</span>
-                      <a href="{{ url_for('dashboard_views.my_workshops') }}">View All</a>
+                      <a href="{{ url_for('student_views.my_workshops') }}">View All</a>
                     </div>
                   {% endif %}
                 {% else %}
@@ -224,7 +200,7 @@
             <section class="profile-section">
               <div class="section-header">
                 <h3>My Certificates</h3>
-                <a href="{{ url_for('dashboard_views.earned_badges') }}" class="view-all">View All</a>
+                <a href="{{ url_for('student_views.earned_badges') }}" class="view-all">View All</a>
               </div>
               <div class="certificate-cards">
                 {% set certified_competencies = [] %}
@@ -243,14 +219,14 @@
                       <div class="certificate-info">
                         <h4>{{ comp.name }}</h4>
                         <p class="certificate-rank">{{ comp.rank_name }}</p>
-                        <a href="{{ url_for('dashboard_views.view_certificate', competency=comp.name) }}" class="view-certificate">View Certificate</a>
+                        <a href="{{ url_for('student_views.view_certificate', competency=comp.name) }}" class="view-certificate">View Certificate</a>
                       </div>
                     </div>
                   {% endfor %}
                   {% if certified_competencies|length > 3 %}
                     <div class="more-card">
                       <span>+{{ certified_competencies|length - 3 }} more</span>
-                      <a href="{{ url_for('dashboard_views.earned_badges') }}">View All</a>
+                      <a href="{{ url_for('student_views.earned_badges') }}">View All</a>
                     </div>
                   {% endif %}
                 {% else %}
@@ -277,7 +253,7 @@
             <h2 class="modal-title">Edit Personal Information</h2>
             <span class="close">&times;</span>
           </div>
-          <form action="{{ url_for('dashboard_views.update_personal_info') }}" method="post">
+          <form action="{{ url_for('student_views.update_personal_info') }}" method="post">
             <div class="form-group">
               <label for="phone">Phone Number</label>
               <input type="text" id="phone" name="phone" value="{{ user.phone or '' }}" placeholder="Enter your phone number">
@@ -285,6 +261,10 @@
             <div class="form-group">
               <label for="location">Location</label>
               <input type="text" id="location" name="location" value="{{ user.location or 'Trinidad and Tobago' }}" placeholder="Enter your location">
+            </div>
+            <div class="form-group">
+              <label for="degree">Degree Program</label>
+              <input type="text" id="degree" name="degree" value="{{ user.degree or '' }}" placeholder="Enter your degree program">
             </div>
             <div class="modal-footer">
               <button type="button" id="cancel-edit" class="btn btn-secondary">Cancel</button>

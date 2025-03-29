@@ -3,24 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard | Career Competency Tracker</title>
+  <title>Admin Dashboard | Career Competency Tracker</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="../../static/Css/studentdashboard.css">
-  <link rel="stylesheet" href="{{ url_for('static', filename='Css/studentdashboard.css') }}">
+  <!-- Global CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='Css/global.css') }}">
+  <!-- Admin Dashboard CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='Css/admindashboard.css') }}">
   <!-- Navbar CSS -->
-  <link rel="stylesheet" href="../../static/Css/navbar.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='Css/navbar.css') }}">
   <!-- Footer CSS -->
-  <link rel="stylesheet" href="../../static/Css/footer.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='Css/footer.css') }}">
-  <link rel="stylesheet" href="../../static/Css/loader.css">
+  <!-- Loader CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='Css/loader.css') }}">
-  <script src="../../static/JavaScript/loader.js" defer></script>
+  
+  <!-- Chart.js for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- JavaScript files -->
   <script src="{{ url_for('static', filename='JavaScript/loader.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='JavaScript/admindashboard.js') }}" defer></script>
+  
+  <!-- Pass data from Flask to JavaScript -->
+  <script>
+    // Convert Flask data to JavaScript variables
+    window.workshopTrendsLabels = {{ workshop_trends_labels | tojson }};
+    window.workshopCreationData = {{ workshop_creation_data | tojson }};
+    window.workshopAttendanceData = {{ workshop_attendance_data | tojson }};
+    
+    window.competencyLabels = {{ competency_labels | tojson }};
+    window.competencyData = {{ competency_data | tojson }};
+    
+    window.progressLabels = {{ progress_labels | tojson }};
+    window.badgesEarnedData = {{ badges_earned_data | tojson }};
+    window.certificatesIssuedData = {{ certificates_issued_data | tojson }};
+  </script>
 </head>
 <body>
   <div id="loader">
@@ -31,43 +51,147 @@
       <span class="loading">Loading...</span>
     </div>
   </div>
-  <!-- Navbar (already implemented) -->
-  <nav class="navbar">
-    <a href="{{ url_for('dashboard_views.admin_dashboard') }}" class="logo">
-        <img src="../../static/Images/logo.png">
-        <span class="site-title">Career Competency Tracker</span>
-      </a>
-    <div class="nav-items">
-      <a href="{{ url_for('dashboard_views.manage_workshops') }}">Manage Workshops</a>
-        <a href="{{ url_for('dashboard_views.admin_workshop_creation') }}">Create Workshops</a>
-        <a href="{{ url_for('dashboard_views.admin_badges') }}">Award Badges</a>
-        <a href="{{ url_for('dashboard_views.validate_certificates') }}">Validate Certificates</a>
-        <a href="{{ url_for('auth_views.logout_action') }}">Logout</a>
-    </div>
-  </nav>
+  
+  <!-- Navbar -->
+  {% include 'Html/navbar.html' %}
 
   <!-- Background video element -->
   <video autoplay muted loop id="bg-video">
-    <source src="../../static/Videos/stdashboardvid.mp4" type="video/mp4">
+    <source src="{{ url_for('static', filename='Videos/stdashboardvid.mp4') }}" type="video/mp4">
   </video>
 
-  <main class="content dashboard">
-    <div class="dashboard-options">
-      <section class="options">
-        <h3>Administration Options</h3>
-        <a href="{{ url_for('dashboard_views.manage_workshops') }}" class="button">
-            <span class="button-text">Manage Workshops</span>
-          </a>
-        <a href="{{ url_for('dashboard_views.admin_workshop_creation') }}" class="button">
-            <span class="button-text">Create Workshops</span>
+  <main class="dashboard content-container">
+    <div class="dashboard-header">
+      <h2>Administrator Dashboard</h2>
+      <p>Welcome back! Here's an overview of system metrics and recent activities.</p>
+    </div>
+    
+    <div class="dashboard-grid">
+      <!-- Stats Cards Row -->
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-chalkboard-teacher"></i>
+        </div>
+        <div class="stat-value" data-target="{{ workshop_count }}">{{ workshop_count }}</div>
+        <div class="stat-label">Active Workshops</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-user-graduate"></i>
+        </div>
+        <div class="stat-value" data-target="{{ student_count }}">{{ student_count }}</div>
+        <div class="stat-label">Enrolled Students</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-award"></i>
+        </div>
+        <div class="stat-value" data-target="{{ badge_count }}">{{ badge_count }}</div>
+        <div class="stat-label">Badges Awarded</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-certificate"></i>
+        </div>
+        <div class="stat-value" data-target="{{ certificate_count }}">{{ certificate_count }}</div>
+        <div class="stat-label">Certificates Issued</div>
+      </div>
+      
+      <!-- Workshop Trends Chart -->
+      <div class="chart-container full-width">
+        <h3>Workshop Trends</h3>
+        <div class="chart-canvas">
+          <canvas id="workshopTrendsChart"></canvas>
+        </div>
+      </div>
+      
+      <!-- Competencies Distribution Chart -->
+      <div class="chart-container half-width">
+        <h3>Competencies Distribution</h3>
+        {% if competency_labels and competency_labels|length > 0 %}
+          <div class="chart-canvas">
+            <canvas id="competenciesChart"></canvas>
+          </div>
+        {% else %}
+          <div class="no-data-message">
+            <p>No competency data available. Award badges to students to see this chart.</p>
+          </div>
+        {% endif %}
+      </div>
+      
+      <!-- Student Progress Chart -->
+      <div class="chart-container half-width">
+        <h3>Student Progress</h3>
+        {% if badges_earned_data and badges_earned_data|sum > 0 %}
+          <div class="chart-canvas">
+            <canvas id="studentProgressChart"></canvas>
+          </div>
+        {% else %}
+          <div class="no-data-message">
+            <p>No progress data available. Students must earn badges and certificates to see this chart.</p>
+          </div>
+        {% endif %}
+      </div>
+      
+      <!-- Recent Activity Feed -->
+      <div class="activity-feed">
+        <h3>Recent Activity</h3>
+        
+        {% if recent_activities %}
+          {% for activity in recent_activities %}
+          <div class="activity-item">
+            <div class="activity-icon {{ activity.type }}">
+              <i class="{{ activity.icon }}"></i>
+            </div>
+            <div class="activity-content">
+              <div class="activity-title">{{ activity.title }}</div>
+              <div class="activity-time">{{ activity.time }}</div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="activity-item no-activity">
+            <div class="activity-content">
+              <div class="activity-title">No recent activities</div>
+              <div class="activity-subtitle">Create workshops, award badges, or issue certificates to see activity here</div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      
+      <!-- Quick Access Links -->
+      <div class="quick-actions">
+        <a href="{{ url_for('admin_views.manage_workshops') }}" class="action-card">
+          <div class="action-icon">
+            <i class="fas fa-chalkboard-teacher"></i>
+          </div>
+          <div class="action-title">Manage Workshops</div>
         </a>
-        <a href="{{ url_for('dashboard_views.admin_badges') }}" class="button">
-            <span class="button-text">Award Student Badges/Feedback</span>
+        
+        <a href="{{ url_for('admin_views.admin_workshop_creation') }}" class="action-card">
+          <div class="action-icon">
+            <i class="fas fa-plus-circle"></i>
+          </div>
+          <div class="action-title">Create Workshops</div>
         </a>
-        <a href="{{ url_for('dashboard_views.validate_certificates') }}" class="button">
-            <span class="button-text">Validate Certificate Requests</span>
+        
+        <a href="{{ url_for('admin_views.admin_badges') }}" class="action-card">
+          <div class="action-icon">
+            <i class="fas fa-award"></i>
+          </div>
+          <div class="action-title">Award Badges</div>
         </a>
-      </section>
+        
+        <a href="{{ url_for('admin_views.validate_certificates') }}" class="action-card">
+          <div class="action-icon">
+            <i class="fas fa-certificate"></i>
+          </div>
+          <div class="action-title">Validate Certificates</div>
+        </a>
+      </div>
     </div>
   </main>
 

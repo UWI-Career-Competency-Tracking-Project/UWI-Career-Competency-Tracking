@@ -6,28 +6,28 @@
   }
   
   body {
-    background-color: #121212; /* Fallback if video doesn't load */
+    background-color: #121212; 
     color: #f5f5f5;
     font-family: 'Poppins', sans-serif;
-    /* No special positioning or z-index here; let the video go behind */
   }
   
   /* Background video behind everything */
   #bg-video {
-    position: fixed;   /* Stays in place even if page is scrolled */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Ensures the video covers the entire area */
-    z-index: -1;       /* Places video behind all other elements */
+    object-fit: cover;
+    z-index: -1; 
+    opacity: 0.9; 
   }
   
   /* Main content ensures space for footer (if fixed) */
   .content {
-    padding-bottom: 80px; /* Adjust if your footer height changes */
-    position: relative;   /* Default or relative ensures it's above z-index -1 */
-    z-index: 1;           /* Optional: explicitly set a positive z-index */
+    padding-bottom: 80px; 
+    position: relative;   
+    z-index: 5;           
   }
   
   /* Profile page layout - replaced by profile-container */
@@ -37,7 +37,6 @@
     margin: 20px auto; 
     gap: 20px;
     padding: 0 20px;
-    /* No negative z-index here */
   }
   
   /* Left column with cards - replaced by profile-left-column */
@@ -55,6 +54,8 @@
     margin: 20px auto;
     gap: 30px;
     padding: 0 20px;
+    position: relative;
+    z-index: 10; 
   }
   
   .profile-left-column {
@@ -88,7 +89,7 @@
     margin-bottom: 20px;
     font-size: 1.5rem;
     font-weight: 700;
-    color: #00adb5; /* Teal color to match theme */
+    color: #00adb5; 
     text-align: center;
     text-transform: uppercase;
   
@@ -125,19 +126,16 @@
   
   /* Card styling */
   .profile-card {
-    /* Existing properties (from your code) */
-    background-color: rgba(30, 30, 30, 0.5); /* More transparent for glass effect */
+    background-color: rgba(30, 30, 30, 0.5); 
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     color: #fff;
     padding: 16px;
     position: relative;
-    /* Additional new styles */
     border: 1px solid rgba(255, 255, 255, 0.2); 
     backdrop-filter: blur(8px);
-    /* Subtle load-in animation */
     animation: fadeInUp 0.6s ease forwards;
-    margin-bottom: 5px; /* small gap from card to card if needed */
+    margin-bottom: 5px; 
   }
   
   /* Card header label text gets a subtle gradient for a fancier look */
@@ -278,7 +276,7 @@
 }
 
 .resume-link:hover {
-  color: #ffffff; /* Or some lighter color */
+  color: #ffffff; 
 }
 
 .resume-link:hover::after {
@@ -306,9 +304,9 @@
 
   .profile-right.title {
     display: flex;
-    justify-content: center;   /* Center horizontally */
-    align-items: center;       /* Center vertically if a height is set */
-    height: 100px;             /* Example fixed height */
+    justify-content: center;  
+    align-items: center;       
+    height: 100px;           
   }
 
   .profile-right.title h3 {
@@ -322,7 +320,6 @@
   
   /* Big teal boxes on the right */
   .big-option {
-    /* A partially transparent teal gradient */
     background: linear-gradient(
       135deg,
       rgba(0, 173, 181, 0.7) 0%,
@@ -342,24 +339,17 @@
     letter-spacing: 1px;
     text-transform: uppercase;
   
-    /* Make text pop off backgrounds */
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
-  
-    /* Subtle border */
     border: 1px solid rgba(255, 255, 255, 0.3);
-  
-    /* Smooth transitions for hover states */
     transition:
       transform 0.3s ease,
       background-color 0.3s ease,
       box-shadow 0.3s ease;
   
-    /* Frosted glass behind it (optional) */
     backdrop-filter: blur(5px);
   
-    /* Fade-in scale animation */
     animation: fadeIn 0.8s ease forwards;
-    opacity: 0; /* start invisible, fadeIn anim sets to 1 */
+    opacity: 0; 
   }
   
   /* Hover effect: shift, scale, glow, rotate text? Up to you! */

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Creation</title>
+    <title>Home</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,13 +33,13 @@
           <span class="loading">Loading...</span>
         </div>
       </div>
-      <!-- Navbar (already implemented) -->
+
       <nav class="navbar">
-        <a href="{{ url_for('dashboard_views.student_dashboard') }}" class="logo">
-            <img src="../../static/Images/logo.png">
+        <a href="{{ url_for('index_views.index_page') }}" class="logo">
+            <img src="{{ url_for('static', filename='Images/logo.png') }}">
             <span class="site-title">Career Competency Tracker</span>
           </a>
-        <div class="nav-items"><!-- add in the respective page links -->
+        <div class="nav-items">
           <a href="{{ url_for('auth_views.login') }}">Login</a>
           <a href="{{ url_for('auth_views.signup') }}">Sign up</a>
         </div>
@@ -51,7 +51,6 @@
       </video>
 
     <main>
-        <!-- main page body here -->
         <div class="circle-card">
           <h2>Welcome to the Career Competency Tracking System</h2>
           <p>Select an option to proceed:</p>
