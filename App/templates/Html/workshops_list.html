@@ -1,30 +1,36 @@
 {% if workshops %}
     {% for workshop in workshops %}
-        <div class="workshop-card">
-            {% if workshop.image_path %}
-                <img src="{{ url_for('static', filename=workshop.image_path) }}" alt="{{ workshop.workshopName }}" class="workshop-image">
-            {% endif %}
+        <div class="workshop-card" {% if workshop.image_path %}style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('{{ url_for('static', filename=workshop.image_path) }}');"{% endif %}>
             <div class="workshop-content">
                 <h3>{{ workshop.workshopName }}</h3>
-                <p class="description">{{ workshop.workshopDescription }}</p>
+                <p class="workshop-description">{{ workshop.workshopDescription }}</p>
                 <div class="workshop-details">
-                    <p><i class="fas fa-calendar"></i> {{ workshop.workshopDate.strftime('%B %d, %Y') }}</p>
-                    <p><i class="fas fa-clock"></i> {{ workshop.workshopTime }}</p>
-                    <p><i class="fas fa-map-marker-alt"></i> {{ workshop.location }}</p>
-                    <p><i class="fas fa-chalkboard-teacher"></i> {{ workshop.instructor }}</p>
+                    <p><i class="fas fa-user"></i> <strong>Instructor:</strong> {{ workshop.instructor }}</p>
+                    <p><i class="fas fa-calendar"></i> <strong>Date:</strong> {{ workshop.workshopDate.strftime('%B %d, %Y') }}</p>
+                    <p><i class="fas fa-clock"></i> <strong>Time:</strong> {{ workshop.workshopTime }}</p>
+                    <p><i class="fas fa-location-dot"></i> <strong>Location:</strong> {{ workshop.location }}</p>
                 </div>
+                {% if workshop.competencies %}
                 <div class="competencies">
                     <h4>Competencies:</h4>
-                    <ul>
+                    <div class="tags">
                         {% for competency in workshop.competencies %}
-                            <li>{{ competency }}</li>
+                        <span class="tag">{{ competency }}</span>
                         {% endfor %}
-                    </ul>
+                    </div>
                 </div>
-                <a href="{{ url_for('dashboard_views.enroll_workshop', workshop_id=workshop.id) }}" class="enroll-btn">Enroll Now</a>
+                {% endif %}
             </div>
+            <a href="{{ url_for('student_views.enroll_workshop', workshop_id=workshop.id) }}" class="enroll-button">Enroll Now</a>
         </div>
     {% endfor %}
 {% else %}
-    <p class="no-workshops">No workshops found matching your search.</p>
+    <div class="no-workshops-message">
+        {% if search_query %}
+            <p>No workshops found matching "{{ search_query }}". Try a different search term or check back later.</p>
+        {% else %}
+            <p>No available workshops found. You may have enrolled in all current workshops or check back later for new offerings.</p>
+        {% endif %}
+        <a href="{{ url_for('student_views.my_workshops') }}" class="view-enrolled-button">View My Enrolled Workshops</a>
+    </div>
 {% endif %} 

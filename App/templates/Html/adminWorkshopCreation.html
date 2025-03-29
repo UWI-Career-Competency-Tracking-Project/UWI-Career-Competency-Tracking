@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/global.css') }}">
     <!-- Navbar CSS -->
     <link rel="stylesheet" href="../../static/Css/navbar.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/navbar.css') }}">
@@ -23,6 +25,15 @@
     <!-- Page CSS -->
     <link rel="stylesheet" href="../../static/Css/adminWorkshopCreation.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/admin_workshop_creation.css') }}">
+    
+    <!-- Select2 library -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="../../static/JavaScript/adminWorkshopCreation.js" defer></script>
+    <script src="{{ url_for('static', filename='JavaScript/adminWorkshopCreation.js') }}" defer></script>
 </head>
 <body>
     <div id="loader">
@@ -36,39 +47,39 @@
 
     <!-- Navbar -->
     <nav class="navbar">
-        <a href="{{ url_for('dashboard_views.student_dashboard') }}" class="logo">
+        <a href="{{ url_for('admin_views.admin_dashboard') }}" class="logo">
             <img src="../../static/Images/logo.png">
             <span class="site-title">Career Competency Tracker</span>
         </a>
         <div class="nav-items">
-            <a href="{{ url_for('dashboard_views.manage_workshops') }}">Manage Workshops</a>
-            <a href="{{ url_for('dashboard_views.admin_workshop_creation') }}">Create Workshops</a>
-            <a href="{{ url_for('dashboard_views.admin_badges') }}">Award Badges</a>
-            <a href="{{ url_for('dashboard_views.validate_certificates') }}">Validate Certificates</a>
+            <a href="{{ url_for('admin_views.manage_workshops') }}">Manage Workshops</a>
+            <a href="{{ url_for('admin_views.admin_workshop_creation') }}">Create Workshops</a>
+            <a href="{{ url_for('admin_views.admin_badges') }}">Award Badges</a>
+            <a href="{{ url_for('admin_views.validate_certificates') }}">Validate Certificates</a>
             <a href="{{ url_for('auth_views.logout_action') }}">Logout</a>
         </div>
     </nav>
 
     <!-- Background Video -->
     <video autoplay muted loop id="bg-video">
-        <source src="../../static/Videos/stdashboardvid.mp4" type="video/mp4">
+        <source src="{{ url_for('static', filename='Videos/stdashboardvid.mp4') }}" type="video/mp4">
     </video>
 
-    <main>
+    <main class="content-container">
         <div class="workshop-container">
             <div class="title-row">
                 <h2>Workshop Creation</h2>
               </div>
               
-              <!-- Notify Row (alone) -->
+              <!-- Replace checkbox with notification message -->
               <div class="notify-row">
-                <div class="checkbox-group">
-                  <label for="notify">Notify Students</label>
-                  <input type="checkbox" id="notify" name="notify_students">
+                <div class="info-message">
+                  <i class="fas fa-bell"></i>
+                  <span>All students will be notified when a new workshop is created</span>
                 </div>
               </div>
             
-              <form method="POST" action="{{ url_for('dashboard_views.admin_workshop_creation') }}" enctype="multipart/form-data">
+              <form method="POST" action="{{ url_for('admin_views.admin_workshop_creation') }}" enctype="multipart/form-data" id="workshopForm">
                 <!-- Your existing .form-row blocks for code, date/time, etc. -->
                 <div class="form-row">
                   <div class="form-group">
@@ -111,14 +122,32 @@
                   </div>
 
                   <div class="form-group">
-                    <label>Competencies (comma-separated)</label>
-                    <input type="text" name="competencies" placeholder="e.g. Leadership, Communication, Technical Skills">
-                    <small>Enter competencies that students will gain from this workshop</small>
+                    <label>Competencies</label>
+                    <select name="competencies[]" multiple class="competencies-select">
+                      <option value="Programming">Programming</option>
+                      <option value="Problem Solving">Problem Solving</option>
+                      <option value="Team Work">Team Work</option>
+                      <option value="Data Analysis">Data Analysis</option>
+                      <option value="Communication">Communication</option>
+                      <option value="Leadership">Leadership</option>
+                      <option value="Design Thinking">Design Thinking</option>
+                      <option value="Creativity">Creativity</option>
+                      <option value="Cloud Computing">Cloud Computing</option>
+                      <option value="System Administration">System Administration</option>
+                      <option value="Business Analysis">Business Analysis</option>
+                      <option value="Testing">Testing</option>
+                      <option value="Attention to Detail">Attention to Detail</option>
+                      <option value="Database Management">Database Management</option>
+                      <option value="Security">Security</option>
+                      <option value="Technical Writing">Technical Writing</option>
+                      <option value="Documentation">Documentation</option>
+                    </select>
+                    <small>Click to select multiple competencies (search also available)</small>
                   </div>
                 </div>
 
                 <div class="form-row">
-                  <button type="submit">Create Workshop</button>
+                  <button type="submit" id="submitButton">Create Workshop</button>
                 </div>
             </form>
         </div>

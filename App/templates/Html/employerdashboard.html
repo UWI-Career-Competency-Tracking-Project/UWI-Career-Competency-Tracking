@@ -8,9 +8,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="../../static/Css/studentdashboard.css">
-  <link rel="stylesheet" href="{{ url_for('static', filename='Css/studentdashboard.css') }}">
+  <!-- Global CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='Css/global.css') }}">
+  <!-- Dashboard CSS -->
+  <link rel="stylesheet" href="../../static/Css/employerdashboard.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='Css/employerdashboard.css') }}">
   <!-- Navbar CSS -->
   <link rel="stylesheet" href="../../static/Css/navbar.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='Css/navbar.css') }}">
@@ -31,28 +33,28 @@
       <span class="loading">Loading...</span>
     </div>
   </div>
-  <!-- Navbar (already implemented) -->
+
   <nav class="navbar">
-    <a href="{{ url_for('dashboard_views.employer_dashboard') }}" class="logo">
+    <a href="{{ url_for('employer_views.employer_dashboard') }}" class="logo">
         <img src="../../static/Images/logo.png">
         <span class="site-title">Career Competency Tracker</span>
       </a>
     <div class="nav-items">
-      <a href="{{ url_for('dashboard_views.search_candidates') }}">Search Candidates</a>
+      <a href="{{ url_for('employer_views.search_candidates') }}">Search Candidates</a>
       <a href="{{ url_for('auth_views.logout_action') }}">Logout</a>
     </div>
   </nav>
 
   <!-- Background video element -->
   <video autoplay muted loop id="bg-video">
-    <source src="../../static/Videos/stdashboardvid.mp4" type="video/mp4">
+    <source src="{{ url_for('static', filename='Videos/employerdashboard.mp4') }}" type="video/mp4">
   </video>
 
-  <main class="content dashboard">
+  <main class="content-container">
     <div class="dashboard-options">
       <section class="options">
         <h3>Employer Options</h3>
-        <a href="{{ url_for('dashboard_views.search_candidates') }}" class="button">
+        <a href="{{ url_for('employer_views.search_candidates') }}" class="button">
             <span class="button-text">Search Candidates</span>
         </a>
       </section>

@@ -58,4 +58,25 @@
     padding: 3px 8px;
     border-radius: 4px;
     font-size: 0.8rem;
+}
+
+/* Fix for footer positioning */
+body {
+    min-height: 100vh;
+    position: relative;
+    padding-bottom: 60px; /* Ensure there's space for the footer */
+    margin: 0;
+}
+
+.footer {
+    position: fixed; /* Changed from absolute to fixed */
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+/* Ensure the main content doesn't get hidden by the fixed footer */
+.content {
+    padding-bottom: 30px;
 } 

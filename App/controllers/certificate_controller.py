@@ -15,10 +15,17 @@ def request_certificate(student_id, competency):
         if existing_request:
             return False, 'A request for this competency is already pending.'
         
+        student = Student.query.get(student_id)
+        if student and student.competencies.get(competency, {}).get('certificate_status') == 'denied':
+            print(f"Resubmitting previously denied certificate request for {competency}")
+            
         new_request = CertificateRequest(
             student_id=student_id,
             competency=competency
         )
+        
+        if student:
+            student.update_competency_certificate_status(competency, 'pending')
         
         db.session.add(new_request)
         db.session.commit()
@@ -50,10 +57,12 @@ def process_request(request_id, action):
             
         request.status = action + 'd'  
         
-        if action == 'approve':
-            student = Student.query.get(request.student_id)
-            if student:
+        student = Student.query.get(request.student_id)
+        if student:
+            if action == 'approve':
                 student.update_competency_certificate_status(request.competency, 'approved')
+            elif action == 'deny':
+                student.update_competency_certificate_status(request.competency, 'denied')
         
         db.session.commit()
         return True, f'Certificate request {action}d successfully.'

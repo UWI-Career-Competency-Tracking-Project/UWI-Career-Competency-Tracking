@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify, request, flash, send_from_directory, flash, redirect, url_for
+from flask import Blueprint, render_template, jsonify, request, flash, send_from_directory, flash, redirect, url_for, session
 from flask_jwt_extended import jwt_required, current_user, unset_jwt_cookies, set_access_cookies
 from flask_login import login_user, logout_user, login_required
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -77,7 +77,6 @@ def signup():
             db.session.add(new_user)
             db.session.commit()
             
-            # Verify the user type after creation
             created_user = User.query.filter_by(username=username).first()
             print(f"Created user type: {created_user.user_type}") 
             
@@ -88,6 +87,9 @@ def signup():
             db.session.rollback()
             flash('An error occurred during registration.', 'error')
             return redirect(url_for('auth_views.signup'))
+
+    else:
+        session.pop('_flashes', None)
 
     return render_template('Html/signup.html')
 
@@ -102,18 +104,18 @@ def login():
             login_user(user)
             flash('Logged in successfully!', 'success')
             
-            # Redirect based on user type
             if user.user_type == 'student':
-                return redirect(url_for('dashboard_views.student_profile'))
+                return redirect(url_for('student_views.student_profile'))
             elif user.user_type == 'admin':
-                return redirect(url_for('dashboard_views.admin_dashboard'))
+                return redirect(url_for('admin_views.admin_dashboard'))
             elif user.user_type == 'employer':
-                return redirect(url_for('dashboard_views.search_candidates'))
+                return redirect(url_for('employer_views.search_candidates'))
             
-            # Fallback to main dashboard if user type is not recognized
             return redirect(url_for('dashboard_views.dashboard'))
         else:
             flash('Invalid username or password.', 'error')
+    else:
+        session.pop('_flashes', None)
 
     return render_template('Html/login.html')
 
@@ -121,7 +123,10 @@ def login():
 @login_required
 def logout_action():
     logout_user()
+    
+    old_flashes = session.pop('_flashes', [])
     flash('Logged out successfully.', 'success')
+    
     return redirect(url_for('auth_views.login'))
 
 @auth.route('/api/login', methods=['POST'])

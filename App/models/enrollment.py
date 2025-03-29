@@ -7,7 +7,11 @@ class Enrollment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
     workshop_id = db.Column(db.Integer, db.ForeignKey('workshops.id'), nullable=False)
-    enrollment_date = db.Column(db.DateTime, default=datetime.utcnow)
+    enrollment_date = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    status = db.Column(db.String(20), default='enrolled')
+    attended = db.Column(db.Boolean, default=False)
+    attendance_date = db.Column(db.DateTime, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     student = db.relationship('Student', back_populates='enrollments')
     workshop = db.relationship('Workshop', back_populates='enrollments')
@@ -15,6 +19,10 @@ class Enrollment(db.Model):
     def __init__(self, student_id, workshop_id):
         self.student_id = student_id
         self.workshop_id = workshop_id
+        self.enrollment_date = datetime.now()
+        self.status = 'enrolled'
+        self.attended = False
+        self.attendance_date = None
 
     def add_workshop_competencies(self):
         """Add workshop competencies to the student"""
@@ -75,6 +83,21 @@ class Enrollment(db.Model):
             traceback.print_exc()
             db.session.rollback()
             return False
+
+    def mark_attended(self):
+        self.attended = True
+        self.attendance_date = datetime.now()
+        self.status = 'completed'
+        db.session.commit()
+    
+    def mark_not_attended(self):
+        self.attended = False
+        self.attendance_date = None
+        db.session.commit()
+    
+    def cancel(self):
+        self.status = 'cancelled'
+        db.session.commit()
 
     def __repr__(self):
         return f'<Enrollment {self.student_id} - {self.workshop_id}>' 

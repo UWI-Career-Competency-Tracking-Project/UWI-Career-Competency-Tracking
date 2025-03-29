@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/global.css') }}">
     <!-- Link to your CSS file -->
     <link rel="stylesheet" href="../../static/Css/competencies.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/competencies.css') }}">
@@ -21,6 +23,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/loader.css') }}">
     <script src="../../static/JavaScript/loader.js" defer></script>
     <script src="{{ url_for('static', filename='JavaScript/loader.js') }}" defer></script>
+    <!-- Notifications JavaScript -->
+    <script src="{{ url_for('static', filename='JavaScript/notifications.js') }}" defer></script>
 </head>
 <body>
     <div id="loader">
@@ -30,44 +34,16 @@
           <div class="ring"></div>
           <span class="loading">Loading...</span>
         </div>
-      </div>
-      <!-- Navbar (already implemented) -->
-      <nav class="navbar">
-        <a href="{{ url_for('dashboard_views.student_dashboard') }}" class="logo">
-            <img src="{{ url_for('static', filename='Images/logo.png') }}">
-            <span class="site-title">Career Competency Tracker</span>
-          </a>
-        <div class="nav-items">
-          <a href="{{ url_for('dashboard_views.my_workshops') }}">My Workshops</a>
-          <a href="{{ url_for('dashboard_views.workshops') }}">Available Workshops</a>
-          <a href="{{ url_for('dashboard_views.competencies') }}">Tracked Comps</a>
-          <a href="{{ url_for('dashboard_views.earned_badges') }}">Badges & Certificates</a>
-          <div class="profile-dropdown" tabindex="0">
-            <div class="profile-trigger">
-              {% if user.profile_pic %}
-                <img src="{{ url_for('static', filename='profile_pics/' + user.profile_pic) }}" alt="User Profile">
-              {% else %}
-                <img src="https://via.placeholder.com/40" alt="User Profile">
-              {% endif %}
-            </div>
-            <div class="dropdown-content">
-              <div class="dropdown-header">
-                <span class="dropdown-username">{{ user.first_name }} {{ user.last_name }}</span>
-                <div class="dropdown-separator"></div>
-              </div>
-              <a href="{{ url_for('dashboard_views.student_profile') }}">Profile</a>
-              <a href="{{ url_for('auth_views.logout_action') }}">Sign Out</a>
-            </div>
-          </div>
-        </div>
-      </nav>
+    </div>
+    
+    {% include 'Html/navbar.html' %}
 
-      <!-- Background video element -->
-      <video autoplay muted loop id="bg-video">
-        <source src="../../static/Videos/growth.mp4" type="video/mp4">
-      </video>
+    <!-- Background video element -->
+    <video autoplay muted loop id="bg-video">
+        <source src="{{ url_for('static', filename='Videos/growth.mp4') }}" type="video/mp4">
+    </video>
 
-    <main>
+    <main class="content-container">
         <div class="competencies-container">
             <h2>My Competencies</h2>
             
@@ -105,11 +81,16 @@
                         
                         {% if rank == 3 %}
                             {% if details.certificate_status == 'approved' %}
-                                <a href="{{ url_for('dashboard_views.view_certificate', competency=competency) }}" class="certificate-button view">View Certificate</a>
+                                <a href="{{ url_for('student_views.view_certificate', competency=competency) }}" class="certificate-button view">View Certificate</a>
                             {% elif details.certificate_status == 'pending' %}
                                 <button class="certificate-button pending" disabled>Certificate Request Pending</button>
+                            {% elif details.certificate_status == 'denied' %}
+                                <form action="{{ url_for('student_views.request_certificate') }}" method="POST">
+                                    <input type="hidden" name="competency" value="{{ competency }}">
+                                    <button type="submit" class="certificate-button denied">Request Denied - Request Again</button>
+                                </form>
                             {% else %}
-                                <form action="{{ url_for('dashboard_views.request_certificate') }}" method="POST">
+                                <form action="{{ url_for('student_views.request_certificate') }}" method="POST">
                                     <input type="hidden" name="competency" value="{{ competency }}">
                                     <button type="submit" class="certificate-button request">Request Certificate</button>
                                 </form>

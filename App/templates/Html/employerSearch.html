@@ -31,14 +31,14 @@
           <span class="loading">Loading...</span>
         </div>
       </div>
-      <!-- Navbar (already implemented) -->
+
       <nav class="navbar">
-        <a href="{{ url_for('dashboard_views.student_dashboard') }}" class="logo">
+        <a href="{{ url_for('employer_views.employer_dashboard') }}" class="logo">
             <img src="../../static/Images/logo.png">
             <span class="site-title">Career Competency Tracker</span>
           </a>
-        <div class="nav-items"><!-- add in the respective page links -->
-          <a href="{{ url_for('dashboard_views.search_candidates') }}">Search Candidates</a>
+        <div class="nav-items">
+          <a href="{{ url_for('employer_views.search_candidates') }}">Search Candidates</a>
           <a href="{{ url_for('auth_views.logout_action') }}">Logout</a>
         </div>
       </nav>
@@ -49,7 +49,6 @@
       </video>
 
     <main>
-        <!-- main page body here -->
 
         <div class="search-container">
             <h2>Search Candidates</h2>
@@ -80,7 +79,7 @@
                 {% for student in students %}
                     <div class="candidate-card">
                         <div class="candidate-info">
-                            <h3><a href="{{ url_for('dashboard_views.view_candidate_profile', student_id=student.id) }}" class="student-name-link">{{ student.first_name }} {{ student.last_name }}</a></h3>
+                            <h3><a href="{{ url_for('employer_views.view_candidate_profile', student_id=student.id) }}" class="student-name-link">{{ student.first_name }} {{ student.last_name }}</a></h3>
                             <p class="email"><i class="fas fa-envelope"></i> {{ student.email }}</p>
                         </div>
                         {% if student.competencies %}
@@ -118,41 +117,10 @@
             timeoutId = setTimeout(() => {
                 const searchQuery = document.getElementById('competency-search').value;
                 const rankFilter = document.getElementById('rank-filter').value;
-                window.location.href = `{{ url_for('dashboard_views.search_candidates') }}?competency=${encodeURIComponent(searchQuery)}&rank=${encodeURIComponent(rankFilter)}`;
+                window.location.href = `{{ url_for('employer_views.search_candidates') }}?competency=${encodeURIComponent(searchQuery)}&rank=${encodeURIComponent(rankFilter)}`;
             }, 300);
         }
     </script>
-
-    <style>
-        .search-controls {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .search-input {
-            flex: 1;
-            position: relative;
-        }
-
-        .filter-select select {
-            padding: 0.5rem 1rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: white;
-            font-size: 1rem;
-            min-width: 150px;
-        }
-
-        .filter-select select:focus {
-            outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
-        }
-    </style>
-    
 
     <!-- Footer with animated loading bar -->
     <footer class="footer">

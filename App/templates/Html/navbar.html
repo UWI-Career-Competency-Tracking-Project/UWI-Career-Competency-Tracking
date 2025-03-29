@@ -1,58 +1,110 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Career Competency Tracker</title>
-    <link rel="stylesheet" href="../../static/Css/navbar.css">
-</head>
-<body>
-    <div class="hero">
-        <nav>
-            <img src="../../static/Images/logo.png" class="Logo">
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Features</a></li>
-                <li><a href="#">About</a></li>
-            </ul>
-            <img src="../../static/Images/logo.png" class="user-pic" onclick="toggleMenu()">
-
-            <div class=" sub-menu-wrap" id="subMenu">
-                <div class="sub-menu">
-                    <div class="user-info">
-                        <img src="../../static/Images/logo.png">
-                        <h2>John Doe</h2>
-                    </div>
-                    <hr>
-
-                    <a href="#" class="sub-menu-link">
-                        <img src="../../static/Images/logo.png">
-                        <p>Profile</p>
-                        <span></span>
-                    </a>
-                    <a href="#" class="sub-menu-link">
-                        <img src="../../static/Images/logo.png">
-                        <p>Notifications</p>
-                        <span></span>
-                    </a>
-                    <a href="#" class="sub-menu-link">
-                        <img src="../../static/Images/logo.png">
-                        <p></p>
-                        <span>Settings</span>
-                    </a>
-                    <a href="#" class="sub-menu-link">
-                        <img src="../../static/Images/logo.png">
-                        <p>Logout</p>
-                        <span></span>
-                    </a>
-                </div>
-            </div>
-        </nav>
+<!-- Student Navbar Template for Career Competency Tracker -->
+{% if user and user.user_type == 'student' %}
+<nav class="navbar">
+  <a href="{{ url_for('student_views.student_profile') }}" class="logo">
+    <img src="{{ url_for('static', filename='Images/logo.png') }}">
+    <span class="site-title">Career Competency Tracker</span>
+  </a>
+  <div class="nav-items">
+    <a href="{{ url_for('student_views.my_workshops') }}">My Workshops</a>
+    <a href="{{ url_for('dashboard_views.workshops') }}">Available Workshops</a>
+    <a href="{{ url_for('student_views.competencies') }}">Tracked Comps</a>
+    <a href="{{ url_for('student_views.earned_badges') }}">Badges & Certificates</a>
+    
+    <!-- Notifications Dropdown -->
+    <div class="notifications-dropdown" tabindex="0">
+      <div class="notifications-trigger">
+        <i class="fas fa-bell"></i>
+        <span class="notification-badge" id="notification-count">0</span>
+      </div>
+      <div class="dropdown-content notifications-content">
+        <div class="dropdown-header">
+          <span class="dropdown-title">Notifications</span>
+          <button id="mark-all-read" class="mark-all-btn">Mark all as read</button>
+          <div class="dropdown-separator"></div>
+        </div>
+        <div class="notifications-list" id="notifications-list">
+          <div class="notification-loading">Loading notifications...</div>
+        </div>
+      </div>
     </div>
-
-    <main class="content">
-
-    </main>
-
-    <script src="../../static/JavaScript/navbar.js"></script>
-</body>
-</html>
+    
+    <!-- Profile Dropdown -->
+    <div class="profile-dropdown" tabindex="0">
+      <div class="profile-trigger">
+        {% if user.profile_pic %}
+          <img src="{{ url_for('static', filename='profile_pics/' + user.profile_pic) }}" alt="User Profile">
+        {% else %}
+          <img src="https://via.placeholder.com/40" alt="User Profile">
+        {% endif %}
+      </div>
+      <div class="dropdown-content">
+        <div class="dropdown-header">
+          <span class="dropdown-username">{{ user.first_name }} {{ user.last_name }}</span>
+          <div class="dropdown-separator"></div>
+        </div>
+        <a href="{{ url_for('student_views.student_profile') }}">Profile</a>
+        <a href="{{ url_for('auth_views.logout_action') }}">Sign Out</a>
+      </div>
+    </div>
+  </div>
+</nav>
+{% elif user and user.user_type == 'admin' %}
+<!-- Admin Navbar -->
+<nav class="navbar">
+  <a href="{{ url_for('admin_views.admin_dashboard') }}" class="logo">
+    <img src="{{ url_for('static', filename='Images/logo.png') }}">
+    <span class="site-title">Career Competency Tracker</span>
+  </a>
+  <div class="nav-items">
+    <a href="{{ url_for('admin_views.manage_workshops') }}">Manage Workshops</a>
+    <a href="{{ url_for('admin_views.admin_workshop_creation') }}">Create Workshops</a>
+    <a href="{{ url_for('admin_views.admin_badges') }}">Award Badges</a>
+    <a href="{{ url_for('admin_views.validate_certificates') }}">Validate Certificates</a>
+    
+    <!-- Profile Dropdown -->
+    <div class="profile-dropdown" tabindex="0">
+      <div class="profile-trigger">
+        <i class="fas fa-user-shield"></i>
+      </div>
+      <div class="dropdown-content">
+        <div class="dropdown-header">
+          <span class="dropdown-username">Administrator</span>
+          <div class="dropdown-separator"></div>
+        </div>
+        <a href="{{ url_for('admin_views.admin_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('auth_views.logout_action') }}">Sign Out</a>
+      </div>
+    </div>
+  </div>
+</nav>
+{% elif user and user.user_type == 'employer' %}
+<!-- Employer Navbar -->
+<nav class="navbar">
+  <a href="{{ url_for('employer_views.employer_dashboard') }}" class="logo">
+    <img src="{{ url_for('static', filename='Images/logo.png') }}">
+    <span class="site-title">Career Competency Tracker</span>
+  </a>
+  <div class="nav-items">
+    <a href="{{ url_for('employer_views.search_candidates') }}">Search Candidates</a>
+    <a href="{{ url_for('auth_views.logout_action') }}">Logout</a>
+  </div>
+</nav>
+{% else %}
+<!-- Default Navbar (fallback) -->
+<nav class="navbar">
+  <a href="{{ url_for('index_views.index_page') }}" class="logo">
+    <img src="{{ url_for('static', filename='Images/logo.png') }}">
+    <span class="site-title">Career Competency Tracker</span>
+  </a>
+  <div class="nav-items">
+    {% if user %}
+      <a href="{{ url_for('dashboard_views.dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('auth_views.logout_action') }}">Logout</a>
+    {% else %}
+      <a href="{{ url_for('auth_views.login') }}">Login</a>
+      <a href="{{ url_for('auth_views.signup') }}">Sign Up</a>
+    {% endif %}
+  </div>
+</nav>
+{% endif %} 

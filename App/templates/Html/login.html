@@ -32,9 +32,9 @@
         </div>
     </div>
     
-    <!-- Navbar -->
+
     <nav class="navbar">
-        <a href="{{ url_for('dashboard_views.student_dashboard') }}" class="logo">
+        <a href="{{ url_for('main_views.home') }}" class="logo">
             <img src="../../static/Images/logo.png">
             <span class="site-title">Career Competency Tracker</span>
         </a>
@@ -50,7 +50,6 @@
     </video>
 
     <main>
-        <!-- Centered login card -->
         <div class="login-container">
             <div class="container">
                 <h2>Login</h2>
@@ -59,7 +58,7 @@
                     {% if messages %}
                         <div class="flash-messages">
                             {% for category, message in messages %}
-                                <div class="alert alert-{{ category }}" role="alert">
+                                <div class="alert alert-{{ category }} fade-in" role="alert">
                                     {{ message }}
                                 </div>
                             {% endfor %}

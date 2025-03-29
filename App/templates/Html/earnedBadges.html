@@ -4,11 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Earned Badges & Certificates</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='Css/earnedBadges.css') }}">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/global.css') }}">
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='Css/earnedBadges.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
     <!-- Navbar CSS -->
     <link rel="stylesheet" href="../../static/Css/navbar.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/navbar.css') }}">
@@ -19,6 +23,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/loader.css') }}">
     <script src="../../static/JavaScript/loader.js" defer></script>
     <script src="{{ url_for('static', filename='JavaScript/loader.js') }}" defer></script>
+    <!-- Notifications JavaScript -->
+    <script src="{{ url_for('static', filename='JavaScript/notifications.js') }}" defer></script>
 </head>
 <body>
     <div id="loader">
@@ -28,44 +34,16 @@
           <div class="ring"></div>
           <span class="loading">Loading...</span>
         </div>
-      </div>
-      <!-- Navbar (already implemented) -->
-      <nav class="navbar">
-        <a href="{{ url_for('dashboard_views.student_dashboard') }}" class="logo">
-            <img src="{{ url_for('static', filename='Images/logo.png') }}">
-            <span class="site-title">Career Competency Tracker</span>
-          </a>
-        <div class="nav-items">
-          <a href="{{ url_for('dashboard_views.my_workshops') }}">My Workshops</a>
-          <a href="{{ url_for('dashboard_views.workshops') }}">Available Workshops</a>
-          <a href="{{ url_for('dashboard_views.competencies') }}">Tracked Comps</a>
-          <a href="{{ url_for('dashboard_views.earned_badges') }}">Badges & Certificates</a>
-          <div class="profile-dropdown" tabindex="0">
-            <div class="profile-trigger">
-              {% if user.profile_pic %}
-                <img src="{{ url_for('static', filename='profile_pics/' + user.profile_pic) }}" alt="User Profile">
-              {% else %}
-                <img src="https://via.placeholder.com/40" alt="User Profile">
-              {% endif %}
-            </div>
-            <div class="dropdown-content">
-              <div class="dropdown-header">
-                <span class="dropdown-username">{{ user.first_name }} {{ user.last_name }}</span>
-                <div class="dropdown-separator"></div>
-              </div>
-              <a href="{{ url_for('dashboard_views.student_profile') }}">Profile</a>
-              <a href="{{ url_for('auth_views.logout_action') }}">Sign Out</a>
-            </div>
-          </div>
-        </div>
-      </nav>
+    </div>
+    
+    {% include 'Html/navbar.html' %}
 
-      <!-- Background video element -->
-      <video autoplay muted loop id="bg-video">
-        <source src="{{ url_for('static', filename='Videos/badges.mp4') }}" type="video/mp4">
-      </video>
+    <!-- Background video element -->
+    <video autoplay muted loop id="bg-video">
+      <source src="{{ url_for('static', filename='Videos/badges.mp4') }}" type="video/mp4">
+    </video>
 
-    <main>
+    <main class="content-container">
         <div class="badges-container">
             <h2>Your Earned Badges & Certificates</h2>
             
@@ -92,12 +70,12 @@
                             {% endif %}
                             {% if competency.rank == 3 %}
                                 {% if competency.certificate_status == 'approved' %}
-                                    <a href="{{ url_for('dashboard_views.view_certificate', competency=competency.name) }}" 
+                                    <a href="{{ url_for('student_views.view_certificate', competency=competency.name) }}" 
                                        class="view-certificate-btn">View Certificate</a>
                                 {% elif competency.certificate_status == 'pending' %}
                                     <p class="certificate-status pending">Certificate Request Pending</p>
                                 {% elif not competency.certificate_status %}
-                                    <form action="{{ url_for('dashboard_views.request_certificate') }}" method="POST">
+                                    <form action="{{ url_for('student_views.request_certificate') }}" method="POST">
                                         <input type="hidden" name="competency" value="{{ competency.name }}">
                                         <button type="submit" class="request-certificate-btn">Request Certificate</button>
                                     </form>
@@ -110,7 +88,7 @@
                 <div class="no-badges">
                     <i class="fas fa-certificate"></i>
                     <p>You haven't earned any badges yet. Enroll in workshops and complete them to earn badges!</p>
-                    <a href="{{ url_for('dashboard_views.workshops') }}" class="browse-workshops-btn">Browse Workshops</a>
+                    <a href="{{ url_for('student_views.workshops') }}" class="browse-workshops-btn">Browse Workshops</a>
                 </div>
             {% endif %}
         </div>
