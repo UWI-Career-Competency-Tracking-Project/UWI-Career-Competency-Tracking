@@ -35,7 +35,7 @@ def admin_dashboard():
         student_count = db.session.query(Student).count()
         
         badge_count = 0
-        certificate_count = 0
+        certificate_count = 0  
         competency_counts = {}
         
         students = Student.query.all()
@@ -50,6 +50,20 @@ def admin_dashboard():
                     else:
                         competency_counts[comp_name] = 1
         
+        enrollments = db.session.query(Enrollment).filter_by(completed=True, certificate_status='approved').all()
+        certificate_count = len(enrollments)
+        
+        for enrollment in enrollments[:5]:
+            student = Student.query.get(enrollment.student_id)
+            workshop = Workshop.query.get(enrollment.workshop_id)
+            if student and workshop:
+                recent_activities.append({
+                    'type': 'certificate',
+                    'icon': 'fas fa-certificate',
+                    'title': f"Certificate issued to {student.first_name} for {workshop.workshopName}",
+                    'time': format_time_ago(enrollment.completion_date or datetime.now())
+                })
+        
         for student in students:
             if student.competencies:
                 for comp_name, comp_data in student.competencies.items():
@@ -63,15 +77,6 @@ def admin_dashboard():
                             'icon': 'fas fa-award',
                             'title': f"{student.first_name} earned {comp_name} Badge ({rank_name})",
                             'time': format_time_ago(comp_data.get('updated_at', datetime.now()))
-                        })
-                        
-                    if comp_data.get('certificate_status') == 'approved':
-                        certificate_count += 1
-                        recent_activities.append({
-                            'type': 'certificate',
-                            'icon': 'fas fa-certificate',
-                            'title': f"Certificate issued to {student.first_name} for {comp_name}",
-                            'time': format_time_ago(comp_data.get('certificate_date', datetime.now()))
                         })
         
         recent_workshops = Workshop.query.order_by(Workshop.workshopDate.desc()).limit(5).all()
@@ -258,22 +263,162 @@ def admin_workshop_creation():
             traceback.print_exc()
             flash(f'Error creating workshop: {str(e)}', 'error')
             
-    return render_template('Html/adminWorkshopCreation.html')
+    return render_template('Html/adminWorkshopCreation.html', user=current_user)
 
 @admin_views.route('/manage-workshops')
 @login_required
 def manage_workshops():
-    print("Accessing manage_workshops route") 
-    print(f"Current user type: {current_user.user_type}") 
-    
     if current_user.user_type != 'admin':
-        print(f"Access denied for user: {current_user.username}, type: {current_user.user_type}") 
         flash('Access denied. Administrators only.', 'error')
         return redirect(url_for('dashboard_views.dashboard'))
     
-    workshops = Workshop.query.all()
-    print(f"Found {len(workshops)} workshops") 
-    return render_template('Html/manageWorkshops.html', workshops=workshops)
+    workshops = Workshop.query.order_by(Workshop.workshopDate.desc()).all()
+    return render_template('Html/manageWorkshops.html', workshops=workshops, user=current_user)
+
+@admin_views.route('/workshop-enrollments/<workshop_id>')
+@login_required
+def workshop_enrollments(workshop_id):
+    """View all students enrolled in a workshop"""
+    if current_user.user_type != 'admin':
+        flash('Access denied. Administrators only.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+        
+    workshop = Workshop.query.filter_by(workshopID=workshop_id).first_or_404()
+    
+    enrollments = Enrollment.query.filter_by(workshop_id=workshop.id).all()
+    enrolled_students = []
+    
+    for enrollment in enrollments:
+        student = Student.query.get(enrollment.student_id)
+        if student:
+            enrolled_students.append({
+                'student': student,
+                'enrollment': enrollment
+            })
+    
+    months = []
+    for i in range(12):
+        month_date = datetime.now() - relativedelta(months=11-i)
+        months.append(month_date.strftime("%b"))
+    
+    return render_template(
+        'Html/workshop_enrollments.html',
+        workshop=workshop,
+        enrolled_students=enrolled_students,
+        user=current_user,
+        workshop_count=0,
+        student_count=0,
+        badge_count=0,
+        certificate_count=0,
+        recent_activities=[],
+        workshop_trends_labels=months,
+        workshop_creation_data=[0] * 12,
+        workshop_attendance_data=[0] * 12,
+        competency_labels=[],
+        competency_data=[],
+        progress_labels=months,
+        badges_earned_data=[0] * 12,
+        certificates_issued_data=[0] * 12
+    )
+
+@admin_views.route('/mark-workshop-completion/<int:enrollment_id>', methods=['POST'])
+@login_required
+def mark_workshop_completion(enrollment_id):
+    """Mark a student as having completed a workshop"""
+    if current_user.user_type != 'admin':
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    enrollment = Enrollment.query.get_or_404(enrollment_id)
+    action = request.form.get('action')
+    
+    try:
+        if action == 'complete':
+            # Mark as completed and add competencies
+            enrollment.mark_completed()
+            
+            # Send notification to student
+            from ..controllers import notification_controller
+            workshop = Workshop.query.get(enrollment.workshop_id)
+            student = Student.query.get(enrollment.student_id)
+            
+            if workshop and student:
+                badge_link = url_for('student_views.earned_badges', _external=True)
+                notification_controller.create_notification(
+                    student_id=enrollment.student_id,
+                    message=f"Workshop Completed: {workshop.workshopName}. You have successfully completed the workshop '{workshop.workshopName}' and earned competencies.",
+                    notification_type='workshop_completion',
+                    link=badge_link
+                )
+            
+            return jsonify({
+                'success': True, 
+                'message': 'Student marked as completed',
+                'status': 'completed'
+            })
+            
+        elif action == 'uncomplete':
+            enrollment.mark_not_completed()
+            return jsonify({
+                'success': True, 
+                'message': 'Completion status removed',
+                'status': enrollment.status
+            })
+            
+        else:
+            return jsonify({'error': 'Invalid action'}), 400
+            
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error marking completion: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@admin_views.route('/mark-workshop-attendance/<int:enrollment_id>', methods=['POST'])
+@login_required
+def mark_workshop_attendance(enrollment_id):
+    """Mark a student as having attended a workshop"""
+    if current_user.user_type != 'admin':
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    enrollment = Enrollment.query.get_or_404(enrollment_id)
+    action = request.form.get('action')
+    
+    try:
+        if action == 'mark':
+            # Mark as attended
+            enrollment.mark_attended()
+            
+            # Send notification to student
+            from ..controllers import notification_controller
+            workshop = Workshop.query.get(enrollment.workshop_id)
+            
+            if workshop:
+                notification_controller.track_workshop_attendance(
+                    workshop_id=enrollment.workshop_id,
+                    student_id=enrollment.student_id,
+                    attended=True
+                )
+            
+            return jsonify({
+                'success': True, 
+                'message': 'Student marked as attended',
+                'status': enrollment.status
+            })
+            
+        elif action == 'unmark':
+            enrollment.mark_not_attended()
+            return jsonify({
+                'success': True, 
+                'message': 'Attendance status removed',
+                'status': enrollment.status
+            })
+            
+        else:
+            return jsonify({'error': 'Invalid action'}), 400
+            
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error marking attendance: {e}")
+        return jsonify({'error': str(e)}), 500
 
 @admin_views.route('/edit-workshop/<workshop_id>', methods=['GET', 'POST'])
 @login_required
@@ -342,7 +487,7 @@ def edit_workshop(workshop_id):
             print(f"Error updating workshop: {e}")
             flash(f'Error updating workshop: {str(e)}', 'error')
             
-    return render_template('Html/editWorkshop.html', workshop=workshop)
+    return render_template('Html/editWorkshop.html', workshop=workshop, user=current_user)
 
 @admin_views.route('/delete-workshop/<workshop_id>', methods=['DELETE'])
 @login_required
@@ -439,7 +584,8 @@ def admin_badges():
     
     return render_template('Html/adminbadges.html', 
                          student_competencies=student_competencies,
-                         search_query=search_query)
+                         search_query=search_query,
+                         user=current_user)
 
 @admin_views.route('/validate-certificates')
 @login_required
@@ -449,7 +595,7 @@ def validate_certificates():
         return redirect(url_for('dashboard_views.dashboard'))
     
     pending_requests = certificate_controller.get_pending_requests()
-    return render_template('Html/adminValidatecomp.html', pending_requests=pending_requests)
+    return render_template('Html/adminValidatecomp.html', pending_requests=pending_requests, user=current_user)
 
 @admin_views.route('/process-certificate-request/<int:request_id>', methods=['POST'])
 @login_required
@@ -466,13 +612,49 @@ def process_certificate_request(request_id):
     success, message = certificate_controller.process_request(request_id, action)
     
     if success:
+        # Get the enrollment that was just processed
+        enrollment = Enrollment.query.get(request_id)
+        if enrollment:
+            # Get the workshop details
+            workshop = Workshop.query.get(enrollment.workshop_id)
+            if workshop:
+                # Create a notification for the student using controller
+                certificate_link = url_for('student_views.earned_badges', _external=True)
+                notification_controller.create_certificate_notification(
+                    student_id=enrollment.student_id,
+                    competency_name=workshop.workshopName,
+                    status=action,  # This will be 'approve' or 'deny'
+                    link=certificate_link
+                )
+        
+        flash(message, 'success')
+    else:
+        flash(message, 'error')
+    
+    return redirect(url_for('admin_views.validate_certificates'))
+
+@admin_views.route('/process-competency-certificate/<int:request_id>', methods=['POST'])
+@login_required
+def process_competency_certificate(request_id):
+    if current_user.user_type != 'admin':
+        flash('Access denied. Administrators only.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+    
+    action = request.form.get('action')
+    if action not in ['approve', 'deny']:
+        flash('Invalid action.', 'error')
+        return redirect(url_for('admin_views.validate_certificates'))
+    
+    success, message = certificate_controller.process_competency_request(request_id, action)
+    
+    if success:
         cert_request = CertificateRequest.query.get(request_id)
         if cert_request:
             certificate_link = url_for('student_views.earned_badges', _external=True)
             notification_controller.create_certificate_notification(
                 student_id=cert_request.student_id,
                 competency_name=cert_request.competency,
-                status='approved' if action == 'approve' else 'rejected',
+                status=action,  
                 link=certificate_link
             )
     
@@ -532,7 +714,7 @@ def create_sample_jobs():
             {
                 'title': 'Software Developer',
                 'description': 'Design and develop software applications using modern technologies.',
-                'required_rank': 2,  # Intermediate
+                'required_rank': 2,  
                 'competencies': [
                     ('Programming', 2),
                     ('Problem Solving', 2),
@@ -552,7 +734,7 @@ def create_sample_jobs():
             {
                 'title': 'Project Manager',
                 'description': 'Lead and coordinate software development projects.',
-                'required_rank': 3,  # Advanced
+                'required_rank': 3,  
                 'competencies': [
                     ('Leadership', 3),
                     ('Communication', 2),
@@ -661,5 +843,76 @@ def create_sample_jobs():
             db.session.rollback()
             print(f"Error creating sample jobs: {str(e)}")
 
-# Define UPLOAD_FOLDER
-UPLOAD_FOLDER = 'App/static/workshop_images' 
+UPLOAD_FOLDER = 'App/static/workshop_images'
+
+@admin_views.route('/get-admin-notifications')
+def get_admin_notifications():
+    try:
+        if not current_user.is_authenticated:
+            return jsonify({'notifications': [], 'unread_count': 0})
+        
+        if current_user.user_type != 'admin':
+            return jsonify({'notifications': [], 'unread_count': 0})
+        
+        try:
+            notifications = notification_controller.get_admin_notifications(limit=20)
+            unread_count = notification_controller.get_admin_unread_count()
+            
+            formatted_notifications = []
+            for notif in notifications:
+                if not notif.created_at:
+                    created_at = datetime.now().isoformat()
+                elif isinstance(notif.created_at, str):
+                    try:
+                        created_at = datetime.fromisoformat(notif.created_at).isoformat()
+                    except ValueError:
+                        created_at = datetime.now().isoformat()
+                else:
+                    created_at = notif.created_at.isoformat()
+                
+                formatted_notifications.append({
+                    'id': notif.id,
+                    'message': notif.message,
+                    'notification_type': notif.notification_type,
+                    'is_read': notif.is_read,
+                    'created_at': created_at,
+                    'link': notif.link
+                })
+            
+            return jsonify({
+                'notifications': formatted_notifications,
+                'unread_count': unread_count
+            })
+            
+        except Exception as e:
+            print(f"Error getting admin notifications: {e}")
+            return jsonify({'notifications': [], 'unread_count': 0})
+    except Exception as e:
+        print(f"Critical error in get_admin_notifications: {e}")
+        return jsonify({'notifications': [], 'unread_count': 0})
+
+@admin_views.route('/mark-admin-notification-read/<int:notification_id>', methods=['POST'])
+@login_required
+def mark_admin_notification_read(notification_id):
+    if current_user.user_type != 'admin':
+        return jsonify({'error': 'Access denied. Administrators only.'}), 403
+    
+    try:
+        success = notification_controller.mark_as_read(notification_id)
+        return jsonify({'success': success})
+    except Exception as e:
+        print(f"Error marking notification as read: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@admin_views.route('/mark-all-admin-notifications-read', methods=['POST'])
+@login_required
+def mark_all_admin_notifications_read():
+    if current_user.user_type != 'admin':
+        return jsonify({'error': 'Access denied. Administrators only.'}), 403
+    
+    try:
+        count = notification_controller.mark_all_as_read(user_type='admin')
+        return jsonify({'success': True, 'count': count})
+    except Exception as e:
+        print(f"Error marking all notifications as read: {e}")
+        return jsonify({'error': str(e)}), 500 

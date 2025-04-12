@@ -153,4 +153,28 @@ h2:hover {
   background: linear-gradient(135deg, rgba(46,204,113,0.85), rgba(46,204,113,1));
 }
 
+/* Request Type Indicator */
+.request-type {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.request-type.workshop {
+  background: linear-gradient(135deg, rgba(0,119,182,0.7), rgba(0,119,182,0.9));
+  color: white;
+  border: 1px solid rgba(0,119,182,0.5);
+}
+
+.request-type.competency {
+  background: linear-gradient(135deg, rgba(142,36,170,0.7), rgba(142,36,170,0.9));
+  color: white;
+  border: 1px solid rgba(142,36,170,0.5);
+}
+
 

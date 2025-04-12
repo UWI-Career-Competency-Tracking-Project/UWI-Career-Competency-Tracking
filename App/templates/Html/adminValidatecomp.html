@@ -24,6 +24,9 @@
     <link rel="stylesheet" href="../../static/Css/adminValidatecomp.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/adminValidatecomp.css') }}">
     
+    <!-- Notifications JavaScript -->
+    <script src="{{ url_for('static', filename='JavaScript/notifications.js') }}" defer></script>
+</head>
 <body>
     <div id="loader">
         <div class="container">
@@ -34,19 +37,7 @@
         </div>
       </div>
 
-      <nav class="navbar">
-        <a href="{{ url_for('admin_views.admin_dashboard') }}" class="logo">
-            <img src="../../static/Images/logo.png">
-            <span class="site-title">Career Competency Tracker</span>
-          </a>
-        <div class="nav-items">
-          <a href="{{ url_for('admin_views.manage_workshops') }}">Manage Workshops</a>
-          <a href="{{ url_for('admin_views.admin_workshop_creation') }}">Create Workshops</a>
-          <a href="{{ url_for('admin_views.admin_badges') }}">Award Badges</a>
-          <a href="{{ url_for('admin_views.validate_certificates') }}">Validate Certificates</a>
-          <a href="{{ url_for('auth_views.logout_action') }}">Logout</a>
-        </div>
-      </nav>
+      {% include 'Html/navbar.html' with context %}
 
       <!-- Background video element -->
       <video autoplay muted loop id="bg-video">
@@ -62,15 +53,35 @@
                 <div class="submission">
                     <div class="student-info">
                         <h3>{{ request.student.first_name }} {{ request.student.last_name }}</h3>
-                        <p>Competency: {{ request.competency }}</p>
-                        <p>Request Date: {{ request.request_date.strftime('%Y-%m-%d') }}</p>
+                        
+                        {% if request.type == 'workshop' %}
+                            <div class="request-type workshop">Workshop Certificate</div>
+                            <p><strong>Workshop:</strong> {{ request.workshop.workshopName }}</p>
+                            <p><strong>Workshop Date:</strong> {{ request.workshop.workshopDate.strftime('%B %d, %Y') }}</p>
+                            <p><strong>Competencies:</strong> {{ request.competency }}</p>
+                        {% else %}
+                            <div class="request-type competency">Competency Certificate</div>
+                            <p><strong>Competency:</strong> {{ request.competency }}</p>
+                        {% endif %}
+                        
+                        <p><strong>Request Date:</strong> {{ request.request_date.strftime('%Y-%m-%d') }}</p>
                     </div>
-                    <form action="{{ url_for('admin_views.process_certificate_request', request_id=request.id) }}" method="POST" class="approval-form">
-                        <div class="approval-buttons">
-                            <button type="submit" name="action" value="deny" class="reject">Deny Certificate</button>
-                            <button type="submit" name="action" value="approve" class="accept">Approve Certificate</button>
-                        </div>
-                    </form>
+                    
+                    {% if request.type == 'workshop' %}
+                        <form action="{{ url_for('admin_views.process_certificate_request', request_id=request.id) }}" method="POST" class="approval-form">
+                            <div class="approval-buttons">
+                                <button type="submit" name="action" value="deny" class="reject">Deny Certificate</button>
+                                <button type="submit" name="action" value="approve" class="accept">Approve Certificate</button>
+                            </div>
+                        </form>
+                    {% else %}
+                        <form action="{{ url_for('admin_views.process_competency_certificate', request_id=request.id) }}" method="POST" class="approval-form">
+                            <div class="approval-buttons">
+                                <button type="submit" name="action" value="deny" class="reject">Deny Certificate</button>
+                                <button type="submit" name="action" value="approve" class="accept">Approve Certificate</button>
+                            </div>
+                        </form>
+                    {% endif %}
                 </div>
                 {% endfor %}
             {% else %}

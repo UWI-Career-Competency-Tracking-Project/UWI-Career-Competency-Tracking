@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Certificate of Completion</title>
+    <title>Workshop Completion Certificate</title>
     
     <!-- Base CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/navbar.css') }}">
@@ -106,10 +106,36 @@
     <div class="container">
         <div id="certificate-container">
             <div id="certificate">
+                {% if view_mode == 'employer' %}
+                <div class="back-nav">
+                    <a href="{{ url_for('employer_views.view_candidate_profile', student_id=user.id) }}" class="back-button">
+                        <i class="fas fa-arrow-left"></i> Back to Candidate Profile
+                    </a>
+                </div>
+                {% endif %}
                 <img src="{{ url_for('static', filename='Images/certificate.png') }}" alt="Certificate" class="cert-img">
-                <div id="student-name">{{ student_name }}</div>
-                <div id="competency">{{ competency }}</div>
-                <div id="date">{{ date }}</div>
+                <div id="student-name">{{ certificate.student_name }}</div>
+                <div id="workshop-name">{{ certificate.workshop_name }}</div>
+                <div id="date">{{ certificate.date_completed }}</div>
+                
+                <div id="competencies-list">
+                    <h3>Competencies Earned:</h3>
+                    <ul>
+                        {% if certificate.competencies %}
+                            {% if certificate.competencies is string %}
+                                {% for comp in certificate.competencies.split(',') %}
+                                    <li>{{ comp.strip() }}</li>
+                                {% endfor %}
+                            {% else %}
+                                {% for comp in certificate.competencies %}
+                                    <li>{{ comp }}</li>
+                        {% endfor %}
+                            {% endif %}
+                        {% else %}
+                            <li>Workshop completion</li>
+                        {% endif %}
+                    </ul>
+                </div>
             </div>
             <div class="download-buttons">
                 <button id="download-btn">Download as PNG</button>
@@ -128,23 +154,5 @@
 
     <!-- Custom Script -->
     <script src="{{ url_for('static', filename='JavaScript/studentCertificate.js') }}"></script>
-
-    <!-- Certificate content -->
-    <main class="certificate-container">
-        {% if view_mode == 'employer' %}
-        <div class="back-nav">
-            <a href="{{ url_for('employer_views.view_candidate_profile', student_id=user.id) }}" class="back-button">
-                <i class="fas fa-arrow-left"></i> Back to Candidate Profile
-            </a>
-        </div>
-        {% endif %}
-        
-        <div class="certificate">
-            <img src="{{ url_for('static', filename='Images/certificate.png') }}" alt="Certificate" class="cert-img">
-            <div id="student-name">{{ student_name }}</div>
-            <div id="competency">{{ competency }}</div>
-            <div id="date">{{ date }}</div>
-        </div>
-    </main>
 </body>
 </html>

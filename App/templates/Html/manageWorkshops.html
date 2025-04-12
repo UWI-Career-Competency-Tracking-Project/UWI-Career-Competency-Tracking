@@ -24,6 +24,8 @@
     <!-- Page CSS / JS ref -->
     <link rel="stylesheet" href="../../static/Css/manageWorkshops.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/manage_workshops.css') }}">
+    <!-- Notifications JavaScript -->
+    <script src="{{ url_for('static', filename='JavaScript/notifications.js') }}" defer></script>
 </head>
 
 <body>
@@ -36,19 +38,8 @@
         </div>
     </div>
 
-    <nav class="navbar">
-        <a href="{{ url_for('admin_views.admin_dashboard') }}" class="logo">
-            <img src="../../static/Images/logo.png">
-            <span class="site-title">Career Competency Tracker</span>
-        </a>
-        <div class="nav-items">
-            <a href="{{ url_for('admin_views.manage_workshops') }}">Manage Workshops</a>
-            <a href="{{ url_for('admin_views.admin_workshop_creation') }}">Create Workshops</a>
-            <a href="{{ url_for('admin_views.admin_badges') }}">Award Badges</a>
-            <a href="{{ url_for('admin_views.validate_certificates') }}">Validate Certificates</a>
-            <a href="{{ url_for('auth_views.logout_action') }}">Logout</a>
-        </div>
-    </nav>
+    <!-- Navbar -->
+    {% include 'Html/navbar.html' with context %}
 
     <!-- Background video -->
     <video autoplay muted loop id="bg-video">
@@ -64,7 +55,12 @@
                 <div class="workshop-card"
                     {% if workshop.image_path %}style="background-image: url('{{ url_for('static', filename=workshop.image_path) }}');"{% endif %}>
                     <div class="workshop-content">
-                        <span class="workshop-id">Workshop ID: {{ workshop.workshopID }}</span>
+                        <div class="workshop-header">
+                            <span class="workshop-id">Workshop ID: {{ workshop.workshopID }}</span>
+                            <span class="student-count" title="Students enrolled">
+                                <i class="fas fa-user-graduate"></i> {{ workshop.enrollments|length }}
+                            </span>
+                        </div>
                         <h3>{{ workshop.workshopName }}</h3>
                         <p class="workshop-description">{{ workshop.workshopDescription }}</p>
                         <div class="workshop-details">
@@ -86,6 +82,9 @@
                         <div class="workshop-actions">
                             <a href="{{ url_for('admin_views.edit_workshop', workshop_id=workshop.workshopID) }}" class="action-button edit-btn">
                                 <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="{{ url_for('admin_views.workshop_enrollments', workshop_id=workshop.workshopID) }}" class="action-button students-btn">
+                                <i class="fas fa-users"></i> View Students
                             </a>
                             <button class="action-button delete-btn" data-workshop-id="{{ workshop.workshopID }}" {% if workshop.enrollments %}disabled{% endif %}>
                                 <i class="fas fa-trash-alt"></i> Delete

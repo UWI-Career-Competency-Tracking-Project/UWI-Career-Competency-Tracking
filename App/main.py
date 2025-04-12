@@ -57,6 +57,8 @@ def create_app(config_name=None):
     from .models.workshop import Workshop
     from .models.student import Student
     from .models.administrator import Administrator
+    from .models.enrollment import Enrollment
+    from .models.employer import Employer
     
     @login_manager.user_loader
     def load_user(user_id):
@@ -105,13 +107,26 @@ def create_app(config_name=None):
                 )
                 db.session.add(student)
 
+            # Create employer user if it doesn't exist
+            employer = Employer.query.filter_by(username="employer").first()
+            if not employer:
+                employer = Employer(
+                    username="employer",
+                    email="employer@example.com",
+                    password="employer123",
+                    first_name="Test",
+                    last_name="Employer"
+                )
+                db.session.add(employer)
+
             db.session.commit()
             print("Created test users")
 
             # Create sample workshop if none exist
             workshop_exists = Workshop.query.first() is not None
             if not workshop_exists:
-                sample_workshop = Workshop(
+                # Workshop 1: Introduction to Leadership
+                workshop1 = Workshop(
                     workshopID="WS001",
                     workshopName="Introduction to Leadership",
                     workshopDescription="Learn the fundamentals of leadership and team management.",
@@ -121,14 +136,65 @@ def create_app(config_name=None):
                     location="Room 101",
                     image_path="workshop_images/default.jpg"
                 )
-                db.session.add(sample_workshop)
+                db.session.add(workshop1)
                 db.session.flush()
                 
-                workshop_competencies = ["Leadership", "Communication", "Team Management"]
-                sample_workshop.add_competencies(workshop_competencies)
+                workshop1_competencies = ["Leadership I", "Communication I", "Team Work I"]
+                workshop1.add_competencies(workshop1_competencies)
+                
+                # Workshop 2: Advanced Programming
+                workshop2 = Workshop(
+                    workshopID="WS002",
+                    workshopName="Advanced Programming Techniques",
+                    workshopDescription="Master advanced programming concepts and design patterns.",
+                    workshopDate=datetime.strptime("2024-04-10", "%Y-%m-%d").date(),
+                    workshopTime="10:00",
+                    instructor="Prof. John Doe",
+                    location="Computer Lab 3",
+                    image_path="workshop_images/programming.png"
+                )
+                db.session.add(workshop2)
+                db.session.flush()
+                
+                workshop2_competencies = ["Programming III", "Problem Solving II", "Critical Thinking II"]
+                workshop2.add_competencies(workshop2_competencies)
+                
+                # Workshop 3: Professional Communication
+                workshop3 = Workshop(
+                    workshopID="WS003",
+                    workshopName="Professional Communication Skills",
+                    workshopDescription="Develop effective communication skills for the workplace.",
+                    workshopDate=datetime.strptime("2024-04-25", "%Y-%m-%d").date(),
+                    workshopTime="13:30",
+                    instructor="Dr. Maria Rodriguez",
+                    location="Room 205",
+                    image_path="workshop_images/communication.png"
+                )
+                db.session.add(workshop3)
+                db.session.flush()
+                
+                workshop3_competencies = ["Communication II", "Public Speaking I", "Professional Etiquette I"]
+                workshop3.add_competencies(workshop3_competencies)
+                
+                # Workshop 4: Project Management
+                workshop4 = Workshop(
+                    workshopID="WS004",
+                    workshopName="Project Management Fundamentals",
+                    workshopDescription="Learn essential project management methodologies and tools.",
+                    workshopDate=datetime.strptime("2024-05-05", "%Y-%m-%d").date(),
+                    workshopTime="09:00",
+                    instructor="Mr. Robert Johnson",
+                    location="Conference Room A",
+                    image_path="workshop_images/project.jpg"
+                )
+                db.session.add(workshop4)
+                db.session.flush()
+                
+                workshop4_competencies = ["Project Management II", "Team Work II", "Time Management I"]
+                workshop4.add_competencies(workshop4_competencies)
                 
                 db.session.commit()
-                print("Created sample workshop with competencies")
+                print("Created sample workshops with competencies")
             
         except Exception as e:
             print(f"Error initializing database: {str(e)}")

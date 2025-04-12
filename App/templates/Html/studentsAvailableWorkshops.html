@@ -92,12 +92,14 @@
                 {% endfor %}
             {% else %}
                 <div class="no-workshops-message">
-                    {% if search_query %}
-                        <p>No workshops found matching "{{ search_query }}". Try a different search term or check back later.</p>
-                    {% else %}
-                        <p>No available workshops found. You may have enrolled in all current workshops or check back later for new offerings.</p>
-                    {% endif %}
-                    <a href="{{ url_for('student_views.my_workshops') }}" class="view-enrolled-button">View My Enrolled Workshops</a>
+                    <div class="message-content">
+                        {% if search_query %}
+                            <p>No workshops found matching "{{ search_query }}". Try a different search term or check back later.</p>
+                        {% else %}
+                            <p>No available workshops found. You may have enrolled in all current workshops or check back later for new offerings.</p>
+                        {% endif %}
+                        <a href="{{ url_for('student_views.my_workshops') }}" class="view-enrolled-button">View My Enrolled Workshops</a>
+                    </div>
                 </div>
             {% endif %}
         </section>

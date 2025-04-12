@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, send_from_directory
+from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, send_from_directory, send_file
 from flask_login import login_required, current_user
 from ..models.workshop import Workshop
 from ..models.enrollment import Enrollment
@@ -14,14 +14,16 @@ from ..controllers import certificate_controller
 from ..controllers import notification_controller
 from ..models.job_roles import JobRole
 import io
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.pagesizes import letter, landscape
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
 from PyPDF2 import PdfReader, PdfWriter
 from .dashboard_common import allowed_file, format_time_ago
 from ..models.job_competency import JobCompetency
 from ..models.competency import Competency
+from flask_jwt_extended import create_access_token, set_access_cookies
+from flask import make_response
 
 student_views = Blueprint('student_views', __name__, template_folder='../templates')
 
@@ -46,13 +48,10 @@ def competencies():
             flash('Student account not found.', 'error')
             return redirect(url_for('dashboard_views.dashboard'))
         
-        # Format competencies data for display
         for comp_name, comp_data in student.competencies.items():
-            # Ensure the certificate_status field exists
             if 'certificate_status' not in comp_data:
                 student.competencies[comp_name]['certificate_status'] = None
             
-            # Convert empty string to None for consistency
             if comp_data.get('certificate_status') == '':
                 student.competencies[comp_name]['certificate_status'] = None
         
@@ -82,10 +81,25 @@ def my_workshops():
             Enrollment.student_id == student.id
         ).all()
         
-        print(f"Found {len(enrolled_workshops)} enrolled workshops for student {student.username}")
+        active_workshops = []
+        completed_workshops = []
+        
+        for workshop in enrolled_workshops:
+            enrollment = next((e for e in workshop.enrollments if e.student_id == student.id), None)
+            if enrollment:
+                if enrollment.completed:
+                    completed_workshops.append(workshop)
+                else:
+                    active_workshops.append(workshop)
+        
+        print(f"Found {len(enrolled_workshops)} total workshops for student {student.username}")
+        print(f"Active workshops: {len(active_workshops)}")
+        print(f"Completed workshops: {len(completed_workshops)}")
         
         return render_template('Html/myWorkshops.html', 
                              workshops=enrolled_workshops,
+                             active_workshops=active_workshops,
+                             completed_workshops=completed_workshops,
                              user=student)
                              
     except Exception as e:
@@ -124,17 +138,26 @@ def enroll_workshop(workshop_id):
             workshop_id=workshop_id
         )
         db.session.add(enrollment)
-        db.session.flush()  
         
-        print("Created enrollment, adding competencies...")
+        print("Created enrollment")
         
-        enrollment.add_workshop_competencies()
+        notification_controller.create_admin_notification(
+            message=f"{current_user.first_name} {current_user.last_name} has enrolled in {workshop.workshopName}",
+            notification_type='enrollment',
+            link=f"/workshop-enrollments/{workshop.workshopID}"
+        )
         
-        student = Student.query.get(current_user.id)
-        print(f"Student competencies after enrollment: {student.competencies}")
+        create_student_notification(
+            student_id=current_user.id,
+            message=f"You have successfully enrolled in {workshop.workshopName}",
+            notification_type='enrollment_confirmation',
+            link=f"/my-workshops"
+        )
+        
+        # Note: Competencies will be added only after the admin marks the workshop as completed
         
         db.session.commit()
-        flash('Successfully enrolled in workshop!', 'success')
+        flash('Successfully enrolled in workshop! Competencies will be added after workshop completion.', 'success')
         
     except Exception as e:
         db.session.rollback()
@@ -146,55 +169,11 @@ def enroll_workshop(workshop_id):
     
     return redirect(url_for('dashboard_views.workshops'))
 
-@student_views.route('/request-certificate', methods=['POST'])
-@login_required
-def request_certificate():
-    if current_user.user_type != 'student':
-        flash('Access denied. Students only.', 'error')
-        return redirect(url_for('dashboard_views.dashboard'))
-    
-    try:
-        competency = request.form.get('competency')
-        if not competency:
-            flash('Invalid request.', 'error')
-            return redirect(url_for('student_views.competencies'))
-        
-        student = Student.query.get(current_user.id)
-        if not student:
-            flash('Student not found.', 'error')
-            return redirect(url_for('student_views.competencies'))
-        
-        if competency not in student.competencies:
-            flash('Competency not found.', 'error')
-            return redirect(url_for('student_views.competencies'))
-            
-        comp_data = student.competencies[competency]
-        if comp_data.get('rank') != 3:
-            flash('Certificate can only be requested for Advanced rank competencies.', 'error')
-            return redirect(url_for('student_views.competencies'))
-        
-        success, message = certificate_controller.request_certificate(current_user.id, competency)
-        
-        if success:
-            student.update_competency_certificate_status(competency, 'pending')
-            flash('Certificate request submitted successfully.', 'success')
-        else:
-            flash(message, 'error')
-            
-        return redirect(url_for('student_views.competencies'))
-        
-    except Exception as e:
-        print(f"Error in request_certificate: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        flash('An error occurred while processing your request.', 'error')
-        return redirect(url_for('student_views.competencies'))
-
 @student_views.route('/earned-badges')
 @login_required
 def earned_badges():
     if current_user.user_type != 'student':
-        flash('Only students can view their badges and certificates.', 'error')
+        flash('Only students can view their certificates.', 'error')
         return redirect(url_for('dashboard_views.dashboard'))
         
     try:
@@ -203,29 +182,19 @@ def earned_badges():
             flash('Student account not found.', 'error')
             return redirect(url_for('dashboard_views.dashboard'))
             
-        earned_competencies = []
-        if student.competencies:
-            for comp_name, comp_data in student.competencies.items():
-                rank = comp_data.get('rank', 0)
-                certificate_status = comp_data.get('certificate_status', None)
-                feedback = comp_data.get('feedback', '')
-                
-                if rank > 0:  
-                    earned_competencies.append({
-                        'name': comp_name,
-                        'rank': rank,
-                        'rank_name': ['Beginner', 'Intermediate', 'Advanced'][rank-1],
-                        'certificate_status': certificate_status,
-                        'feedback': feedback
-                    })
+        completed_workshops = Workshop.query.join(Enrollment).filter(
+            Enrollment.student_id == student.id,
+            Enrollment.completed == True,
+            Enrollment.certificate_status == 'approved'
+        ).all()
         
         return render_template('Html/earnedBadges.html', 
                              user=student,
-                             earned_competencies=earned_competencies)
+                             completed_workshops=completed_workshops)
                              
     except Exception as e:
-        print(f"Error loading badges: {e}")
-        flash('Error loading badges and certificates.', 'error')
+        print(f"Error loading certificates: {e}")
+        flash('Error loading certificates.', 'error')
         return redirect(url_for('dashboard_views.dashboard'))
 
 @student_views.route('/view-certificate/<competency>')
@@ -235,15 +204,443 @@ def view_certificate(competency):
         flash('Access denied. Students only.', 'error')
         return redirect(url_for('dashboard_views.dashboard'))
     
-    certificate_data = certificate_controller.get_certificate_data(current_user.id, competency)
-    if not certificate_data:
-        flash('Certificate not found.', 'error')
+    student = Student.get_by_id(current_user.id)
+    if not student or not student.competencies or competency not in student.competencies:
+        flash('You do not have this competency.', 'error')
         return redirect(url_for('student_views.competencies'))
     
-    # Add user to certificate_data
-    certificate_data['user'] = current_user
+    comp_data = student.competencies.get(competency, {})
+    if comp_data.get('certificate_status') != 'approved':
+        flash('You do not have an approved certificate for this competency.', 'error')
+        return redirect(url_for('student_views.competencies'))
     
-    return render_template('Html/studentCertificate.html', **certificate_data)
+    certificate_data = {
+        'student_name': f"{student.first_name} {student.last_name}",
+        'competency': competency,
+        'rank': comp_data.get('rank', 3),
+        'rank_name': ['Beginner', 'Intermediate', 'Advanced'][comp_data.get('rank', 3) - 1],
+        'date_issued': comp_data.get('certificate_date', 'Not Available'),
+        'certificate_id': f"COMP-{student.id}-{competency.replace(' ', '')}"
+    }
+    
+    buffer = io.BytesIO()
+    
+    base_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+    background_path = os.path.join(base_dir, 'static', 'Images', 'certificate.png')
+    medal_path = os.path.join(base_dir, 'static', 'Images', 'medal.png')
+    
+    from reportlab.lib.units import inch
+    from reportlab.platypus.frames import Frame
+    from reportlab.platypus.doctemplate import PageTemplate
+    
+    frame = Frame(
+        0.75*inch,
+        0.75*inch,
+        9.5*inch,
+        7*inch,
+        leftPadding=0,
+        bottomPadding=0,
+        rightPadding=0,
+        topPadding=0,
+    )
+    
+    def firstPageTemplate(canvas, doc):
+        if os.path.exists(background_path):
+            canvas.saveState()
+            canvas.drawImage(background_path, 0, 0, width=11*inch, height=8.5*inch)
+            
+            canvas.setFont('Helvetica', 8)
+            canvas.setFillColorRGB(0.5, 0.5, 0.5)
+            canvas.drawCentredString(5.5*inch, 0.4*inch, f"Certificate ID: {certificate_data['certificate_id']}")
+            canvas.drawCentredString(5.5*inch, 0.25*inch, "© 2025 Career Competency Tracking System. All Rights Reserved.")
+            
+            if os.path.exists(medal_path):
+                canvas.drawImage(medal_path, 4.5*inch, 1.5*inch, width=2*inch, height=2*inch)
+            
+            canvas.restoreState()
+    
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=landscape(letter),
+        rightMargin=0.75*inch,
+        leftMargin=0.75*inch,
+        topMargin=0.75*inch,
+        bottomMargin=0.75*inch
+    )
+    
+    page_template = PageTemplate(id='First', frames=frame, onPage=firstPageTemplate)
+    doc.addPageTemplates([page_template])
+    
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+    
+    try:
+        elegant_title_font = 'Times-Bold'
+        elegant_heading_font = 'Times-Bold'
+        elegant_text_font = 'Times-Roman'
+        student_name_font = 'Times-Italic'
+    except:
+        elegant_title_font = 'Helvetica-Bold'
+        elegant_heading_font = 'Helvetica-Bold'
+        elegant_text_font = 'Helvetica'
+        student_name_font = 'Helvetica-Bold'
+    
+    styles = getSampleStyleSheet()
+    
+    title_style = ParagraphStyle(
+        'TitleStyle',
+        parent=styles['Heading1'],
+        fontName=elegant_title_font,
+        fontSize=22,
+        textColor=colors.navy,
+        alignment=1,
+        spaceAfter=2
+    )
+    
+    subtitle_style = ParagraphStyle(
+        'SubtitleStyle',
+        parent=styles['Heading2'],
+        fontName=elegant_heading_font,
+        fontSize=18,
+        textColor=colors.navy,
+        alignment=1,
+        spaceAfter=2
+    )
+    
+    heading_style = ParagraphStyle(
+        'HeadingStyle',
+        parent=styles['Heading2'],
+        fontName=elegant_heading_font,
+        fontSize=16,
+        textColor=colors.navy,
+        alignment=1,
+        spaceAfter=2
+    )
+    
+    student_name_style = ParagraphStyle(
+        'StudentNameStyle',
+        parent=styles['Heading2'],
+        fontName=student_name_font,
+        fontSize=24,
+        textColor=colors.navy,
+        alignment=1,
+        spaceAfter=4
+    )
+    
+    competency_name_style = ParagraphStyle(
+        'CompetencyNameStyle',
+        parent=styles['Heading2'],
+        fontName=elegant_heading_font,
+        fontSize=18,
+        textColor=colors.navy,
+        alignment=1,
+        spaceAfter=2
+    )
+    
+    normal_style = ParagraphStyle(
+        'NormalStyle',
+        parent=styles['Normal'],
+        fontName=elegant_text_font,
+        fontSize=12,
+        textColor=colors.navy,
+        alignment=1,
+        spaceAfter=2
+    )
+    
+    level_style = ParagraphStyle(
+        'LevelStyle',
+        parent=styles['Normal'],
+        fontName=elegant_text_font,
+        fontSize=16,
+        textColor=colors.navy,
+        alignment=1,
+        spaceAfter=1
+    )
+    
+    content = []
+    
+    logo_path = os.path.join(base_dir, 'static', 'Images', 'logo.png')
+    if os.path.exists(logo_path):
+        img = Image(logo_path, width=1.5*inch, height=0.8*inch)
+        img.hAlign = 'CENTER'
+        content.append(img)
+    
+    content.append(Paragraph("CAREER COMPETENCY TRACKER", title_style))
+    content.append(Paragraph("CERTIFICATE", title_style))
+    content.append(Paragraph("of Achievement", subtitle_style))
+    content.append(Spacer(1, 5))
+    
+    content.append(Paragraph("This Certificate is Presented To", normal_style))
+    content.append(Paragraph(f"{certificate_data['student_name']}", student_name_style))
+    content.append(Spacer(1, 5))
+    content.append(Paragraph(f"For demonstrating proficiency in", normal_style))
+    content.append(Paragraph(f"{certificate_data['competency']}", competency_name_style))
+    content.append(Spacer(1, 10))
+    
+    content.append(Paragraph(f"{certificate_data['rank_name']} Level", level_style))
+    content.append(Spacer(1, 15))
+    
+    date_style = ParagraphStyle(
+        'DateStyle',
+        parent=normal_style,
+        fontSize=14,
+        textColor=colors.navy,
+        alignment=1
+    )
+    content.append(Paragraph(f"Date Issued: {certificate_data['date_issued']}", date_style))
+    
+    director_style = ParagraphStyle(
+        'DirectorStyle',
+        parent=normal_style,
+        fontSize=14,
+        textColor=colors.navy,
+        alignment=1
+    )
+    
+    content.append(Spacer(1, 20))
+    content.append(Paragraph("Program Director", director_style))
+    
+    doc.build(content)
+    
+    buffer.seek(0)
+    
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=f"{student.first_name}_{student.last_name}_{competency}_Certificate.pdf",
+        mimetype='application/pdf'
+    )
+
+@student_views.route('/view-workshop-certificate/<workshop_id>')
+@login_required
+def view_workshop_certificate(workshop_id):
+    if current_user.user_type != 'student':
+        flash('Access denied. Students only.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+    
+    workshop = Workshop.query.get(workshop_id)
+    if not workshop:
+        flash('Workshop not found.', 'error')
+        return redirect(url_for('student_views.my_workshops'))
+    
+    enrollment = Enrollment.query.filter_by(
+        student_id=current_user.id,
+        workshop_id=workshop_id,
+        completed=True
+    ).first()
+    
+    if not enrollment:
+        flash('You have not completed this workshop.', 'error')
+        return redirect(url_for('student_views.my_workshops'))
+    
+    certificate_data = {
+        'student_name': f"{current_user.first_name} {current_user.last_name}",
+        'workshop_name': workshop.workshopName,
+        'competencies': workshop.competencies,
+        'date_completed': enrollment.completion_date.strftime('%B %d, %Y') if enrollment.completion_date else datetime.now().strftime('%B %d, %Y'),
+        'instructor': workshop.instructor,
+        'certificate_id': f"WS-{current_user.id}-{workshop.id}"
+    }
+    
+    buffer = io.BytesIO()
+    
+    base_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+    background_path = os.path.join(base_dir, 'static', 'Images', 'certificate.png')
+    medal_path = os.path.join(base_dir, 'static', 'Images', 'medal.png')
+    
+    from reportlab.lib.units import inch
+    from reportlab.platypus.frames import Frame
+    from reportlab.platypus.doctemplate import PageTemplate
+    
+    frame = Frame(
+        0.75*inch,
+        0.75*inch,
+        9.5*inch,
+        7*inch,
+        leftPadding=0,
+        bottomPadding=0,
+        rightPadding=0,
+        topPadding=0,
+    )
+    
+    def firstPageTemplate(canvas, doc):
+        if os.path.exists(background_path):
+            canvas.saveState()
+            canvas.drawImage(background_path, 0, 0, width=11*inch, height=8.5*inch)
+            
+            canvas.setFont('Helvetica', 8)
+            canvas.setFillColorRGB(0.5, 0.5, 0.5)
+            canvas.drawCentredString(5.5*inch, 0.4*inch, f"Certificate ID: {certificate_data['certificate_id']}")
+            canvas.drawCentredString(5.5*inch, 0.25*inch, "© 2025 Career Competency Tracking System. All Rights Reserved.")
+            
+            if os.path.exists(medal_path):
+                canvas.drawImage(medal_path, 4.5*inch, 1.5*inch, width=2*inch, height=2*inch)
+            
+            canvas.restoreState()
+    
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=landscape(letter),
+        rightMargin=0.75*inch,
+        leftMargin=0.75*inch,
+        topMargin=0.75*inch,
+        bottomMargin=0.75*inch
+    )
+    
+    page_template = PageTemplate(id='First', frames=frame, onPage=firstPageTemplate)
+    doc.addPageTemplates([page_template])
+    
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+    
+    try:
+        elegant_title_font = 'Times-Bold'
+        elegant_heading_font = 'Times-Bold'
+        elegant_text_font = 'Times-Roman'
+        student_name_font = 'Times-Italic'
+    except:
+        elegant_title_font = 'Helvetica-Bold'
+        elegant_heading_font = 'Helvetica-Bold'
+        elegant_text_font = 'Helvetica'
+        student_name_font = 'Helvetica-Bold'
+    
+    styles = getSampleStyleSheet()
+    
+    title_style = ParagraphStyle(
+        'TitleStyle',
+        parent=styles['Heading1'],
+        fontName=elegant_title_font,
+        fontSize=22,
+        textColor=colors.navy,
+        alignment=1,
+        spaceAfter=2
+    )
+    
+    subtitle_style = ParagraphStyle(
+        'SubtitleStyle',
+        parent=styles['Heading2'],
+        fontName=elegant_heading_font,
+        fontSize=18,
+        textColor=colors.navy,
+        alignment=1,
+        spaceAfter=2
+    )
+    
+    heading_style = ParagraphStyle(
+        'HeadingStyle',
+        parent=styles['Heading2'],
+        fontName=elegant_heading_font,
+        fontSize=16,
+        textColor=colors.navy,
+        alignment=1,
+        spaceAfter=2
+    )
+    
+    student_name_style = ParagraphStyle(
+        'StudentNameStyle',
+        parent=styles['Heading2'],
+        fontName=student_name_font,
+        fontSize=24,
+        textColor=colors.navy,
+        alignment=1,
+        spaceAfter=4
+    )
+    
+    workshop_name_style = ParagraphStyle(
+        'WorkshopNameStyle',
+        parent=styles['Heading2'],
+        fontName=elegant_heading_font,
+        fontSize=18,
+        textColor=colors.navy,
+        alignment=1,
+        spaceAfter=2
+    )
+    
+    normal_style = ParagraphStyle(
+        'NormalStyle',
+        parent=styles['Normal'],
+        fontName=elegant_text_font,
+        fontSize=12,
+        textColor=colors.navy,
+        alignment=1,
+        spaceAfter=2
+    )
+    
+    competency_style = ParagraphStyle(
+        'CompetencyStyle',
+        parent=styles['Normal'],
+        fontName=elegant_text_font,
+        fontSize=14,
+        textColor=colors.navy,
+        alignment=1,
+        spaceAfter=1
+    )
+    
+    content = []
+    
+    logo_path = os.path.join(base_dir, 'static', 'Images', 'logo.png')
+    if os.path.exists(logo_path):
+        img = Image(logo_path, width=1.5*inch, height=0.8*inch)
+        img.hAlign = 'CENTER'
+        content.append(img)
+    
+    content.append(Paragraph("CAREER COMPETENCY TRACKER", title_style))
+    content.append(Paragraph("CERTIFICATE", title_style))
+    content.append(Paragraph("of Achievement", subtitle_style))
+    content.append(Spacer(1, 5))
+    
+    content.append(Paragraph("This Certificate is Presented To", normal_style))
+    content.append(Paragraph(f"{certificate_data['student_name']}", student_name_style))
+    content.append(Spacer(1, 5))
+    content.append(Paragraph("For the completion of the Workshop", normal_style))
+    content.append(Paragraph(f"{certificate_data['workshop_name']}", workshop_name_style))
+    content.append(Spacer(1, 10))
+    
+    content.append(Paragraph("Competencies Earned:", heading_style))
+    content.append(Spacer(1, 5))
+    
+    if certificate_data['competencies']:
+        if isinstance(certificate_data['competencies'], str):
+            for comp in certificate_data['competencies'].split(','):
+                content.append(Paragraph(comp.strip(), competency_style))
+        else:
+            for comp in certificate_data['competencies']:
+                content.append(Paragraph(comp, competency_style))
+    else:
+        content.append(Paragraph("Workshop completion", competency_style))
+    
+    content.append(Spacer(1, 15))
+    
+    date_style = ParagraphStyle(
+        'DateStyle',
+        parent=normal_style,
+        fontSize=14,
+        textColor=colors.navy,
+        alignment=1
+    )
+    content.append(Paragraph(f"Date: {certificate_data['date_completed']}", date_style))
+    
+    instructor_style = ParagraphStyle(
+        'InstructorStyle',
+        parent=normal_style,
+        fontSize=14,
+        textColor=colors.navy,
+        alignment=1
+    )
+    
+    content.append(Spacer(1, 20))
+    content.append(Paragraph(f"Instructor: {certificate_data['instructor']}", instructor_style))
+    
+    doc.build(content)
+    
+    buffer.seek(0)
+    
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=f"{current_user.first_name}_{current_user.last_name}_{workshop.workshopName}_Certificate.pdf",
+        mimetype='application/pdf'
+    )
 
 @student_views.route('/job-matches')
 @login_required
@@ -253,10 +650,8 @@ def job_matches():
         return redirect(url_for('dashboard_views.dashboard'))
         
     try:
-        # Import here to avoid circular imports
         from ..models.job_roles import JobRole
         
-        # Create sample jobs
         create_sample_jobs()
         
         student = Student.get_by_id(current_user.id)
@@ -290,12 +685,10 @@ def student_profile():
             flash('Student account not found.', 'error')
             return redirect(url_for('dashboard_views.dashboard'))
         
-        # Get enrolled workshops
         enrolled_workshops = Workshop.query.join(Enrollment).filter(
             Enrollment.student_id == student.id
         ).all()
         
-        # Get earned competencies
         earned_competencies = []
         if student.competencies:
             for comp_name, comp_data in student.competencies.items():
@@ -312,8 +705,6 @@ def student_profile():
                         'feedback': feedback
                     })
         
-        # Get job matches (limited to top 3)
-        # Create sample jobs
         create_sample_jobs()
         job_matches = JobRole.get_matching_jobs(student)[:3]
         
@@ -347,28 +738,21 @@ def update_profile_pic():
             flash('No selected file', 'error')
             return redirect(url_for('student_views.student_profile'))
         
-        # Validate file type
         if not file or not allowed_file(file.filename):
             flash('Invalid file type. Please upload an image file (PNG, JPG, JPEG, GIF, WEBP, BMP, TIFF, or SVG).', 'error')
             return redirect(url_for('student_views.student_profile'))
             
-        # Proceed with update if file is valid
-        # Create profile pics directory if it doesn't exist
         profile_pics_dir = 'App/static/profile_pics'
         if not os.path.exists(profile_pics_dir):
             os.makedirs(profile_pics_dir)
         
-        # Generate unique filename
         filename = secure_filename(file.filename)
-        # Add timestamp to prevent caching issues
         filename = f"{current_user.id}_{int(datetime.now().timestamp())}_{filename}"
         file_path = os.path.join(profile_pics_dir, filename)
         file.save(file_path)
         
-        # Update student record
         student = Student.get_by_id(current_user.id)
         if student:
-            # Delete old profile pic if exists
             if student.profile_pic:
                 old_pic_path = os.path.join(profile_pics_dir, student.profile_pic)
                 if os.path.exists(old_pic_path):
@@ -376,9 +760,7 @@ def update_profile_pic():
                         os.remove(old_pic_path)
                     except Exception as e:
                         print(f"Error removing old profile picture: {e}")
-                        # Continue even if old file removal fails
             
-            # Update with new profile pic
             student.profile_pic = filename
             db.session.commit()
             flash('Profile picture updated successfully!', 'success')
@@ -411,22 +793,17 @@ def update_resume():
             flash('No selected file', 'error')
             return redirect(url_for('student_views.student_profile'))
         
-        # Create resumes directory if it doesn't exist
         resumes_dir = 'App/static/resumes'
         if not os.path.exists(resumes_dir):
             os.makedirs(resumes_dir)
         
-        # Generate unique filename
         filename = secure_filename(file.filename)
-        # Add timestamp to prevent caching issues
         filename = f"{current_user.id}_{int(datetime.now().timestamp())}_{filename}"
         file_path = os.path.join(resumes_dir, filename)
         file.save(file_path)
         
-        # Update student record
         student = Student.get_by_id(current_user.id)
         if student:
-            # Delete old resume if exists
             if student.resume:
                 old_resume_path = os.path.join(resumes_dir, student.resume)
                 if os.path.exists(old_resume_path):
@@ -435,7 +812,6 @@ def update_resume():
                     except:
                         pass
             
-            # Update with new resume
             student.resume = filename
             db.session.commit()
             flash('Resume updated successfully!', 'success')
@@ -462,7 +838,6 @@ def download_resume():
             flash('Resume not found', 'error')
             return redirect(url_for('student_views.student_profile'))
         
-        # Prepare resume file path
         resumes_dir = 'App/static/resumes'
         file_path = os.path.join(resumes_dir, student.resume)
         
@@ -470,10 +845,8 @@ def download_resume():
             flash('Resume file not found', 'error')
             return redirect(url_for('student_views.student_profile'))
         
-        # Extract original filename from stored filename
         original_filename = student.resume.split('_', 2)[2] if len(student.resume.split('_', 2)) > 2 else student.resume
         
-        # Return file for download
         return send_from_directory(
             os.path.abspath(resumes_dir),
             student.resume,
@@ -499,11 +872,9 @@ def remove_resume():
             flash('No resume to remove', 'error')
             return redirect(url_for('student_views.student_profile'))
         
-        # Get resume file path
         resumes_dir = 'App/static/resumes'
         file_path = os.path.join(resumes_dir, student.resume)
         
-        # Delete the file if it exists
         if os.path.exists(file_path):
             try:
                 os.remove(file_path)
@@ -511,7 +882,6 @@ def remove_resume():
             except Exception as file_error:
                 print(f"Error deleting resume file: {file_error}")
         
-        # Update the student record
         student.resume = None
         db.session.commit()
         flash('Resume removed successfully', 'success')
@@ -587,7 +957,6 @@ def generate_resume():
             
             story = []
             
-            # Header
             story.append(Paragraph(f"{student.first_name} {student.last_name}", title_style))
             contact_info = f"{student.email}"
             if student.phone:
@@ -597,7 +966,6 @@ def generate_resume():
             story.append(Paragraph(contact_info, normal_style))
             story.append(Spacer(1, 12))
             
-            # Summary
             story.append(Paragraph("SUMMARY", heading_style))
             story.append(Paragraph(
                 "A highly skilled individual with a diverse set of competencies and certifications from the UWI Career Competency Tracking System. "
@@ -606,7 +974,6 @@ def generate_resume():
             ))
             story.append(Spacer(1, 12))
             
-            # Competencies
             story.append(Paragraph("COMPETENCIES", heading_style))
             if earned_competencies:
                 for comp in earned_competencies:
@@ -630,11 +997,20 @@ def generate_resume():
             
             story.append(Spacer(1, 12))
             
-            # Workshops
             story.append(Paragraph("WORKSHOPS & TRAINING", heading_style))
             if enrolled_workshops:
                 for workshop in enrolled_workshops:
-                    workshop_text = f"<b>{workshop.workshopName}</b><br/>"
+                    enrollment = Enrollment.query.filter_by(
+                        student_id=student.id,
+                        workshop_id=workshop.id
+                    ).first()
+                    
+                    workshop_text = f"<b>{workshop.workshopName}</b>"
+                    
+                    if enrollment and enrollment.certificate_status == 'approved':
+                        workshop_text += " <i>(Certified)</i>"
+                    
+                    workshop_text += "<br/>"
                     workshop_text += f"Date: {workshop.workshopDate.strftime('%B %d, %Y')} | "
                     workshop_text += f"Instructor: {workshop.instructor} | "
                     workshop_text += f"Location: {workshop.location}<br/>"
@@ -649,7 +1025,6 @@ def generate_resume():
             
             story.append(Spacer(1, 12))
             
-            # Education
             story.append(Paragraph("EDUCATION", heading_style))
             education_text = "<b>University of the West Indies</b><br/>"
             education_text += f"Degree Program: {student.degree or '[Student\'s Degree]'}<br/>"
@@ -658,7 +1033,6 @@ def generate_resume():
             
             story.append(Spacer(1, 12))
             
-            # Additional Information
             story.append(Paragraph("ADDITIONAL INFORMATION", heading_style))
             story.append(Paragraph(
                 "This resume was automatically generated based on verified competencies and completed workshops "
@@ -667,15 +1041,12 @@ def generate_resume():
                 normal_style
             ))
             
-            # Build the PDF
             doc.build(story)
             
-            # Update student record with generated resume
             student.resume = filename
             db.session.commit()
             flash('Resume generated successfully!', 'success')
             
-            # Redirect to download the generated resume
             return redirect(url_for('student_views.download_resume'))
             
         except Exception as pdf_error:
@@ -709,7 +1080,6 @@ def merge_resume():
             flash('You need to upload a resume first before adding competencies to it.', 'error')
             return redirect(url_for('student_views.student_profile'))
         
-        # Get earned competencies
         earned_competencies = []
         if student.competencies:
             for comp_name, comp_data in student.competencies.items():
@@ -728,29 +1098,24 @@ def merge_resume():
             flash('You do not have any competencies to add to your resume.', 'info')
             return redirect(url_for('student_views.student_profile'))
             
-        # Get enrolled workshops
         enrolled_workshops = Workshop.query.join(Enrollment).filter(
             Enrollment.student_id == student.id
         ).all()
         
-        # Resumes directory
         resumes_dir = 'App/static/resumes'
         
-        # Get existing resume path
         existing_resume_path = os.path.join(resumes_dir, student.resume)
         
         if not os.path.exists(existing_resume_path):
             flash('Existing resume file not found', 'error')
             return redirect(url_for('student_views.student_profile'))
         
-        # Generate unique filename for competency PDF and merged resume
         timestamp = int(datetime.now().timestamp())
         merged_filename = f"{student.id}_{timestamp}_enhanced_resume.pdf"
         competency_pdf_path = os.path.join(resumes_dir, f"temp_competency_{timestamp}.pdf")
         merged_file_path = os.path.join(resumes_dir, merged_filename)
         
         try:
-            # 1. Generate PDF of just the competencies using ReportLab
             doc = SimpleDocTemplate(
                 competency_pdf_path,
                 pagesize=letter,
@@ -760,13 +1125,11 @@ def merge_resume():
                 bottomMargin=72
             )
             
-            # Define styles
             styles = getSampleStyleSheet()
             title_style = styles['Heading1']
             heading_style = styles['Heading2']
             normal_style = styles['Normal']
             
-            # Custom styles
             competency_style = ParagraphStyle(
                 'CompetencyStyle',
                 parent=styles['Normal'],
@@ -775,15 +1138,12 @@ def merge_resume():
                 leftIndent=0
             )
             
-            # Build PDF content
             story = []
             
-            # Title
             story.append(Paragraph("COMPETENCY PROFILE", title_style))
             story.append(Paragraph(f"For {student.first_name} {student.last_name}", normal_style))
             story.append(Spacer(1, 12))
             
-            # Competencies
             story.append(Paragraph("VERIFIED COMPETENCIES", heading_style))
             if earned_competencies:
                 for comp in earned_competencies:
@@ -807,11 +1167,20 @@ def merge_resume():
             
             story.append(Spacer(1, 12))
             
-            # Workshops
             story.append(Paragraph("WORKSHOPS & TRAINING", heading_style))
             if enrolled_workshops:
                 for workshop in enrolled_workshops:
-                    workshop_text = f"<b>{workshop.workshopName}</b><br/>"
+                    enrollment = Enrollment.query.filter_by(
+                        student_id=student.id,
+                        workshop_id=workshop.id
+                    ).first()
+                    
+                    workshop_text = f"<b>{workshop.workshopName}</b>"
+                    
+                    if enrollment and enrollment.certificate_status == 'approved':
+                        workshop_text += " <i>(Certified)</i>"
+                    
+                    workshop_text += "<br/>"
                     workshop_text += f"Date: {workshop.workshopDate.strftime('%B %d, %Y')} | "
                     workshop_text += f"Instructor: {workshop.instructor} | "
                     workshop_text += f"Location: {workshop.location}<br/>"
@@ -826,7 +1195,6 @@ def merge_resume():
             
             story.append(Spacer(1, 12))
             
-            # Certification
             story.append(Paragraph("CERTIFICATION", heading_style))
             story.append(Paragraph(
                 "The above competencies have been verified by the UWI Career Competency Tracking System. "
@@ -834,42 +1202,33 @@ def merge_resume():
                 normal_style
             ))
             
-            # Build the PDF
             doc.build(story)
             
-            # 2. Merge PDFs using PyPDF2
             with open(existing_resume_path, 'rb') as file_original:
                 original_pdf = PdfReader(file_original)
                 
                 with open(competency_pdf_path, 'rb') as file_competency:
                     competency_pdf = PdfReader(file_competency)
                     
-                    # Create a PDF writer
                     merger = PdfWriter()
                     
-                    # Add all pages from both PDFs
                     for page in original_pdf.pages:
                         merger.add_page(page)
                     
                     for page in competency_pdf.pages:
                         merger.add_page(page)
                     
-                    # Write the merged PDF to file
                     with open(merged_file_path, 'wb') as output_file:
                         merger.write(output_file)
             
-            # Remove temporary competency PDF
             if os.path.exists(competency_pdf_path):
                 os.remove(competency_pdf_path)
             
-            # Save old resume path to delete it later
             old_resume_path = os.path.join(resumes_dir, student.resume)
             
-            # Update student record with merged resume
             student.resume = merged_filename
             db.session.commit()
             
-            # Delete old resume file if different from the new one
             if os.path.exists(old_resume_path) and old_resume_path != merged_file_path:
                 try:
                     os.remove(old_resume_path)
@@ -878,7 +1237,6 @@ def merge_resume():
             
             flash('Your resume has been enhanced with your competencies and skills!', 'success')
             
-            # Redirect to download the merged resume
             return redirect(url_for('student_views.download_resume'))
             
         except Exception as pdf_error:
@@ -925,49 +1283,50 @@ def update_personal_info():
     return redirect(url_for('student_views.student_profile'))
 
 @student_views.route('/get-notifications')
-@login_required
 def get_notifications():
-    """
-    Get notifications for the current user (API endpoint)
-    """
-    if current_user.user_type != 'student':
-        return jsonify({'error': 'Access denied. Students only.'}), 403
+    if not current_user.is_authenticated:
+        return jsonify({'notifications': [], 'unread_count': 0})
     
-    limit = request.args.get('limit', 10, type=int)
-    unread_only = request.args.get('unread_only', False, type=bool)
-    
-    notifications = notification_controller.get_notifications(
-        student_id=current_user.id,
-        limit=limit,
-        unread_only=unread_only
-    )
-    
-    unread_count = notification_controller.get_unread_count(current_user.id)
-    
-    return jsonify({
-        'notifications': [
-            {
-                'id': n.id,
-                'message': n.message,
-                'notification_type': n.notification_type,
-                'created_at': n.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-                'is_read': n.is_read,
-                'link': n.link
-            } for n in notifications
-        ],
-        'unread_count': unread_count
-    })
+    try:
+        student_id = current_user.id
+        notifications = notification_controller.get_notifications(student_id, limit=20)
+        unread_count = notification_controller.get_unread_count(student_id)
+        
+        formatted_notifications = []
+        for notif in notifications:
+            if isinstance(notif.created_at, str):
+                try:
+                    created_at = datetime.fromisoformat(notif.created_at)
+                except ValueError:
+                    created_at = datetime.now()
+            else:
+                created_at = notif.created_at or datetime.now()
+                
+            formatted_notifications.append({
+                'id': notif.id,
+                'message': notif.message,
+                'notification_type': notif.notification_type,
+                'is_read': notif.is_read,
+                'created_at': created_at.isoformat(),
+                'link': notif.link
+            })
+        
+        formatted_notifications.sort(key=lambda x: x['created_at'], reverse=True)
+        
+        return jsonify({
+            'notifications': formatted_notifications,
+            'unread_count': unread_count
+        })
+    except Exception as e:
+        print(f"Error getting notifications: {e}")
+        return jsonify({'error': str(e)}), 500
 
 @student_views.route('/mark-notification-read/<int:notification_id>', methods=['POST'])
 @login_required
 def mark_notification_read(notification_id):
-    """
-    Mark a notification as read
-    """
     if current_user.user_type != 'student':
         return jsonify({'error': 'Access denied. Students only.'}), 403
     
-    # Ensure the notification belongs to the current user
     notification = Notification.query.get(notification_id)
     if not notification or notification.student_id != current_user.id:
         return jsonify({'error': 'Notification not found or unauthorized.'}), 404
@@ -982,9 +1341,6 @@ def mark_notification_read(notification_id):
 @student_views.route('/mark-all-notifications-read', methods=['POST'])
 @login_required
 def mark_all_notifications_read():
-    """
-    Mark all notifications as read for the current user
-    """
     if current_user.user_type != 'student':
         return jsonify({'error': 'Access denied. Students only.'}), 403
     
@@ -1015,6 +1371,7 @@ def unenroll_workshop(workshop_id):
             return jsonify({'error': 'You are not enrolled in this workshop.'}), 404
         
         workshop = Workshop.query.get(workshop_id)
+        workshop_name = workshop.workshopName if workshop else "Unknown Workshop"
         
         if workshop and workshop.competencies:
             other_workshops = Workshop.query.join(Enrollment).filter(
@@ -1040,6 +1397,20 @@ def unenroll_workshop(workshop_id):
                         ).delete()
         
         db.session.delete(enrollment)
+        
+        notification_controller.create_admin_notification(
+            message=f"{student.first_name} {student.last_name} has unenrolled from {workshop_name}",
+            notification_type='unenrollment',
+            link=f"/admin/workshop-attendance?workshop_id={workshop_id}"
+        )
+        
+        create_student_notification(
+            student_id=student.id,
+            message=f"You have successfully unenrolled from {workshop_name}",
+            notification_type='unenrollment_confirmation',
+            link="/my-workshops"
+        )
+        
         db.session.commit()
         
         return jsonify({'message': 'Successfully unenrolled from workshop.'}), 200
@@ -1049,14 +1420,12 @@ def unenroll_workshop(workshop_id):
         return jsonify({'error': str(e)}), 500 
 
 def create_sample_jobs():
-    """Create sample jobs if none exist"""
-    from ..models.job_roles import JobRole
     if JobRole.query.count() == 0:
         jobs = [
             {
                 'title': 'Software Developer',
                 'description': 'Design and develop software applications using modern technologies.',
-                'required_rank': 2,  # Intermediate
+                'required_rank': 2,
                 'competencies': [
                     ('Programming', 2),
                     ('Problem Solving', 2),
@@ -1076,7 +1445,7 @@ def create_sample_jobs():
             {
                 'title': 'Project Manager',
                 'description': 'Lead and coordinate software development projects.',
-                'required_rank': 3,  # Advanced
+                'required_rank': 3,
                 'competencies': [
                     ('Leadership', 3),
                     ('Communication', 2),
@@ -1192,5 +1561,120 @@ def workshops():
         flash('Access denied. Students only.', 'error')
         return redirect(url_for('dashboard_views.dashboard'))
     
-    # Redirect to the dashboard_views.workshops route
     return redirect(url_for('dashboard_views.workshops')) 
+
+@student_views.route('/request-certificate', methods=['POST'])
+@login_required
+def request_certificate():
+    if current_user.user_type != 'student':
+        flash('Only students can request certificates.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+    
+    try:
+        competency = request.form.get('competency')
+        if not competency:
+            flash('Invalid request. Please specify a competency.', 'error')
+            return redirect(url_for('student_views.earned_badges'))
+        
+        student = Student.get_by_id(current_user.id)
+        if not student or not student.competencies or competency not in student.competencies:
+            flash('Competency not found or not earned.', 'error')
+            return redirect(url_for('student_views.earned_badges'))
+        
+        comp_data = student.competencies.get(competency, {})
+        rank = comp_data.get('rank', 0)
+        
+        if rank < 3:
+            flash('You need to reach Advanced level to request a certificate.', 'error')
+            return redirect(url_for('student_views.earned_badges'))
+        
+        student.competencies[competency]['certificate_status'] = 'pending'
+        db.session.commit()
+        
+        notification_controller.create_admin_notification(
+            message=f"Certificate request from {student.first_name} {student.last_name} for competency: {competency}",
+            notification_type='certificate_request',
+            link="/validate-certificates",
+            related_id=student.id
+        )
+        
+        flash('Certificate request submitted successfully. You will be notified when it is approved.', 'success')
+        return redirect(url_for('student_views.earned_badges'))
+        
+    except Exception as e:
+        print(f"Error requesting certificate: {e}")
+        db.session.rollback()
+        flash('An error occurred while requesting the certificate. Please try again.', 'error')
+        return redirect(url_for('student_views.earned_badges'))
+
+@student_views.route('/request-workshop-certificate', methods=['POST'])
+@login_required
+def request_workshop_certificate():
+    if current_user.user_type != 'student':
+        flash('Only students can request certificates.', 'error')
+        return redirect(url_for('dashboard_views.dashboard'))
+    
+    try:
+        workshop_id = request.form.get('workshop_id')
+        if not workshop_id:
+            flash('Invalid request. Please specify a workshop.', 'error')
+            return redirect(url_for('student_views.my_workshops'))
+        
+        workshop = Workshop.query.get(workshop_id)
+        if not workshop:
+            flash('Workshop not found.', 'error')
+            return redirect(url_for('student_views.my_workshops'))
+        
+        enrollment = Enrollment.query.filter_by(
+            workshop_id=workshop_id,
+            student_id=current_user.id
+        ).first()
+        
+        if not enrollment or not enrollment.completed:
+            flash('You must complete this workshop before requesting a certificate.', 'error')
+            return redirect(url_for('student_views.my_workshops'))
+        
+        if enrollment.certificate_status == 'pending':
+            flash('You have already requested a certificate for this workshop.', 'info')
+            return redirect(url_for('student_views.my_workshops', tab='completed'))
+            
+        enrollment.certificate_status = 'pending'
+        db.session.commit()
+        
+        notification_controller.create_admin_notification(
+            message=f"Certificate request from {current_user.first_name} {current_user.last_name} for workshop: {workshop.workshopName}",
+            notification_type='certificate_request',
+            link=f"/validate-certificates?workshop_id={workshop_id}"
+        )
+        
+        flash('Certificate request submitted successfully. You will be notified when it is approved.', 'success')
+        return redirect(url_for('student_views.my_workshops', tab='completed'))
+        
+    except Exception as e:
+        print(f"Error requesting certificate: {e}")
+        flash('An error occurred while requesting the certificate. Please try again.', 'error')
+        return redirect(url_for('student_views.my_workshops'))
+
+def create_student_notification(student_id, message, notification_type, link=None):
+    return notification_controller.create_notification(
+        student_id=student_id,
+        message=message,
+        notification_type=notification_type,
+        link=link
+    )
+
+def notify_certificate_approval(student_id, certificate_type, certificate_name):
+    try:
+        link = "/earned-badges"
+        message = f"Your certificate for {certificate_name} has been approved!"
+        
+        notification_controller.create_notification(
+            student_id=student_id,
+            message=message,
+            notification_type='certificate_approved',
+            link=link
+        )
+        return True
+    except Exception as e:
+        print(f"Error creating certificate approval notification: {e}")
+        return False 

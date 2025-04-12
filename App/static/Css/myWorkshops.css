@@ -86,6 +86,8 @@ body {
      grid-auto-rows: 1fr;
      align-items: stretch;
   */
+  position: relative;
+  min-height: 200px;
 }
 
 /* Workshop Card */
@@ -191,10 +193,27 @@ body {
 }
 
 /* If user not enrolled in any workshops */
+.no-workshops {
+  text-align: center;
+  padding: 50px 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  margin: 20px auto;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  grid-column: 1 / -1;
+  position: relative;
+  z-index: 1;
+}
+
 .no-workshops p {
   font-size: 1.2rem;
   margin-bottom: 20px;
   text-align: center;
+  color: #f5f5f5;
 }
 
 .no-workshops a.enroll-button {
@@ -204,8 +223,126 @@ body {
   border-radius: 5px;
   text-decoration: none;
   transition: background-color 0.3s;
+  display: inline-block;
+  margin-top: 10px;
+  font-weight: 600;
 }
 
 .no-workshops a.enroll-button:hover {
   background: #008e9a;
+}
+
+/* Tab content styles */
+.tab-content {
+  display: none;
+  position: relative;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Hide the no-workshops message in certain contexts */
+.hide-message {
+  display: none !important;
+}
+
+/* Tab styles */
+.tab-container {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.tab-nav {
+    display: flex;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 15px;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.tab-btn.active {
+    background: rgba(0, 173, 181, 0.7);
+    color: white;
+}
+
+/* Completed workshop card styles */
+.completed-card {
+    position: relative;
+    border: 2px solid rgba(142, 36, 170, 0.5);
+}
+
+.completion-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #8e24aa;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Status badges */
+.status {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.status.enrolled {
+    background-color: #e1f5fe;
+    color: #0288d1;
+}
+
+.status.attended {
+    background-color: #e8f5e9;
+    color: #43a047;
+}
+
+/* Certificate button styles */
+.certificate-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+.certificate-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #8e24aa;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 500;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.certificate-button:hover {
+    background-color: #6a1b9a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }

@@ -53,49 +53,25 @@
                     <div class="competency-card">
                         <h3>{{ competency }}</h3>
                         {% set rank = details.rank|int %}
-                        {% set progress_class = "" %}
                         {% set rank_name = "" %}
                         
                         {% if rank == 1 %}
-                            {% set progress_class = "progress-beginner" %}
                             {% set rank_name = "Beginner" %}
                         {% elif rank == 2 %}
-                            {% set progress_class = "progress-intermediate" %}
                             {% set rank_name = "Intermediate" %}
                         {% elif rank == 3 %}
-                            {% set progress_class = "progress-advanced" %}
                             {% set rank_name = "Advanced" %}
                         {% else %}
-                            {% set progress_class = "progress-unranked" %}
                             {% set rank_name = "Unranked" %}
                         {% endif %}
                         
-                        <div class="progress-label">Progress:</div>
-                        <div class="progress-bar">
-                            <div class="progress-fill {{ progress_class }}"></div>
-                        </div>
                         <div class="rank-label">Rank: <span class="rank-text">{{ rank_name }}</span></div>
                         {% if details.feedback %}
                             <div class="feedback"><strong>Feedback:</strong> {{ details.feedback }}</div>
                         {% endif %}
                         
-                        {% if rank == 3 %}
-                            {% if details.certificate_status == 'approved' %}
-                                <a href="{{ url_for('student_views.view_certificate', competency=competency) }}" class="certificate-button view">View Certificate</a>
-                            {% elif details.certificate_status == 'pending' %}
-                                <button class="certificate-button pending" disabled>Certificate Request Pending</button>
-                            {% elif details.certificate_status == 'denied' %}
-                                <form action="{{ url_for('student_views.request_certificate') }}" method="POST">
-                                    <input type="hidden" name="competency" value="{{ competency }}">
-                                    <button type="submit" class="certificate-button denied">Request Denied - Request Again</button>
-                                </form>
-                            {% else %}
-                                <form action="{{ url_for('student_views.request_certificate') }}" method="POST">
-                                    <input type="hidden" name="competency" value="{{ competency }}">
-                                    <button type="submit" class="certificate-button request">Request Certificate</button>
-                                </form>
-                            {% endif %}
-                        {% endif %}
+                        <!-- Certificates are for completed workshops, not individual competencies -->
+                        <!-- This feature will be moved to workshop certificates -->
                     </div>
                     {% endfor %}
                 </div>

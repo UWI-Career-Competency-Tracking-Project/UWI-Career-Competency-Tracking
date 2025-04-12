@@ -21,6 +21,10 @@
     <!-- Page CSS / JS ref Change to page accordingly -->
     <link rel="stylesheet" href="../../static/Css/employerSearch.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/employerSearch.css') }}">
+    
+    <!-- Add reference to JavaScript file -->
+    <script src="../../static/JavaScript/employerSearch.js" defer></script>
+    <script src="{{ url_for('static', filename='JavaScript/employerSearch.js') }}" defer></script>
 </head>
 <body>
     <div id="loader">
@@ -31,6 +35,12 @@
           <span class="loading">Loading...</span>
         </div>
       </div>
+
+      <!-- Add data attributes to store URLs for JavaScript -->
+      <div id="data-container" 
+           data-competencies-url="{{ url_for('employer_views.get_competencies') }}"
+           data-search-url="{{ url_for('employer_views.search_candidates') }}"
+           style="display: none;"></div>
 
       <nav class="navbar">
         <a href="{{ url_for('employer_views.employer_dashboard') }}" class="logo">
@@ -59,17 +69,21 @@
                                id="competency-search" 
                                placeholder="Search by competency..."
                                value="{{ search_query }}"
-                               oninput="debounceSearch()">
+                               autocomplete="off">
                         <i class="fas fa-search search-icon"></i>
+                        <div id="autocomplete-list" class="autocomplete-items"></div>
                     </div>
                     <div class="filter-select">
-                        <select id="rank-filter" onchange="debounceSearch()">
+                        <select id="rank-filter">
                             <option value="">All Ranks</option>
                             <option value="1" {% if rank_filter == '1' %}selected{% endif %}>Beginner</option>
                             <option value="2" {% if rank_filter == '2' %}selected{% endif %}>Intermediate</option>
                             <option value="3" {% if rank_filter == '3' %}selected{% endif %}>Advanced</option>
                         </select>
                     </div>
+                    <button id="search-button" class="search-button">
+                        <i class="fas fa-search"></i> Search
+                    </button>
                 </div>
             </div>
         </div>
@@ -109,18 +123,8 @@
         
     </main>
 
-    <script>
-        let timeoutId;
-        
-        function debounceSearch() {
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => {
-                const searchQuery = document.getElementById('competency-search').value;
-                const rankFilter = document.getElementById('rank-filter').value;
-                window.location.href = `{{ url_for('employer_views.search_candidates') }}?competency=${encodeURIComponent(searchQuery)}&rank=${encodeURIComponent(rankFilter)}`;
-            }, 300);
-        }
-    </script>
+    <!-- Remove the inline script and replace with a comment -->
+    <!-- JavaScript functionality moved to employerSearch.js -->
 
     <!-- Footer with animated loading bar -->
     <footer class="footer">

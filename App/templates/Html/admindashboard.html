@@ -26,6 +26,7 @@
   <!-- JavaScript files -->
   <script src="{{ url_for('static', filename='JavaScript/loader.js') }}" defer></script>
   <script src="{{ url_for('static', filename='JavaScript/admindashboard.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='JavaScript/notifications.js') }}" defer></script>
   
   <!-- Pass data from Flask to JavaScript -->
   <script>
@@ -176,13 +177,6 @@
             <i class="fas fa-plus-circle"></i>
           </div>
           <div class="action-title">Create Workshops</div>
-        </a>
-        
-        <a href="{{ url_for('admin_views.admin_badges') }}" class="action-card">
-          <div class="action-icon">
-            <i class="fas fa-award"></i>
-          </div>
-          <div class="action-title">Award Badges</div>
         </a>
         
         <a href="{{ url_for('admin_views.validate_certificates') }}" class="action-card">

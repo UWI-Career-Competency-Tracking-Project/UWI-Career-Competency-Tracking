@@ -3,13 +3,14 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 24px;
-  background: linear-gradient(135deg, rgba(0,173,181,0.7), rgba(0,173,181,0.5));
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, rgba(0,173,181,0.85), rgba(0,173,181,0.75));
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   color: #fff;
   position: relative; 
   z-index: 1000;  
   backdrop-filter: blur(8px);
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .navbar .logo {
@@ -35,14 +36,8 @@
   font-size: 1.4rem;
   font-weight: bold;
   text-transform: uppercase;
-
-  /* More pronounced teal gradient */
-  background: linear-gradient(to right, #006b71, #b1f4f8);
-  -webkit-background-clip: text;
-  color: transparent;
-
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
-  -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.8);
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 
@@ -65,6 +60,8 @@
   display: inline-block;
   overflow: hidden; 
   transition: transform 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
 }
 
 .nav-items a:hover {
@@ -152,27 +149,35 @@
 
 /* Dropdown header with animated separator */
 .dropdown-header {
-  padding: 12px 16px;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(0, 173, 181, 0.9);
 }
 
-.dropdown-username {
-  display: block;
-  font-size: 1em;
+.dropdown-title {
   font-weight: bold;
+  font-size: 16px;
   color: #fff;
-  margin-bottom: 8px;
+  font-family: 'Poppins', sans-serif;
 }
 
-.dropdown-separator {
-  width: 0;
-  height: 2px;
-  background-color: #fff;
-  animation: loadingLine 1s ease-out forwards;
+.mark-all-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  font-family: 'Poppins', sans-serif;
 }
 
-@keyframes loadingLine {
-  from { width: 0; }
-  to { width: 100%; }
+.mark-all-btn:hover {
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
 /* Dropdown links */
@@ -268,13 +273,14 @@
   max-height: 80vh;
   overflow-y: auto;
   z-index: 1000;
-  background-color: #fff;
+  background-color: rgba(240, 240, 240, 0.95);
   border-radius: 8px;
   box-shadow: 0 8px 16px rgba(0,0,0,0.2);
   opacity: 0;
   visibility: hidden;
   transform: translateY(10px);
   transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+  border: 1px solid rgba(0, 173, 181, 0.5);
 }
 
 /* Make dropdown easier to interact with */
@@ -287,39 +293,11 @@
   transform: translateY(0);
 }
 
-.dropdown-header {
-  padding: 15px;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.dropdown-title {
-  font-weight: bold;
-  font-size: 16px;
-  color: #333;
-}
-
-.mark-all-btn {
-  background: none;
-  border: none;
-  color: #3498db;
-  cursor: pointer;
-  font-size: 12px;
-  padding: 3px 8px;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-}
-
-.mark-all-btn:hover {
-  background-color: #f0f0f0;
-}
-
 .notifications-list {
   padding: 0;
   margin: 0;
   list-style-type: none;
+  font-family: 'Poppins', sans-serif;
 }
 
 .notification-item {
@@ -328,18 +306,28 @@
   position: relative;
   cursor: pointer;
   transition: background-color 0.2s;
+  background-color: rgba(255, 255, 255, 0.95);
 }
 
 .notification-item:hover {
-  background-color: #f8f9fa;
+  background-color: rgba(240, 240, 240, 0.95);
 }
 
 .notification-item.unread {
-  background-color: #ebf6fc;
+  background-color: rgba(255, 255, 255, 0.95);
 }
 
 .notification-item.unread:hover {
-  background-color: #e0f0fa;
+  background-color: rgba(240, 240, 240, 0.95);
+}
+
+/* Regular (read) notifications - darker background */
+.notification-item:not(.unread) {
+  background-color: rgba(220, 220, 220, 0.95);
+}
+
+.notification-item:not(.unread):hover {
+  background-color: rgba(210, 210, 210, 0.95);
 }
 
 .notification-content {
@@ -372,16 +360,33 @@
   background-color: #27ae60;
 }
 
+.notification-icon.certificate-request {
+  background-color: #e74c3c;
+}
+
+.notification-icon.certificate-approved {
+  background-color: #2ecc71;
+}
+
+.notification-icon.enrollment {
+  background-color: #9b59b6;
+}
+
+.notification-icon.unenrollment {
+  background-color: #e67e22;
+}
+
 .notification-text {
   flex-grow: 1;
   font-size: 14px;
-  color: #555;
+  color: #333; /* Darker color for better readability */
   line-height: 1.4;
+  font-family: 'Poppins', sans-serif;
 }
 
 .notification-time {
   font-size: 12px;
-  color: #999;
+  color: #666; /* Darker color for better readability */
   margin-top: 5px;
   display: block;
 }
@@ -389,13 +394,15 @@
 .notification-loading {
   padding: 20px;
   text-align: center;
-  color: #999;
+  color: #666;
+  font-family: 'Poppins', sans-serif;
 }
 
 .notification-empty {
   padding: 20px;
   text-align: center;
-  color: #999;
+  color: #666;
+  font-family: 'Poppins', sans-serif;
 }
 
 /* Animation */

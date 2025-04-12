@@ -169,8 +169,16 @@
                 <a href="{{ url_for('student_views.my_workshops') }}" class="view-all">View All</a>
               </div>
               <div class="workshop-cards">
-                {% if workshops %}
-                  {% for workshop in workshops[:3] %}
+                {% set active_workshops = [] %}
+                {% for workshop in workshops %}
+                  {% set enrollment = workshop.enrollments|selectattr('student_id', 'eq', user.id)|first %}
+                  {% if enrollment and not enrollment.completed %}
+                    {% set _ = active_workshops.append(workshop) %}
+                  {% endif %}
+                {% endfor %}
+                
+                {% if active_workshops %}
+                  {% for workshop in active_workshops[:3] %}
                     <div class="workshop-card">
                       {% if workshop.image_path %}
                         <div class="workshop-image">
@@ -184,14 +192,59 @@
                       </div>
                     </div>
                   {% endfor %}
-                  {% if workshops|length > 3 %}
+                  {% if active_workshops|length > 3 %}
                     <div class="more-card">
-                      <span>+{{ workshops|length - 3 }} more</span>
+                      <span>+{{ active_workshops|length - 3 }} more</span>
                       <a href="{{ url_for('student_views.my_workshops') }}">View All</a>
                     </div>
                   {% endif %}
                 {% else %}
-                  <p class="no-items">You are not enrolled in any workshops yet.</p>
+                  <p class="no-items">You are not enrolled in any active workshops yet.</p>
+                {% endif %}
+              </div>
+            </section>
+
+            <!-- Completed Workshops Section -->
+            <section class="profile-section">
+              <div class="section-header">
+                <h3>Completed Workshops</h3>
+                <a href="{{ url_for('student_views.my_workshops') }}?tab=completed" class="view-all">View All</a>
+              </div>
+              <div class="workshop-cards">
+                {% set completed_workshops = [] %}
+                {% for workshop in workshops %}
+                  {% set enrollment = workshop.enrollments|selectattr('student_id', 'eq', user.id)|first %}
+                  {% if enrollment and enrollment.completed %}
+                    {% set _ = completed_workshops.append(workshop) %}
+                  {% endif %}
+                {% endfor %}
+                
+                {% if completed_workshops %}
+                  {% for workshop in completed_workshops[:3] %}
+                    <div class="workshop-card completed-card">
+                      {% if workshop.image_path %}
+                        <div class="workshop-image">
+                          <img src="{{ url_for('static', filename=workshop.image_path) }}" alt="{{ workshop.workshopName }}">
+                          <span class="completion-badge"><i class="fas fa-check-circle"></i></span>
+                        </div>
+                      {% endif %}
+                      <div class="workshop-info">
+                        <h4>{{ workshop.workshopName }}</h4>
+                        <p class="workshop-date">{{ workshop.workshopDate.strftime('%B %d, %Y') }}</p>
+                        <p class="workshop-instructor">{{ workshop.instructor }}</p>
+                        {% set enrollment = workshop.enrollments|selectattr('student_id', 'eq', user.id)|first %}
+                        <p class="completion-date">Completed: {{ enrollment.completion_date.strftime('%B %d, %Y') if enrollment.completion_date else 'N/A' }}</p>
+                      </div>
+                    </div>
+                  {% endfor %}
+                  {% if completed_workshops|length > 3 %}
+                    <div class="more-card">
+                      <span>+{{ completed_workshops|length - 3 }} more</span>
+                      <a href="{{ url_for('student_views.my_workshops') }}?tab=completed">View All</a>
+                    </div>
+                  {% endif %}
+                {% else %}
+                  <p class="no-items">You haven't completed any workshops yet.</p>
                 {% endif %}
               </div>
             </section>
@@ -200,37 +253,38 @@
             <section class="profile-section">
               <div class="section-header">
                 <h3>My Certificates</h3>
-                <a href="{{ url_for('student_views.earned_badges') }}" class="view-all">View All</a>
+                <a href="{{ url_for('student_views.my_workshops') }}?tab=completed" class="view-all">View All</a>
               </div>
               <div class="certificate-cards">
-                {% set certified_competencies = [] %}
-                {% for comp in earned_competencies %}
-                  {% if comp.certificate_status == 'approved' %}
-                    {% set _ = certified_competencies.append(comp) %}
+                {% set completed_workshops = [] %}
+                {% for workshop in workshops %}
+                  {% set enrollment = workshop.enrollments|selectattr('student_id', 'eq', user.id)|first %}
+                  {% if enrollment and enrollment.completed %}
+                    {% set _ = completed_workshops.append(workshop) %}
                   {% endif %}
                 {% endfor %}
                 
-                {% if certified_competencies %}
-                  {% for comp in certified_competencies[:3] %}
+                {% if completed_workshops %}
+                  {% for workshop in completed_workshops[:3] %}
                     <div class="certificate-card">
                       <div class="certificate-icon">
                         <i class="fas fa-certificate"></i>
                       </div>
                       <div class="certificate-info">
-                        <h4>{{ comp.name }}</h4>
-                        <p class="certificate-rank">{{ comp.rank_name }}</p>
-                        <a href="{{ url_for('student_views.view_certificate', competency=comp.name) }}" class="view-certificate">View Certificate</a>
+                        <h4>{{ workshop.workshopName }}</h4>
+                        <p class="certificate-date">Completed: {{ workshop.enrollments|selectattr('student_id', 'eq', user.id)|first|attr('completion_date')|string|truncate(10, True, '') if workshop.enrollments|selectattr('student_id', 'eq', user.id)|first|attr('completion_date') else 'N/A' }}</p>
+                        <a href="{{ url_for('student_views.view_workshop_certificate', workshop_id=workshop.id) }}" class="view-certificate">View Certificate</a>
                       </div>
                     </div>
                   {% endfor %}
-                  {% if certified_competencies|length > 3 %}
+                  {% if completed_workshops|length > 3 %}
                     <div class="more-card">
-                      <span>+{{ certified_competencies|length - 3 }} more</span>
-                      <a href="{{ url_for('student_views.earned_badges') }}">View All</a>
+                      <span>+{{ completed_workshops|length - 3 }} more</span>
+                      <a href="{{ url_for('student_views.my_workshops') }}?tab=completed">View All</a>
                     </div>
                   {% endif %}
                 {% else %}
-                  <p class="no-items">You don't have any certificates yet. Advanced competencies can be certified.</p>
+                  <p class="no-items">You don't have any certificates yet. Complete workshops to earn certificates.</p>
                 {% endif %}
               </div>
             </section>

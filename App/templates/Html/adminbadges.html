@@ -27,6 +27,8 @@
     <!-- Admin Badges JavaScript -->
     <script src="../../static/JavaScript/admin_badges.js" defer></script>
     <script src="{{ url_for('static', filename='JavaScript/admin_badges.js') }}" defer></script>
+    <!-- Notifications JavaScript -->
+    <script src="{{ url_for('static', filename='JavaScript/notifications.js') }}" defer></script>
 </head>
 <body>
     <div id="loader">
@@ -37,19 +39,9 @@
           <span class="loading">Loading...</span>
         </div>
       </div>
-      <nav class="navbar">
-        <a href="{{ url_for('admin_views.admin_dashboard') }}" class="logo">
-            <img src="../../static/Images/logo.png">
-            <span class="site-title">Career Competency Tracker</span>
-          </a>
-        <div class="nav-items">
-          <a href="{{ url_for('admin_views.manage_workshops') }}">Manage Workshops</a>
-          <a href="{{ url_for('admin_views.admin_workshop_creation') }}">Create Workshops</a>
-          <a href="{{ url_for('admin_views.admin_badges') }}">Award Badges</a>
-          <a href="{{ url_for('admin_views.validate_certificates') }}">Validate Certificates</a>
-          <a href="{{ url_for('auth_views.logout_action') }}">Logout</a>
-        </div>
-      </nav>
+      
+      <!-- Include navbar -->
+      {% include 'Html/navbar.html' with context %}
 
       <!-- Background video element -->
       <video autoplay muted loop id="bg-video">
