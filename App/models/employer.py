@@ -10,5 +10,8 @@ class Employer(User):
         'polymorphic_identity': 'employer',
     }
 
+    def __init__(self, username, password, email, first_name=None, last_name=None):
+        super().__init__(username, password, email, first_name, last_name, user_type='employer')
+
     def get_json(self):
         return super().get_json()

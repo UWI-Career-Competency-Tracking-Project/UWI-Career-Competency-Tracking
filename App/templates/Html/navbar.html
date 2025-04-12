@@ -8,8 +8,8 @@
   <div class="nav-items">
     <a href="{{ url_for('student_views.my_workshops') }}">My Workshops</a>
     <a href="{{ url_for('dashboard_views.workshops') }}">Available Workshops</a>
-    <a href="{{ url_for('student_views.competencies') }}">Tracked Comps</a>
-    <a href="{{ url_for('student_views.earned_badges') }}">Badges & Certificates</a>
+    <a href="{{ url_for('student_views.competencies') }}">Competencies</a>
+    <a href="{{ url_for('student_views.earned_badges') }}">Certificates</a>
     
     <!-- Notifications Dropdown -->
     <div class="notifications-dropdown" tabindex="0">
@@ -21,10 +21,9 @@
         <div class="dropdown-header">
           <span class="dropdown-title">Notifications</span>
           <button id="mark-all-read" class="mark-all-btn">Mark all as read</button>
-          <div class="dropdown-separator"></div>
         </div>
         <div class="notifications-list" id="notifications-list">
-          <div class="notification-loading">Loading notifications...</div>
+          <div class="notification-empty">Loading notifications...</div>
         </div>
       </div>
     </div>
@@ -35,16 +34,15 @@
         {% if user.profile_pic %}
           <img src="{{ url_for('static', filename='profile_pics/' + user.profile_pic) }}" alt="User Profile">
         {% else %}
-          <img src="https://via.placeholder.com/40" alt="User Profile">
+          <i class="fas fa-user-circle" style="font-size: 24px; color: #fff;"></i>
         {% endif %}
       </div>
       <div class="dropdown-content">
         <div class="dropdown-header">
           <span class="dropdown-username">{{ user.first_name }} {{ user.last_name }}</span>
-          <div class="dropdown-separator"></div>
         </div>
-        <a href="{{ url_for('student_views.student_profile') }}">Profile</a>
-        <a href="{{ url_for('auth_views.logout_action') }}">Sign Out</a>
+        <a href="{{ url_for('student_views.student_profile') }}"><i class="fas fa-user-alt"></i> Profile</a>
+        <a href="{{ url_for('auth_views.logout_action') }}"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
       </div>
     </div>
   </div>
@@ -59,8 +57,24 @@
   <div class="nav-items">
     <a href="{{ url_for('admin_views.manage_workshops') }}">Manage Workshops</a>
     <a href="{{ url_for('admin_views.admin_workshop_creation') }}">Create Workshops</a>
-    <a href="{{ url_for('admin_views.admin_badges') }}">Award Badges</a>
     <a href="{{ url_for('admin_views.validate_certificates') }}">Validate Certificates</a>
+    
+    <!-- Notifications Dropdown -->
+    <div class="notifications-dropdown" tabindex="0">
+      <div class="notifications-trigger">
+        <i class="fas fa-bell"></i>
+        <span class="notification-badge" id="notification-count">0</span>
+      </div>
+      <div class="dropdown-content notifications-content">
+        <div class="dropdown-header">
+          <span class="dropdown-title">Notifications</span>
+          <button id="mark-all-read" class="mark-all-btn">Mark all as read</button>
+        </div>
+        <div class="notifications-list" id="notifications-list">
+          <div class="notification-empty">Loading notifications...</div>
+        </div>
+      </div>
+    </div>
     
     <!-- Profile Dropdown -->
     <div class="profile-dropdown" tabindex="0">
@@ -70,10 +84,9 @@
       <div class="dropdown-content">
         <div class="dropdown-header">
           <span class="dropdown-username">Administrator</span>
-          <div class="dropdown-separator"></div>
         </div>
-        <a href="{{ url_for('admin_views.admin_dashboard') }}">Dashboard</a>
-        <a href="{{ url_for('auth_views.logout_action') }}">Sign Out</a>
+        <a href="{{ url_for('admin_views.admin_dashboard') }}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="{{ url_for('auth_views.logout_action') }}"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
       </div>
     </div>
   </div>

@@ -34,6 +34,8 @@
     <!-- Custom JavaScript -->
     <script src="../../static/JavaScript/adminWorkshopCreation.js" defer></script>
     <script src="{{ url_for('static', filename='JavaScript/adminWorkshopCreation.js') }}" defer></script>
+    <!-- Notifications JavaScript -->
+    <script src="{{ url_for('static', filename='JavaScript/notifications.js') }}" defer></script>
 </head>
 <body>
     <div id="loader">
@@ -45,19 +47,8 @@
         </div>
     </div>
 
-    <nav class="navbar">
-        <a href="{{ url_for('admin_views.admin_dashboard') }}" class="logo">
-            <img src="../../static/Images/logo.png">
-            <span class="site-title">Career Competency Tracker</span>
-        </a>
-        <div class="nav-items">
-            <a href="{{ url_for('admin_views.manage_workshops') }}">Manage Workshops</a>
-            <a href="{{ url_for('admin_views.admin_workshop_creation') }}">Create Workshops</a>
-            <a href="{{ url_for('admin_views.admin_badges') }}">Award Badges</a>
-            <a href="{{ url_for('admin_views.validate_certificates') }}">Validate Certificates</a>
-            <a href="{{ url_for('auth_views.logout_action') }}">Logout</a>
-        </div>
-    </nav>
+    <!-- Navbar -->
+    {% include 'Html/navbar.html' with context %}
 
     <!-- Background Video -->
     <video autoplay muted loop id="bg-video">
@@ -126,25 +117,144 @@
                     <div class="form-group">
                         <label>Competencies</label>
                         <select name="competencies[]" multiple class="competencies-select">
-                            <option value="Programming" {% if 'Programming' in workshop.competencies %}selected{% endif %}>Programming</option>
-                            <option value="Problem Solving" {% if 'Problem Solving' in workshop.competencies %}selected{% endif %}>Problem Solving</option>
-                            <option value="Team Work" {% if 'Team Work' in workshop.competencies %}selected{% endif %}>Team Work</option>
-                            <option value="Data Analysis" {% if 'Data Analysis' in workshop.competencies %}selected{% endif %}>Data Analysis</option>
-                            <option value="Communication" {% if 'Communication' in workshop.competencies %}selected{% endif %}>Communication</option>
-                            <option value="Leadership" {% if 'Leadership' in workshop.competencies %}selected{% endif %}>Leadership</option>
-                            <option value="Design Thinking" {% if 'Design Thinking' in workshop.competencies %}selected{% endif %}>Design Thinking</option>
-                            <option value="Creativity" {% if 'Creativity' in workshop.competencies %}selected{% endif %}>Creativity</option>
-                            <option value="Cloud Computing" {% if 'Cloud Computing' in workshop.competencies %}selected{% endif %}>Cloud Computing</option>
-                            <option value="System Administration" {% if 'System Administration' in workshop.competencies %}selected{% endif %}>System Administration</option>
-                            <option value="Business Analysis" {% if 'Business Analysis' in workshop.competencies %}selected{% endif %}>Business Analysis</option>
-                            <option value="Testing" {% if 'Testing' in workshop.competencies %}selected{% endif %}>Testing</option>
-                            <option value="Attention to Detail" {% if 'Attention to Detail' in workshop.competencies %}selected{% endif %}>Attention to Detail</option>
-                            <option value="Database Management" {% if 'Database Management' in workshop.competencies %}selected{% endif %}>Database Management</option>
-                            <option value="Security" {% if 'Security' in workshop.competencies %}selected{% endif %}>Security</option>
-                            <option value="Technical Writing" {% if 'Technical Writing' in workshop.competencies %}selected{% endif %}>Technical Writing</option>
-                            <option value="Documentation" {% if 'Documentation' in workshop.competencies %}selected{% endif %}>Documentation</option>
+                            <!-- Programming & Development -->
+                            <option value="Programming I" {% if 'Programming I' in workshop.competencies %}selected{% endif %}>Programming I</option>
+                            <option value="Programming II" {% if 'Programming II' in workshop.competencies %}selected{% endif %}>Programming II</option>
+                            <option value="Programming III" {% if 'Programming III' in workshop.competencies %}selected{% endif %}>Programming III</option>
+                            <option value="Web Development I" {% if 'Web Development I' in workshop.competencies %}selected{% endif %}>Web Development I</option>
+                            <option value="Web Development II" {% if 'Web Development II' in workshop.competencies %}selected{% endif %}>Web Development II</option>
+                            <option value="Web Development III" {% if 'Web Development III' in workshop.competencies %}selected{% endif %}>Web Development III</option>
+                            <option value="Mobile Development I" {% if 'Mobile Development I' in workshop.competencies %}selected{% endif %}>Mobile Development I</option>
+                            <option value="Mobile Development II" {% if 'Mobile Development II' in workshop.competencies %}selected{% endif %}>Mobile Development II</option>
+                            <option value="Mobile Development III" {% if 'Mobile Development III' in workshop.competencies %}selected{% endif %}>Mobile Development III</option>
+                            <option value="DevOps I" {% if 'DevOps I' in workshop.competencies %}selected{% endif %}>DevOps I</option>
+                            <option value="DevOps II" {% if 'DevOps II' in workshop.competencies %}selected{% endif %}>DevOps II</option>
+                            <option value="DevOps III" {% if 'DevOps III' in workshop.competencies %}selected{% endif %}>DevOps III</option>
+                            
+                            <!-- Problem Solving & Analysis -->
+                            <option value="Problem Solving I" {% if 'Problem Solving I' in workshop.competencies %}selected{% endif %}>Problem Solving I</option>
+                            <option value="Problem Solving II" {% if 'Problem Solving II' in workshop.competencies %}selected{% endif %}>Problem Solving II</option>
+                            <option value="Problem Solving III" {% if 'Problem Solving III' in workshop.competencies %}selected{% endif %}>Problem Solving III</option>
+                            <option value="Critical Thinking I" {% if 'Critical Thinking I' in workshop.competencies %}selected{% endif %}>Critical Thinking I</option>
+                            <option value="Critical Thinking II" {% if 'Critical Thinking II' in workshop.competencies %}selected{% endif %}>Critical Thinking II</option>
+                            <option value="Critical Thinking III" {% if 'Critical Thinking III' in workshop.competencies %}selected{% endif %}>Critical Thinking III</option>
+                            <option value="Data Analysis I" {% if 'Data Analysis I' in workshop.competencies %}selected{% endif %}>Data Analysis I</option>
+                            <option value="Data Analysis II" {% if 'Data Analysis II' in workshop.competencies %}selected{% endif %}>Data Analysis II</option>
+                            <option value="Data Analysis III" {% if 'Data Analysis III' in workshop.competencies %}selected{% endif %}>Data Analysis III</option>
+                            <option value="Research Methods I" {% if 'Research Methods I' in workshop.competencies %}selected{% endif %}>Research Methods I</option>
+                            <option value="Research Methods II" {% if 'Research Methods II' in workshop.competencies %}selected{% endif %}>Research Methods II</option>
+                            <option value="Research Methods III" {% if 'Research Methods III' in workshop.competencies %}selected{% endif %}>Research Methods III</option>
+                            
+                            <!-- Business Skills -->
+                            <option value="Project Management I" {% if 'Project Management I' in workshop.competencies %}selected{% endif %}>Project Management I</option>
+                            <option value="Project Management II" {% if 'Project Management II' in workshop.competencies %}selected{% endif %}>Project Management II</option>
+                            <option value="Project Management III" {% if 'Project Management III' in workshop.competencies %}selected{% endif %}>Project Management III</option>
+                            <option value="Business Analysis I" {% if 'Business Analysis I' in workshop.competencies %}selected{% endif %}>Business Analysis I</option>
+                            <option value="Business Analysis II" {% if 'Business Analysis II' in workshop.competencies %}selected{% endif %}>Business Analysis II</option>
+                            <option value="Business Analysis III" {% if 'Business Analysis III' in workshop.competencies %}selected{% endif %}>Business Analysis III</option>
+                            <option value="Product Management I" {% if 'Product Management I' in workshop.competencies %}selected{% endif %}>Product Management I</option>
+                            <option value="Product Management II" {% if 'Product Management II' in workshop.competencies %}selected{% endif %}>Product Management II</option>
+                            <option value="Product Management III" {% if 'Product Management III' in workshop.competencies %}selected{% endif %}>Product Management III</option>
+                            
+                            <!-- Teamwork & Communication -->
+                            <option value="Team Work I" {% if 'Team Work I' in workshop.competencies %}selected{% endif %}>Team Work I</option>
+                            <option value="Team Work II" {% if 'Team Work II' in workshop.competencies %}selected{% endif %}>Team Work II</option>
+                            <option value="Team Work III" {% if 'Team Work III' in workshop.competencies %}selected{% endif %}>Team Work III</option>
+                            <option value="Communication I" {% if 'Communication I' in workshop.competencies %}selected{% endif %}>Communication I</option>
+                            <option value="Communication II" {% if 'Communication II' in workshop.competencies %}selected{% endif %}>Communication II</option>
+                            <option value="Communication III" {% if 'Communication III' in workshop.competencies %}selected{% endif %}>Communication III</option>
+                            <option value="Public Speaking I" {% if 'Public Speaking I' in workshop.competencies %}selected{% endif %}>Public Speaking I</option>
+                            <option value="Public Speaking II" {% if 'Public Speaking II' in workshop.competencies %}selected{% endif %}>Public Speaking II</option>
+                            <option value="Public Speaking III" {% if 'Public Speaking III' in workshop.competencies %}selected{% endif %}>Public Speaking III</option>
+                            <option value="Professional Etiquette I" {% if 'Professional Etiquette I' in workshop.competencies %}selected{% endif %}>Professional Etiquette I</option>
+                            <option value="Professional Etiquette II" {% if 'Professional Etiquette II' in workshop.competencies %}selected{% endif %}>Professional Etiquette II</option>
+                            <option value="Professional Etiquette III" {% if 'Professional Etiquette III' in workshop.competencies %}selected{% endif %}>Professional Etiquette III</option>
+                            <option value="Conflict Resolution I" {% if 'Conflict Resolution I' in workshop.competencies %}selected{% endif %}>Conflict Resolution I</option>
+                            <option value="Conflict Resolution II" {% if 'Conflict Resolution II' in workshop.competencies %}selected{% endif %}>Conflict Resolution II</option>
+                            <option value="Conflict Resolution III" {% if 'Conflict Resolution III' in workshop.competencies %}selected{% endif %}>Conflict Resolution III</option>
+                            <option value="Negotiation Skills I" {% if 'Negotiation Skills I' in workshop.competencies %}selected{% endif %}>Negotiation Skills I</option>
+                            <option value="Negotiation Skills II" {% if 'Negotiation Skills II' in workshop.competencies %}selected{% endif %}>Negotiation Skills II</option>
+                            <option value="Negotiation Skills III" {% if 'Negotiation Skills III' in workshop.competencies %}selected{% endif %}>Negotiation Skills III</option>
+                            
+                            <!-- Leadership & Management -->
+                            <option value="Leadership I" {% if 'Leadership I' in workshop.competencies %}selected{% endif %}>Leadership I</option>
+                            <option value="Leadership II" {% if 'Leadership II' in workshop.competencies %}selected{% endif %}>Leadership II</option>
+                            <option value="Leadership III" {% if 'Leadership III' in workshop.competencies %}selected{% endif %}>Leadership III</option>
+                            <option value="Strategic Planning I" {% if 'Strategic Planning I' in workshop.competencies %}selected{% endif %}>Strategic Planning I</option>
+                            <option value="Strategic Planning II" {% if 'Strategic Planning II' in workshop.competencies %}selected{% endif %}>Strategic Planning II</option>
+                            <option value="Strategic Planning III" {% if 'Strategic Planning III' in workshop.competencies %}selected{% endif %}>Strategic Planning III</option>
+                            <option value="Decision Making I" {% if 'Decision Making I' in workshop.competencies %}selected{% endif %}>Decision Making I</option>
+                            <option value="Decision Making II" {% if 'Decision Making II' in workshop.competencies %}selected{% endif %}>Decision Making II</option>
+                            <option value="Decision Making III" {% if 'Decision Making III' in workshop.competencies %}selected{% endif %}>Decision Making III</option>
+                            <option value="Mentoring I" {% if 'Mentoring I' in workshop.competencies %}selected{% endif %}>Mentoring I</option>
+                            <option value="Mentoring II" {% if 'Mentoring II' in workshop.competencies %}selected{% endif %}>Mentoring II</option>
+                            <option value="Mentoring III" {% if 'Mentoring III' in workshop.competencies %}selected{% endif %}>Mentoring III</option>
+                            
+                            <!-- Design & Innovation -->
+                            <option value="Design Thinking I" {% if 'Design Thinking I' in workshop.competencies %}selected{% endif %}>Design Thinking I</option>
+                            <option value="Design Thinking II" {% if 'Design Thinking II' in workshop.competencies %}selected{% endif %}>Design Thinking II</option>
+                            <option value="Design Thinking III" {% if 'Design Thinking III' in workshop.competencies %}selected{% endif %}>Design Thinking III</option>
+                            <option value="UX/UI Design I" {% if 'UX/UI Design I' in workshop.competencies %}selected{% endif %}>UX/UI Design I</option>
+                            <option value="UX/UI Design II" {% if 'UX/UI Design II' in workshop.competencies %}selected{% endif %}>UX/UI Design II</option>
+                            <option value="UX/UI Design III" {% if 'UX/UI Design III' in workshop.competencies %}selected{% endif %}>UX/UI Design III</option>
+                            <option value="Innovation Management I" {% if 'Innovation Management I' in workshop.competencies %}selected{% endif %}>Innovation Management I</option>
+                            <option value="Innovation Management II" {% if 'Innovation Management II' in workshop.competencies %}selected{% endif %}>Innovation Management II</option>
+                            <option value="Innovation Management III" {% if 'Innovation Management III' in workshop.competencies %}selected{% endif %}>Innovation Management III</option>
+                            <option value="Creative Problem Solving I" {% if 'Creative Problem Solving I' in workshop.competencies %}selected{% endif %}>Creative Problem Solving I</option>
+                            <option value="Creative Problem Solving II" {% if 'Creative Problem Solving II' in workshop.competencies %}selected{% endif %}>Creative Problem Solving II</option>
+                            <option value="Creative Problem Solving III" {% if 'Creative Problem Solving III' in workshop.competencies %}selected{% endif %}>Creative Problem Solving III</option>
+                            
+                            <!-- Cloud & Infrastructure -->
+                            <option value="Cloud Computing I" {% if 'Cloud Computing I' in workshop.competencies %}selected{% endif %}>Cloud Computing I</option>
+                            <option value="Cloud Computing II" {% if 'Cloud Computing II' in workshop.competencies %}selected{% endif %}>Cloud Computing II</option>
+                            <option value="Cloud Computing III" {% if 'Cloud Computing III' in workshop.competencies %}selected{% endif %}>Cloud Computing III</option>
+                            <option value="Network Security I" {% if 'Network Security I' in workshop.competencies %}selected{% endif %}>Network Security I</option>
+                            <option value="Network Security II" {% if 'Network Security II' in workshop.competencies %}selected{% endif %}>Network Security II</option>
+                            <option value="Network Security III" {% if 'Network Security III' in workshop.competencies %}selected{% endif %}>Network Security III</option>
+                            <option value="System Architecture I" {% if 'System Architecture I' in workshop.competencies %}selected{% endif %}>System Architecture I</option>
+                            <option value="System Architecture II" {% if 'System Architecture II' in workshop.competencies %}selected{% endif %}>System Architecture II</option>
+                            <option value="System Architecture III" {% if 'System Architecture III' in workshop.competencies %}selected{% endif %}>System Architecture III</option>
+                            
+                            <!-- Data & Information Management -->
+                            <option value="Database Management I" {% if 'Database Management I' in workshop.competencies %}selected{% endif %}>Database Management I</option>
+                            <option value="Database Management II" {% if 'Database Management II' in workshop.competencies %}selected{% endif %}>Database Management II</option>
+                            <option value="Database Management III" {% if 'Database Management III' in workshop.competencies %}selected{% endif %}>Database Management III</option>
+                            <option value="Big Data I" {% if 'Big Data I' in workshop.competencies %}selected{% endif %}>Big Data I</option>
+                            <option value="Big Data II" {% if 'Big Data II' in workshop.competencies %}selected{% endif %}>Big Data II</option>
+                            <option value="Big Data III" {% if 'Big Data III' in workshop.competencies %}selected{% endif %}>Big Data III</option>
+                            <option value="Data Visualization I" {% if 'Data Visualization I' in workshop.competencies %}selected{% endif %}>Data Visualization I</option>
+                            <option value="Data Visualization II" {% if 'Data Visualization II' in workshop.competencies %}selected{% endif %}>Data Visualization II</option>
+                            <option value="Data Visualization III" {% if 'Data Visualization III' in workshop.competencies %}selected{% endif %}>Data Visualization III</option>
+                            <option value="Machine Learning I" {% if 'Machine Learning I' in workshop.competencies %}selected{% endif %}>Machine Learning I</option>
+                            <option value="Machine Learning II" {% if 'Machine Learning II' in workshop.competencies %}selected{% endif %}>Machine Learning II</option>
+                            <option value="Machine Learning III" {% if 'Machine Learning III' in workshop.competencies %}selected{% endif %}>Machine Learning III</option>
+                            
+                            <!-- Cybersecurity & Ethics -->
+                            <option value="Cybersecurity I" {% if 'Cybersecurity I' in workshop.competencies %}selected{% endif %}>Cybersecurity I</option>
+                            <option value="Cybersecurity II" {% if 'Cybersecurity II' in workshop.competencies %}selected{% endif %}>Cybersecurity II</option>
+                            <option value="Cybersecurity III" {% if 'Cybersecurity III' in workshop.competencies %}selected{% endif %}>Cybersecurity III</option>
+                            <option value="Ethical Hacking I" {% if 'Ethical Hacking I' in workshop.competencies %}selected{% endif %}>Ethical Hacking I</option>
+                            <option value="Ethical Hacking II" {% if 'Ethical Hacking II' in workshop.competencies %}selected{% endif %}>Ethical Hacking II</option>
+                            <option value="Ethical Hacking III" {% if 'Ethical Hacking III' in workshop.competencies %}selected{% endif %}>Ethical Hacking III</option>
+                            <option value="Digital Ethics I" {% if 'Digital Ethics I' in workshop.competencies %}selected{% endif %}>Digital Ethics I</option>
+                            <option value="Digital Ethics II" {% if 'Digital Ethics II' in workshop.competencies %}selected{% endif %}>Digital Ethics II</option>
+                            <option value="Digital Ethics III" {% if 'Digital Ethics III' in workshop.competencies %}selected{% endif %}>Digital Ethics III</option>
+                            
+                            <!-- AI Engineering & Natural Language Processing -->
+                            <option value="AI Engineering I" {% if 'AI Engineering I' in workshop.competencies %}selected{% endif %}>AI Engineering I</option>
+                            <option value="AI Engineering II" {% if 'AI Engineering II' in workshop.competencies %}selected{% endif %}>AI Engineering II</option>
+                            <option value="AI Engineering III" {% if 'AI Engineering III' in workshop.competencies %}selected{% endif %}>AI Engineering III</option>
+                            <option value="Natural Language Processing I" {% if 'Natural Language Processing I' in workshop.competencies %}selected{% endif %}>Natural Language Processing I</option>
+                            <option value="Natural Language Processing II" {% if 'Natural Language Processing II' in workshop.competencies %}selected{% endif %}>Natural Language Processing II</option>
+                            <option value="Natural Language Processing III" {% if 'Natural Language Processing III' in workshop.competencies %}selected{% endif %}>Natural Language Processing III</option>
+                            <option value="Prompt Engineering I" {% if 'Prompt Engineering I' in workshop.competencies %}selected{% endif %}>Prompt Engineering I</option>
+                            <option value="Prompt Engineering II" {% if 'Prompt Engineering II' in workshop.competencies %}selected{% endif %}>Prompt Engineering II</option>
+                            <option value="Prompt Engineering III" {% if 'Prompt Engineering III' in workshop.competencies %}selected{% endif %}>Prompt Engineering III</option>
+                            <option value="AI Ethics & Governance I" {% if 'AI Ethics & Governance I' in workshop.competencies %}selected{% endif %}>AI Ethics & Governance I</option>
+                            <option value="AI Ethics & Governance II" {% if 'AI Ethics & Governance II' in workshop.competencies %}selected{% endif %}>AI Ethics & Governance II</option>
+                            <option value="AI Ethics & Governance III" {% if 'AI Ethics & Governance III' in workshop.competencies %}selected{% endif %}>AI Ethics & Governance III</option>
                         </select>
-                        <small>Click to select multiple competencies (search also available)</small>
+                        <small>Click to select multiple competencies with different levels (search also available)</small>
                     </div>
                 </div>
 

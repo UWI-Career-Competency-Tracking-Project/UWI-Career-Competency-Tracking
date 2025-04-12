@@ -7,7 +7,7 @@ function unenrollWorkshop(workshopId) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            credentials: 'same-origin'  // Include cookies in the request
+            credentials: 'same-origin'  
         })
         .then(response => {
             console.log('Response status:', response.status);
@@ -32,3 +32,40 @@ function unenrollWorkshop(workshopId) {
         });
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabParam = urlParams.get('tab');
+    
+    function activateTab(tabId) {
+        tabBtns.forEach(b => b.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
+        
+        const tabBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+        if (tabBtn) {
+            tabBtn.classList.add('active');
+            const tabContent = document.getElementById(`${tabId}-tab`);
+            if (tabContent) {
+                tabContent.classList.add('active');
+            }
+        }
+    }
+    
+    if (tabParam && ['active', 'completed'].includes(tabParam)) {
+        activateTab(tabParam);
+    }
+    
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-tab');
+            activateTab(tabId);
+            
+            const url = new URL(window.location);
+            url.searchParams.set('tab', tabId);
+            window.history.pushState({}, '', url);
+        });
+    });
+});

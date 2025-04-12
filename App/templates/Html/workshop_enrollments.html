@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workshop Enrollments | Career Competency Tracker</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Global CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='Css/global.css') }}">
+  <!-- Admin Dashboard CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='Css/admindashboard.css') }}">
+  <!-- Navbar CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='Css/navbar.css') }}">
+  <!-- Footer CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='Css/footer.css') }}">
+  <!-- Loader CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='Css/loader.css') }}">
+  <!-- Workshop Enrollments CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='Css/workshop_enrollments.css') }}">
+  
+  <!-- JavaScript files -->
+  <script src="{{ url_for('static', filename='JavaScript/loader.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='JavaScript/workshop_enrollments.js') }}" defer></script>
+  <!-- Notifications JavaScript -->
+  <script src="{{ url_for('static', filename='JavaScript/notifications.js') }}" defer></script>
+</head>
+<body>
+  <div id="loader">
+    <div class="container">
+      <div class="ring"></div>
+      <div class="ring"></div>
+      <div class="ring"></div>
+      <span class="loading">Loading...</span>
+    </div>
+  </div>
+  
+  <!-- Navbar -->
+  {% include 'Html/navbar.html' with context %}
+
+  <!-- Background video element -->
+  <video autoplay muted loop id="bg-video">
+    <source src="{{ url_for('static', filename='Videos/stdashboardvid.mp4') }}" type="video/mp4">
+  </video>
+
+  <main class="content-container">
+    <div class="workshop-enrollments">
+        <div class="section-header">
+            <div class="back-button">
+                <a href="{{ url_for('admin_views.manage_workshops') }}" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Back to Workshops
+                </a>
+            </div>
+            <h1>{{ workshop.workshopName }} - Enrolled Students</h1>
+            <div class="workshop-details">
+                <div class="detail-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>{{ workshop.workshopDate.strftime('%B %d, %Y') if workshop.workshopDate else 'TBD' }}</span>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{{ workshop.workshopTime }}</span>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>{{ workshop.location }}</span>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>{{ workshop.instructor }}</span>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-tags"></i>
+                    <span>{{ workshop.competencies|join(', ') }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="enrollment-list">
+            {% if enrolled_students %}
+                <table class="enrollments-table">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Email</th>
+                            <th>Enrollment Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in enrolled_students %}
+                            <tr data-enrollment-id="{{ entry.enrollment.id }}">
+                                <td class="student-name"><strong>{{ entry.student.first_name }} {{ entry.student.last_name }}</strong></td>
+                                <td class="student-email">{{ entry.student.email }}</td>
+                                <td>{{ entry.enrollment.enrollment_date.strftime('%Y-%m-%d') }}</td>
+                                <td class="status-cell">
+                                    {% if entry.enrollment.completed %}
+                                        <span class="status completed">Completed</span>
+                                    {% elif entry.enrollment.attended %}
+                                        <span class="status attended">Attended</span>
+                                    {% else %}
+                                        <span class="status enrolled">Enrolled</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        {% if entry.enrollment.attended %}
+                                            <button class="btn btn-attendance-remove" data-action="unmark">
+                                                <i class="fas fa-times"></i> Remove Attendance
+                                            </button>
+                                            {% if not entry.enrollment.completed %}
+                                                <button class="btn btn-completion" data-action="complete">
+                                                    <i class="fas fa-certificate"></i> Mark Complete
+                                                </button>
+                                            {% else %}
+                                                <button class="btn btn-completion-remove" data-action="uncomplete">
+                                                    <i class="fas fa-times"></i> Remove Completion
+                                                </button>
+                                            {% endif %}
+                                        {% else %}
+                                            <button class="btn btn-attendance" data-action="mark">
+                                                <i class="fas fa-check"></i> Mark Attended
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="no-enrollments">
+                    <i class="fas fa-users-slash empty-icon"></i>
+                    <p>No students have enrolled in this workshop yet.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  {% include 'Html/footer.html' %}
+</body>
+</html> 

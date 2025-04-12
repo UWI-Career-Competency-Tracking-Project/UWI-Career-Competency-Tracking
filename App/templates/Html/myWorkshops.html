@@ -20,10 +20,12 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/loader.css') }}">
     <script src="../../static/JavaScript/loader.js" defer></script>
     <script src="{{ url_for('static', filename='JavaScript/loader.js') }}" defer></script>
+    <!-- MyWorkshops CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/myWorkshops.css') }}">
     <link rel="stylesheet" href="../../static/Css/myWorkshops.css">
+    <!-- MyWorkshops JavaScript -->
+    <script src="{{ url_for('static', filename='JavaScript/myWorkshops.js') }}" defer></script>
     <script src="../../static/JavaScript/myWorkshops.js" defer></script>
-    <link rel="stylesheet" href="../../static/JavaScript/myWorkshops.js">
     <!-- Notifications JavaScript -->
     <script src="{{ url_for('static', filename='JavaScript/notifications.js') }}" defer></script>
 </head>
@@ -46,43 +48,119 @@
 
     <main class="content-container">
         <section class="search-section">
-            <h2>My Enrolled Workshops</h2>
+            <h2>My Workshops</h2>
         </section>
         
-        <section class="workshops-container">
-            {% if workshops %}
-                {% for workshop in workshops %}
-                <div class="workshop-card" {% if workshop.image_path %}style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('{{ url_for('static', filename=workshop.image_path) }}');"{% endif %}>
-                    <div class="workshop-content">
-                        <h3>{{ workshop.workshopName }}</h3>
-                        <p class="workshop-description">{{ workshop.workshopDescription }}</p>
-                        <div class="workshop-details">
-                            <p><i class="fas fa-user"></i> <strong>Instructor:</strong> {{ workshop.instructor }}</p>
-                            <p><i class="fas fa-calendar"></i> <strong>Date:</strong> {{ workshop.workshopDate.strftime('%B %d, %Y') }}</p>
-                            <p><i class="fas fa-clock"></i> <strong>Time:</strong> {{ workshop.workshopTime }}</p>
-                            <p><i class="fas fa-location-dot"></i> <strong>Location:</strong> {{ workshop.location }}</p>
-                        </div>
-                        {% if workshop.competencies %}
-                        <div class="competencies">
-                            <h4>Competencies:</h4>
-                            <div class="tags">
-                                {% for competency in workshop.competencies %}
-                                <span class="tag">{{ competency }}</span>
-                                {% endfor %}
+        <!-- Tab Navigation -->
+        <div class="tab-container">
+            <div class="tab-nav">
+                <button class="tab-btn active" data-tab="active">Active Workshops</button>
+                <button class="tab-btn" data-tab="completed">Completed Workshops</button>
+            </div>
+            
+            <!-- Active Workshops Tab -->
+            <div class="tab-content active" id="active-tab">
+                <section class="workshops-container">
+                    {% if active_workshops %}
+                        {% for workshop in active_workshops %}
+                            <div class="workshop-card" {% if workshop.image_path %}style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('{{ url_for('static', filename=workshop.image_path) }}');"{% endif %}>
+                                <div class="workshop-content">
+                                    <h3>{{ workshop.workshopName }}</h3>
+                                    <p class="workshop-description">{{ workshop.workshopDescription }}</p>
+                                    <div class="workshop-details">
+                                        <p><i class="fas fa-user"></i> <strong>Instructor:</strong> {{ workshop.instructor }}</p>
+                                        <p><i class="fas fa-calendar"></i> <strong>Date:</strong> {{ workshop.workshopDate.strftime('%B %d, %Y') }}</p>
+                                        <p><i class="fas fa-clock"></i> <strong>Time:</strong> {{ workshop.workshopTime }}</p>
+                                        <p><i class="fas fa-location-dot"></i> <strong>Location:</strong> {{ workshop.location }}</p>
+                                        <p><i class="fas fa-info-circle"></i> <strong>Status:</strong> 
+                                            {% set enrollment = workshop.enrollments|selectattr('student_id', 'eq', user.id)|first %}
+                                            {% if enrollment.attended %}
+                                                <span class="status attended">Attended</span>
+                                            {% else %}
+                                                <span class="status enrolled">Enrolled</span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    {% if workshop.competencies %}
+                                    <div class="competencies">
+                                        <h4>Competencies:</h4>
+                                        <div class="tags">
+                                            {% for competency in workshop.competencies %}
+                                            <span class="tag">{{ competency }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <button onclick="unenrollWorkshop('{{ workshop.id }}')" class="unenroll-button">Unenroll from Workshop</button>
                             </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-workshops">
+                            <p>You are not enrolled in any active workshops.</p>
+                            <a href="{{ url_for('dashboard_views.workshops') }}" class="enroll-button">Browse Available Workshops</a>
                         </div>
-                        {% endif %}
-                    </div>
-                    <button onclick="unenrollWorkshop('{{ workshop.id }}')" class="unenroll-button">Unenroll from Workshop</button>
-                </div>
-                {% endfor %}
-            {% else %}
-                <div class="no-workshops">
-                    <p>You are not enrolled in any workshops yet.</p>
-                    <a href="{{ url_for('student_views.workshops') }}" class="enroll-button">Browse Available Workshops</a>
-                </div>
-            {% endif %}
-        </section>
+                    {% endif %}
+                </section>
+            </div>
+            
+            <!-- Completed Workshops Tab -->
+            <div class="tab-content" id="completed-tab">
+                <section class="workshops-container">
+                    {% if completed_workshops %}
+                        {% for workshop in completed_workshops %}
+                            <div class="workshop-card completed-card" {% if workshop.image_path %}style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('{{ url_for('static', filename=workshop.image_path) }}');"{% endif %}>
+                                <div class="workshop-content">
+                                    <span class="completion-badge"><i class="fas fa-check-circle"></i> Completed</span>
+                                    <h3>{{ workshop.workshopName }}</h3>
+                                    <p class="workshop-description">{{ workshop.workshopDescription }}</p>
+                                    <div class="workshop-details">
+                                        <p><i class="fas fa-user"></i> <strong>Instructor:</strong> {{ workshop.instructor }}</p>
+                                        <p><i class="fas fa-calendar"></i> <strong>Date:</strong> {{ workshop.workshopDate.strftime('%B %d, %Y') }}</p>
+                                        <p><i class="fas fa-clock"></i> <strong>Time:</strong> {{ workshop.workshopTime }}</p>
+                                        <p><i class="fas fa-location-dot"></i> <strong>Location:</strong> {{ workshop.location }}</p>
+                                        {% set enrollment = workshop.enrollments|selectattr('student_id', 'eq', user.id)|first %}
+                                        <p><i class="fas fa-check"></i> <strong>Completed on:</strong> {{ enrollment.completion_date.strftime('%B %d, %Y') if enrollment.completion_date else 'N/A' }}</p>
+                                    </div>
+                                    {% if workshop.competencies %}
+                                    <div class="competencies">
+                                        <h4>Competencies Earned:</h4>
+                                        <div class="tags">
+                                            {% for competency in workshop.competencies %}
+                                            <span class="tag">{{ competency }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    <div class="certificate-actions">
+                                        {% set enrollment = workshop.enrollments|selectattr('student_id', 'eq', user.id)|first %}
+                                        {% if enrollment.certificate_status == 'approved' %}
+                                            <a href="{{ url_for('student_views.view_workshop_certificate', workshop_id=workshop.id) }}" class="certificate-button">
+                                                <i class="fas fa-certificate"></i> View Certificate
+                                            </a>
+                                        {% elif enrollment.certificate_status == 'pending' %}
+                                            <span class="certificate-status pending">Certificate Request Pending</span>
+                                        {% else %}
+                                            <form action="{{ url_for('student_views.request_workshop_certificate') }}" method="POST">
+                                                <input type="hidden" name="workshop_id" value="{{ workshop.id }}">
+                                                <button type="submit" class="certificate-button request">
+                                                    <i class="fas fa-certificate"></i> Request Certificate
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div id="no-completed-workshops" class="no-workshops">
+                            <p>You don't have any completed workshops yet.</p>
+                            <a href="{{ url_for('dashboard_views.workshops') }}" class="enroll-button">Browse Available Workshops</a>
+                        </div>
+                    {% endif %}
+                </section>
+            </div>
+        </div>
     </main>
 
     <!-- Footer with animated loading bar -->
@@ -92,6 +170,5 @@
             <div class="loading-bar"></div>
         </div>
     </footer>
-
 </body>
 </html> 

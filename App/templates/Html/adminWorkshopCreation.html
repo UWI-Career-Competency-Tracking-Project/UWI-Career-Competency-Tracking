@@ -34,6 +34,7 @@
     <!-- Custom JavaScript -->
     <script src="../../static/JavaScript/adminWorkshopCreation.js" defer></script>
     <script src="{{ url_for('static', filename='JavaScript/adminWorkshopCreation.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='JavaScript/notifications.js') }}" defer></script>
 </head>
 <body>
     <div id="loader">
@@ -45,20 +46,8 @@
         </div>
     </div>
 
-    <!-- Navbar -->
-    <nav class="navbar">
-        <a href="{{ url_for('admin_views.admin_dashboard') }}" class="logo">
-            <img src="../../static/Images/logo.png">
-            <span class="site-title">Career Competency Tracker</span>
-        </a>
-        <div class="nav-items">
-            <a href="{{ url_for('admin_views.manage_workshops') }}">Manage Workshops</a>
-            <a href="{{ url_for('admin_views.admin_workshop_creation') }}">Create Workshops</a>
-            <a href="{{ url_for('admin_views.admin_badges') }}">Award Badges</a>
-            <a href="{{ url_for('admin_views.validate_certificates') }}">Validate Certificates</a>
-            <a href="{{ url_for('auth_views.logout_action') }}">Logout</a>
-        </div>
-    </nav>
+    <!-- Include navbar -->
+    {% include 'Html/navbar.html' with context %}
 
     <!-- Background Video -->
     <video autoplay muted loop id="bg-video">
@@ -124,25 +113,144 @@
                   <div class="form-group">
                     <label>Competencies</label>
                     <select name="competencies[]" multiple class="competencies-select">
-                      <option value="Programming">Programming</option>
-                      <option value="Problem Solving">Problem Solving</option>
-                      <option value="Team Work">Team Work</option>
-                      <option value="Data Analysis">Data Analysis</option>
-                      <option value="Communication">Communication</option>
-                      <option value="Leadership">Leadership</option>
-                      <option value="Design Thinking">Design Thinking</option>
-                      <option value="Creativity">Creativity</option>
-                      <option value="Cloud Computing">Cloud Computing</option>
-                      <option value="System Administration">System Administration</option>
-                      <option value="Business Analysis">Business Analysis</option>
-                      <option value="Testing">Testing</option>
-                      <option value="Attention to Detail">Attention to Detail</option>
-                      <option value="Database Management">Database Management</option>
-                      <option value="Security">Security</option>
-                      <option value="Technical Writing">Technical Writing</option>
-                      <option value="Documentation">Documentation</option>
+                      <!-- Programming & Development -->
+                      <option value="Programming I">Programming I</option>
+                      <option value="Programming II">Programming II</option>
+                      <option value="Programming III">Programming III</option>
+                      <option value="Web Development I">Web Development I</option>
+                      <option value="Web Development II">Web Development II</option>
+                      <option value="Web Development III">Web Development III</option>
+                      <option value="Mobile Development I">Mobile Development I</option>
+                      <option value="Mobile Development II">Mobile Development II</option>
+                      <option value="Mobile Development III">Mobile Development III</option>
+                      <option value="DevOps I">DevOps I</option>
+                      <option value="DevOps II">DevOps II</option>
+                      <option value="DevOps III">DevOps III</option>
+                      
+                      <!-- Problem Solving & Analysis -->
+                      <option value="Problem Solving I">Problem Solving I</option>
+                      <option value="Problem Solving II">Problem Solving II</option>
+                      <option value="Problem Solving III">Problem Solving III</option>
+                      <option value="Critical Thinking I">Critical Thinking I</option>
+                      <option value="Critical Thinking II">Critical Thinking II</option>
+                      <option value="Critical Thinking III">Critical Thinking III</option>
+                      <option value="Data Analysis I">Data Analysis I</option>
+                      <option value="Data Analysis II">Data Analysis II</option>
+                      <option value="Data Analysis III">Data Analysis III</option>
+                      <option value="Research Methods I">Research Methods I</option>
+                      <option value="Research Methods II">Research Methods II</option>
+                      <option value="Research Methods III">Research Methods III</option>
+                      
+                      <!-- Business Skills -->
+                      <option value="Project Management I">Project Management I</option>
+                      <option value="Project Management II">Project Management II</option>
+                      <option value="Project Management III">Project Management III</option>
+                      <option value="Business Analysis I">Business Analysis I</option>
+                      <option value="Business Analysis II">Business Analysis II</option>
+                      <option value="Business Analysis III">Business Analysis III</option>
+                      <option value="Product Management I">Product Management I</option>
+                      <option value="Product Management II">Product Management II</option>
+                      <option value="Product Management III">Product Management III</option>
+                      
+                      <!-- Teamwork & Communication -->
+                      <option value="Team Work I">Team Work I</option>
+                      <option value="Team Work II">Team Work II</option>
+                      <option value="Team Work III">Team Work III</option>
+                      <option value="Communication I">Communication I</option>
+                      <option value="Communication II">Communication II</option>
+                      <option value="Communication III">Communication III</option>
+                      <option value="Public Speaking I">Public Speaking I</option>
+                      <option value="Public Speaking II">Public Speaking II</option>
+                      <option value="Public Speaking III">Public Speaking III</option>
+                      <option value="Professional Etiquette I">Professional Etiquette I</option>
+                      <option value="Professional Etiquette II">Professional Etiquette II</option>
+                      <option value="Professional Etiquette III">Professional Etiquette III</option>
+                      <option value="Conflict Resolution I">Conflict Resolution I</option>
+                      <option value="Conflict Resolution II">Conflict Resolution II</option>
+                      <option value="Conflict Resolution III">Conflict Resolution III</option>
+                      <option value="Negotiation Skills I">Negotiation Skills I</option>
+                      <option value="Negotiation Skills II">Negotiation Skills II</option>
+                      <option value="Negotiation Skills III">Negotiation Skills III</option>
+                      
+                      <!-- Leadership & Management -->
+                      <option value="Leadership I">Leadership I</option>
+                      <option value="Leadership II">Leadership II</option>
+                      <option value="Leadership III">Leadership III</option>
+                      <option value="Strategic Planning I">Strategic Planning I</option>
+                      <option value="Strategic Planning II">Strategic Planning II</option>
+                      <option value="Strategic Planning III">Strategic Planning III</option>
+                      <option value="Decision Making I">Decision Making I</option>
+                      <option value="Decision Making II">Decision Making II</option>
+                      <option value="Decision Making III">Decision Making III</option>
+                      <option value="Mentoring I">Mentoring I</option>
+                      <option value="Mentoring II">Mentoring II</option>
+                      <option value="Mentoring III">Mentoring III</option>
+                      
+                      <!-- Design & Innovation -->
+                      <option value="Design Thinking I">Design Thinking I</option>
+                      <option value="Design Thinking II">Design Thinking II</option>
+                      <option value="Design Thinking III">Design Thinking III</option>
+                      <option value="UX/UI Design I">UX/UI Design I</option>
+                      <option value="UX/UI Design II">UX/UI Design II</option>
+                      <option value="UX/UI Design III">UX/UI Design III</option>
+                      <option value="Innovation Management I">Innovation Management I</option>
+                      <option value="Innovation Management II">Innovation Management II</option>
+                      <option value="Innovation Management III">Innovation Management III</option>
+                      <option value="Creative Problem Solving I">Creative Problem Solving I</option>
+                      <option value="Creative Problem Solving II">Creative Problem Solving II</option>
+                      <option value="Creative Problem Solving III">Creative Problem Solving III</option>
+                      
+                      <!-- Cloud & Infrastructure -->
+                      <option value="Cloud Computing I">Cloud Computing I</option>
+                      <option value="Cloud Computing II">Cloud Computing II</option>
+                      <option value="Cloud Computing III">Cloud Computing III</option>
+                      <option value="Network Security I">Network Security I</option>
+                      <option value="Network Security II">Network Security II</option>
+                      <option value="Network Security III">Network Security III</option>
+                      <option value="System Architecture I">System Architecture I</option>
+                      <option value="System Architecture II">System Architecture II</option>
+                      <option value="System Architecture III">System Architecture III</option>
+                      
+                      <!-- Data & Information Management -->
+                      <option value="Database Management I">Database Management I</option>
+                      <option value="Database Management II">Database Management II</option>
+                      <option value="Database Management III">Database Management III</option>
+                      <option value="Big Data I">Big Data I</option>
+                      <option value="Big Data II">Big Data II</option>
+                      <option value="Big Data III">Big Data III</option>
+                      <option value="Data Visualization I">Data Visualization I</option>
+                      <option value="Data Visualization II">Data Visualization II</option>
+                      <option value="Data Visualization III">Data Visualization III</option>
+                      <option value="Machine Learning I">Machine Learning I</option>
+                      <option value="Machine Learning II">Machine Learning II</option>
+                      <option value="Machine Learning III">Machine Learning III</option>
+                      
+                      <!-- Cybersecurity & Ethics -->
+                      <option value="Cybersecurity I">Cybersecurity I</option>
+                      <option value="Cybersecurity II">Cybersecurity II</option>
+                      <option value="Cybersecurity III">Cybersecurity III</option>
+                      <option value="Ethical Hacking I">Ethical Hacking I</option>
+                      <option value="Ethical Hacking II">Ethical Hacking II</option>
+                      <option value="Ethical Hacking III">Ethical Hacking III</option>
+                      <option value="Digital Ethics I">Digital Ethics I</option>
+                      <option value="Digital Ethics II">Digital Ethics II</option>
+                      <option value="Digital Ethics III">Digital Ethics III</option>
+                      
+                      <!-- AI Engineering & Natural Language Processing -->
+                      <option value="AI Engineering I">AI Engineering I</option>
+                      <option value="AI Engineering II">AI Engineering II</option>
+                      <option value="AI Engineering III">AI Engineering III</option>
+                      <option value="Natural Language Processing I">Natural Language Processing I</option>
+                      <option value="Natural Language Processing II">Natural Language Processing II</option>
+                      <option value="Natural Language Processing III">Natural Language Processing III</option>
+                      <option value="Prompt Engineering I">Prompt Engineering I</option>
+                      <option value="Prompt Engineering II">Prompt Engineering II</option>
+                      <option value="Prompt Engineering III">Prompt Engineering III</option>
+                      <option value="AI Ethics & Governance I">AI Ethics & Governance I</option>
+                      <option value="AI Ethics & Governance II">AI Ethics & Governance II</option>
+                      <option value="AI Ethics & Governance III">AI Ethics & Governance III</option>
                     </select>
-                    <small>Click to select multiple competencies (search also available)</small>
+                    <small>Click to select multiple competencies with different levels (search also available)</small>
                   </div>
                 </div>
 

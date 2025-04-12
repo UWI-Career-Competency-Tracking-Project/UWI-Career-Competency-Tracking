@@ -79,4 +79,116 @@ body {
 /* Ensure the main content doesn't get hidden by the fixed footer */
 .content {
     padding-bottom: 30px;
+}
+
+/* Certificate section styles */
+.certificates-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.certificate-card {
+    background-color: rgba(30, 30, 30, 0.7);
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.certificate-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.certificate-icon {
+    font-size: 2rem;
+    color: #ffd700;
+    margin-right: 15px;
+    width: 40px;
+    text-align: center;
+}
+
+.certificate-details {
+    flex: 1;
+}
+
+.certificate-details h4 {
+    margin: 0 0 5px 0;
+    font-size: 1rem;
+    color: #ffffff;
+}
+
+.certificate-level {
+    font-size: 0.85rem;
+    color: #aaa;
+    margin: 0;
+}
+
+.certificate-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+    font-size: 0.8rem;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+    border: 1px solid rgba(255, 215, 0, 0.5);
+}
+
+.certificate-card.workshop-certificate {
+    border: 1px solid rgba(0, 173, 181, 0.3);
+}
+
+.certificate-card.workshop-certificate .certificate-icon {
+    color: #00adb5;
+}
+
+.certificate-card.workshop-certificate .certificate-badge {
+    background-color: rgba(0, 173, 181, 0.2);
+    color: #00adb5;
+    border: 1px solid rgba(0, 173, 181, 0.5);
+}
+
+/* View Certificate Button */
+.view-certificate-btn {
+    display: block;
+    width: 100%;
+    padding: 8px 0;
+    margin-top: 15px;
+    background-color: rgba(255, 215, 0, 0.2);
+    color: #ffd700;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.view-certificate-btn:hover {
+    background-color: rgba(255, 215, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.view-certificate-btn.workshop {
+    background-color: rgba(0, 173, 181, 0.2);
+    color: #00adb5;
+    border: 1px solid rgba(0, 173, 181, 0.3);
+}
+
+.view-certificate-btn.workshop:hover {
+    background-color: rgba(0, 173, 181, 0.3);
+}
+
+/* Ensure the main content doesn't get hidden by the fixed footer */
+.content {
+    padding-bottom: 30px;
 } 
