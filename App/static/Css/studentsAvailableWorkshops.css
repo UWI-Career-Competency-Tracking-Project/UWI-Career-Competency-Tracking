@@ -7,7 +7,7 @@
 
 body {
   font-family: 'Poppins', sans-serif;
-  background-color: #121212;
+  background: #e8e8e8;
   color: #f5f5f5;
   min-height: 100vh;
   display: flex;
@@ -25,19 +25,18 @@ body {
   z-index: -1;
 }
 
-/* Search Section */
+/* Search Section with glassy effect */
 .search-section {
-  background: rgba(30, 30, 30, 0.7);
+  background: rgba(27, 74, 99, 0.6); /* deep teal semi-transparent */
+  backdrop-filter: blur(10px);
   padding: 2rem;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   margin: 1rem;
   border-radius: 10px;
 }
 
-/* Glassy Teal Title */
 .search-section h2 {
   display: inline-block;
   margin-bottom: 1.5rem;
@@ -45,48 +44,48 @@ body {
   font-size: 2rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: #00adb5;
-  background: linear-gradient(135deg, rgba(0,173,181,0.2), rgba(0,173,181,0.4));
+  color: #FFFFFF;
+  background-color: #1B4A63;
   border-radius: 8px;
-  border: 2px solid rgba(255,255,255,0.3);
-  box-shadow: 0 0 10px rgba(0,173,181,0.3);
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  border: 2px solid #4FA4B8;
+  box-shadow: 0 0 10px rgba(46,46,46,0.3);
+  text-shadow: 1px 1px 2px rgba(46,46,46,0.7);
   backdrop-filter: blur(4px);
-  transition: transform 0.3s, background 0.3s, box-shadow 0.3s;
+  transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
 }
 
 .search-section h2:hover {
   transform: translateY(-3px);
-  background: linear-gradient(135deg, rgba(0,173,181,0.4), rgba(0,173,181,0.6));
-  box-shadow: 0 0 12px rgba(0,173,181,0.5);
+  background-color: #FF6600; /* strong orange on hover */
+  box-shadow: 0 0 12px rgba(255,102,0,0.5);
 }
 
 .search-container {
   max-width: 600px;
   margin: 0 auto 1rem auto;
-  position: relative;     
+  position: relative;
   border-radius: 4px;
   overflow: hidden;
-  box-shadow: 0 0 8px rgba(0,173,181,0.2);
+  box-shadow: 0 0 8px rgba(0,229,255,0.2);
 }
 
 .search-icon {
   position: absolute;
   top: 50%;
-  left: 12px;             
+  left: 12px;
   transform: translateY(-50%);
-  color: #bbb;         
-  font-size: 1.2rem;  
-  pointer-events: none;   
+  color: #bbb;
+  font-size: 1.2rem;
+  pointer-events: none;
 }
 
 .search-container input {
   width: 100%;
   padding: 0.8rem 1rem;
-  padding-left: 2.5rem;    
+  padding-left: 2.5rem;
   border: none;
   font-size: 1rem;
-  background: rgba(30,30,30,0.5);
+  background: rgba(30, 30, 30, 0.5);
   color: #f5f5f5;
   outline: none;
   transition: box-shadow 0.3s;
@@ -97,7 +96,7 @@ body {
 }
 
 .search-container input:focus {
-  box-shadow: inset 0 0 6px rgba(0,173,181,0.5);
+  box-shadow: inset 0 0 6px rgba(0,229,255,0.5);
 }
 
 /* Notify Checkbox */
@@ -110,6 +109,7 @@ body {
   color: #bbb;
 }
 
+/* Workshops Container */
 .workshops-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -122,16 +122,17 @@ body {
   position: relative;
 }
 
+/* Workshop Card with glassy effect */
 .workshop-card {
   display: flex;
   flex-direction: column;
   height: 100%;
   border-radius: 10px;
   overflow: hidden;
-  background-color: rgba(30,30,30,0.7);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  border: 1px solid rgba(255,255,255,0.2);
+  background-color: rgba(30, 30, 30, 0.5);
   backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   background-size: cover;
   background-position: center;
   transition: transform 0.3s ease;
@@ -141,11 +142,12 @@ body {
   transform: translateY(-5px);
 }
 
+/* Workshop Content with subtle overlay */
 .workshop-content {
   flex: 1;
   padding: 1.5rem;
   color: #f5f5f5;
-  background: linear-gradient(transparent, rgba(0,0,0,0.9));
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
 }
 
 .workshop-content h3 {
@@ -166,6 +168,7 @@ body {
 .workshop-details p {
   margin: 0.5rem 0;
   font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 .workshop-details i {
@@ -173,39 +176,15 @@ body {
   margin-right: 5px;
 }
 
-/* Competencies */
-.competencies {
-  margin-top: 1rem;
-}
-
-.competencies h4 {
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
-}
-
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.tag {
-  background: rgba(255,255,255,0.2);
-  padding: 0.3rem 0.8rem;
-  border-radius: 15px;
-  font-size: 0.8rem;
-}
-
-/* Enroll/Unenroll Buttons inside .workshop-content */
+/* Enrollment Buttons */
 .enroll-button,
 .unenroll-button {
-  background: #00adb5;
+  background: #00E5FF;
   color: #fff;
   padding: 0.8rem 1.5rem;
   border-radius: 5px;
   text-decoration: none;
-  margin-top: auto; 
-  margin-bottom: 0;
+  margin-top: auto;
   font-size: 1rem;
   text-align: center;
   border: none;
@@ -214,7 +193,7 @@ body {
 }
 
 .enroll-button:hover {
-  background: #008e9a;
+  background: #00b3e6;
 }
 
 .unenroll-button {
@@ -225,51 +204,49 @@ body {
   background-color: #c82333;
 }
 
-/* No workshops message */
+/* No Workshops Message */
 .no-workshops-message {
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 15px;
-    padding: 30px;
-    margin: 0 auto;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(8px);
-    text-align: center;
-    grid-column: 1 / -1; /* Make it span all columns in the grid */
-    width: 100%;
-    max-width: 600px;
-    justify-self: center;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 15px;
+  padding: 30px;
+  margin: 0 auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  text-align: center;
+  grid-column: 1 / -1;
+  width: 100%;
+  max-width: 600px;
 }
 
 .message-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .no-workshops-message p {
-    color: #fff;
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-    line-height: 1.6;
+  color: #fff;
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  line-height: 1.6;
 }
 
 .view-enrolled-button {
-    background: #00adb5; /* Match the teal color used elsewhere */
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s, transform 0.2s;
-    display: inline-block;
-    text-decoration: none;
-    margin: 10px 0;
+  background: #00E5FF;
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s, transform 0.2s;
+  text-decoration: none;
+  margin: 10px 0;
 }
 
 .view-enrolled-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0, 173, 181, 0.5);
-    background: linear-gradient(135deg, rgba(0, 173, 181, 0.8), rgba(0, 173, 181, 1));
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0,229,255,0.5);
+  background: #FF6600;
 }

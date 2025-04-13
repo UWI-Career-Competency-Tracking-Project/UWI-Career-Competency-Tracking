@@ -1,9 +1,265 @@
-main {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  padding-bottom: 80px;
-  color: white;
+/* Reset & Base Styling */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, h1, h2, p, input, button {
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background-color: #121212;
+  color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Background Video */
+#bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+/* Title Section for Workshops Page */
+main h2 {
+  display: block;
+  width: fit-content;
+  margin: 2rem auto 1.5rem auto;
+  padding: 10px 20px;
+  font-size: 2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  /* Using bright cyan text on a solid deep teal background for clarity */
+  color: #FFFFFF;
+  background-color: #1B4A63;
+  border-radius: 8px;
+  border: 2px solid rgba(255,255,255,0.3);
+  box-shadow: 0 0 10px rgba(27,74,99,0.3);
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
+}
+
+main h2:hover {
+  transform: translateY(-3px);
+  background-color: #FF6600; /* Strong orange on hover */
+  box-shadow: 0 0 12px rgba(27,74,99,0.5);
+}
+
+/* Workshops Container using Grid */
+.workshops-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem;
+  margin: 0 auto 2rem auto;
+  max-width: 1800px;
+  align-items: stretch;
+  justify-content: center;
+}
+
+/* Workshop Card with Glassy, Dark Background */
+.workshop-card {
+  display: flex;
+  flex-direction: column;
+  /* Let height be defined by content—cards adjust naturally */
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: rgba(30,30,30,0.85);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(8px);
+  background-size: cover;
+  background-position: center;
   position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 380px;
+}
+
+/* Dark overlay for text readability over images */
+.workshop-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.8));
   z-index: 1;
-} 
+}
+
+.workshop-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+}
+
+/* Workshop Content */
+.workshop-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 1.2rem;
+  color: #f5f5f5;
+  position: relative;
+  z-index: 2; /* Above overlay */
+}
+
+.workshop-content h3 {
+  font-size: 1.3rem;
+  margin-bottom: 0.8rem;
+}
+
+.workshop-description {
+  margin-bottom: 0.8rem;
+  font-size: 0.85rem;
+  opacity: 0.9;
+  flex-grow: 1;
+}
+
+.workshop-details {
+  margin: 0.8rem 0;
+  flex-grow: 1;
+}
+
+.workshop-details p {
+  margin: 0.2rem 0;
+  font-size: 0.8rem;
+}
+
+.workshop-details i {
+  width: 20px;
+  margin-right: 5px;
+}
+
+/* Competencies Section */
+.competencies {
+  margin-top: 1rem;
+}
+
+.competencies h4 {
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  background: rgba(255,255,255,0.2);
+  padding: 0.25rem 0.6rem;
+  border-radius: 15px;
+  font-size: 0.75rem;
+}
+
+/* Action Buttons Container */
+.workshop-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.action-button {
+  padding: 8px 15px;
+  border-radius: 5px;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+/* Button variants */
+.edit-btn {
+  background-color: #4caf50;
+}
+
+.edit-btn:hover {
+  background-color: #43a047;
+}
+
+.students-btn {
+  background-color: #3f51b5;
+}
+
+.students-btn:hover {
+  background-color: #303f9f;
+}
+
+.delete-btn {
+  background-color: #f44336;
+}
+
+.delete-btn:hover {
+  background-color: #e53935;
+}
+
+.delete-btn[disabled] {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.delete-btn[disabled]:hover {
+  background-color: #ccc;
+}
+
+/* No Workshops Message */
+.no-workshops {
+  text-align: center;
+  color: #bbb;
+  font-size: 1rem;
+  margin-top: 2rem;
+}
+
+/* Workshop Header with ID and Student Count */
+.workshop-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.workshop-id {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.student-count {
+  display: inline-flex;
+  align-items: center;
+  background-color: rgba(0,173,181,0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.student-count i {
+  margin-right: 5px;
+}
+
+/* Responsive layout (if needed) */
+@media (max-width: 1024px) {
+  .workshops-container {
+      grid-template-columns: 1fr;
+  }
+}

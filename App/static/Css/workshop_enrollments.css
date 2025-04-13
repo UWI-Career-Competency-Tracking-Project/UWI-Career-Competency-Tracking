@@ -1,150 +1,160 @@
-.workshop-enrollments {
-    background-color: rgba(255, 255, 255, 0.85);
+#bg-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    opacity: 0.4;
+  }
+  
+  body {
+    background-color: #f8f9fa;
+    color: #212529;
+  }
+  
+  .workshop-enrollments {
+    background-color: white;
     border-radius: 12px;
     padding: 30px;
     margin: 30px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-    color: #333;
-}
-
-.section-header {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    color: #212529;
+  }
+  
+  .section-header {
     display: flex;
     flex-direction: column;
     margin-bottom: 25px;
-    border-bottom: 2px solid #e0f2f1;
+    border-bottom: 2px solid #e9ecef;
     padding-bottom: 15px;
-}
-
-.section-header h1 {
+  }
+  
+  .section-header h1 {
     margin-bottom: 15px;
-    color: #00796b;
+    color: #1B4A63;
     font-size: 28px;
     font-weight: 600;
-}
-
-.back-button {
+  }
+  
+  .back-button {
     margin-bottom: 15px;
-}
-
-.btn-back {
+  }
+  
+  .btn-back {
     display: inline-flex;
     align-items: center;
-    background-color: #00796b;
+    background-color: #FF6600;
     color: white;
     padding: 10px 16px;
     border-radius: 6px;
     font-weight: 500;
     text-decoration: none;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0, 121, 107, 0.2);
-}
-
-.btn-back:hover {
-    background-color: #00695c;
-    box-shadow: 0 4px 12px rgba(0, 121, 107, 0.3);
+    box-shadow: 0 2px 8px rgba(255, 102, 0, 0.2);
+  }
+  
+  .btn-back:hover {
+    background-color: #e05500;
+    box-shadow: 0 4px 12px rgba(255, 102, 0, 0.3);
     transform: translateY(-2px);
-}
-
-.btn-back i {
+  }
+  
+  .btn-back i {
     margin-right: 8px;
-}
-
-.workshop-details {
+  }
+  
+  .workshop-details {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     margin-top: 15px;
-}
-
-.detail-item {
+  }
+  
+  .detail-item {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #455a64;
+    color: #495057;
     font-size: 15px;
-}
-
-.detail-item i {
-    color: #00796b;
+  }
+  
+  .detail-item i {
+    color: #00adb5;
     font-size: 16px;
-}
-
-.enrollments-table {
+  }
+  
+  .enrollments-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
     background-color: white;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
     margin-top: 20px;
-}
-
-.enrollments-table th {
-    background-color: #00796b;
+  }
+  
+  .enrollments-table th {
+    background-color: #00adb5;
     padding: 16px;
     text-align: left;
     font-weight: 600;
     color: white;
-    border: none;
     font-size: 16px;
-}
-
-.enrollments-table td {
+  }
+  
+  .enrollments-table td {
     padding: 16px;
-    border-bottom: 1px solid #e0f2f1;
+    border-bottom: 1px solid #dee2e6;
     vertical-align: middle;
-    color: #455a64;
+    color: #495057;
     font-size: 15px;
-    transition: all 0.2s;
-}
-
-.student-name {
-    color: #00796b;
+  }
+  
+  .student-name {
+    color: #1B4A63;
     font-size: 16px;
     font-weight: 600;
-}
-
-.student-email {
+  }
+  
+  .student-email {
     color: #0277bd;
     font-size: 15px;
-}
-
-.enrollments-table tr {
-    transition: background-color 0.3s;
-}
-
-.enrollments-table tr:hover {
-    background-color: #e0f2f1;
-}
-
-.enrollments-table tr:last-child td {
+  }
+  
+  .enrollments-table tr:hover {
+    background-color: #f1fdfd;
+  }
+  
+  .enrollments-table tr:last-child td {
     border-bottom: none;
-}
-
-.no-enrollments {
+  }
+  
+  .no-enrollments {
     padding: 40px;
     text-align: center;
-    background-color: #e0f2f1;
+    background-color: #e9f7f7;
     border-radius: 8px;
-    color: #00796b;
+    color: #1B4A63;
     font-size: 18px;
     margin-top: 20px;
-    box-shadow: inset 0 0 10px rgba(0, 121, 107, 0.1);
+    box-shadow: inset 0 0 10px rgba(0, 173, 181, 0.1);
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 16px;
-}
-
-.empty-icon {
+  }
+  
+  .empty-icon {
     font-size: 48px;
-    color: #00796b;
+    color: #00adb5;
     opacity: 0.7;
-}
-
-.btn-primary {
-    background-color: #00796b;
+  }
+  
+  .btn-primary {
+    background-color: #FF6600;
     color: white;
     padding: 10px 20px;
     border-radius: 6px;
@@ -153,16 +163,17 @@
     display: inline-block;
     margin-top: 16px;
     transition: all 0.3s;
-    box-shadow: 0 2px 8px rgba(0, 121, 107, 0.2);
-}
-
-.btn-primary:hover {
-    background-color: #00695c;
-    box-shadow: 0 4px 12px rgba(0, 121, 107, 0.3);
+    box-shadow: 0 2px 8px rgba(255, 102, 0, 0.2);
+  }
+  
+  .btn-primary:hover {
+    background-color: #e05500;
+    box-shadow: 0 4px 12px rgba(255, 102, 0, 0.3);
     transform: translateY(-2px);
-}
-
-.status {
+  }
+  
+  /* Status Badges */
+  .status {
     display: inline-block;
     padding: 8px 16px;
     border-radius: 50px;
@@ -170,35 +181,36 @@
     font-weight: 600;
     text-align: center;
     min-width: 120px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.status.enrolled {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  .status.enrolled {
     background-color: #e1f5fe;
     color: #0288d1;
     border: 1px solid #0288d1;
-}
-
-.status.attended {
+  }
+  
+  .status.attended {
     background-color: #e8f5e9;
     color: #43a047;
     border: 1px solid #43a047;
-}
-
-.status.completed {
+  }
+  
+  .status.completed {
     background-color: #f3e5f5;
     color: #8e24aa;
     border: 1px solid #8e24aa;
-}
-
-.action-buttons {
+  }
+  
+  /* Action Buttons */
+  .action-buttons {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
     justify-content: flex-start;
-}
-
-.btn {
+  }
+  
+  .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -209,87 +221,79 @@
     cursor: pointer;
     border: none;
     transition: all 0.3s;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.btn i {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  .btn i {
     margin-right: 6px;
-}
-
-.btn-attendance {
+  }
+  
+  .btn-attendance {
     background-color: #e8f5e9;
     color: #43a047;
     border: 1px solid #43a047;
-}
-
-.btn-attendance:hover {
+  }
+  
+  .btn-attendance:hover {
     background-color: #43a047;
     color: white;
     box-shadow: 0 4px 12px rgba(67, 160, 71, 0.3);
-}
-
-.btn-attendance-remove {
-    background-color: #fafafa;
-    color: #757575;
-    border: 1px solid #bdbdbd;
-}
-
-.btn-attendance-remove:hover {
-    background-color: #eeeeee;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.btn-completion {
+  }
+  
+  .btn-attendance-remove,
+  .btn-completion-remove {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #ced4da;
+  }
+  
+  .btn-attendance-remove:hover,
+  .btn-completion-remove:hover {
+    background-color: #e9ecef;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+  
+  .btn-completion {
     background-color: #f3e5f5;
     color: #8e24aa;
     border: 1px solid #8e24aa;
-}
-
-.btn-completion:hover {
+  }
+  
+  .btn-completion:hover {
     background-color: #8e24aa;
     color: white;
     box-shadow: 0 4px 12px rgba(142, 36, 170, 0.3);
-}
-
-.btn-completion-remove {
-    background-color: #fafafa;
-    color: #757575;
-    border: 1px solid #bdbdbd;
-}
-
-.btn-completion-remove:hover {
-    background-color: #eeeeee;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
+  }
+  
+  /* Responsive tweaks */
+  @media (max-width: 768px) {
     .workshop-enrollments {
-        padding: 20px;
-        margin: 20px;
+      padding: 20px;
+      margin: 20px;
     }
-
+  
     .section-header h1 {
-        font-size: 24px;
+      font-size: 24px;
     }
-
+  
     .workshop-details {
-        flex-direction: column;
-        gap: 10px;
+      flex-direction: column;
+      gap: 10px;
     }
-
+  
     .enrollments-table {
-        display: block;
-        overflow-x: auto;
+      display: block;
+      overflow-x: auto;
     }
-
+  
     .action-buttons {
-        flex-direction: column;
-        gap: 8px;
+      flex-direction: column;
+      gap: 8px;
     }
-
+  
     .btn {
-        width: 100%;
-        padding: 8px 12px;
+      width: 100%;
+      padding: 8px 12px;
     }
-} 
+  }
+  

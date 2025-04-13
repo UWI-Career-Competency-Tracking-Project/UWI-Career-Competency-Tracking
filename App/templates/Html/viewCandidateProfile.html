@@ -42,7 +42,7 @@
 
     <!-- Background video element -->
     <video autoplay muted loop id="bg-video">
-        <source src="{{ url_for('static', filename='Videos/dna.mp4') }}" type="video/mp4">
+        <source src="{{ url_for('static', filename='Videos/empl.mp4') }}" type="video/mp4">
     </video>
 
     <main class="content">
@@ -90,6 +90,9 @@
                         {% endif %}
                         {% if student.location %}
                             <p><i class="fa-solid fa-location-dot"></i> {{ student.location }}</p>
+                        {% endif %}
+                        {% if student.degree %}
+                            <p><i class="fa-solid fa-graduation-cap"></i> {{ student.degree }}</p>
                         {% endif %}
                     </div>
                 </div>

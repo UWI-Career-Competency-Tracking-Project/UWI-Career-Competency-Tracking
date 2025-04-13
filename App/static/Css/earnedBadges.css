@@ -1,369 +1,296 @@
 /* Reset & Base */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body, h1, h2, p, input, button {
-    font-family: 'Poppins', sans-serif;
-  }
-  
-  body {
-    background-color: #121212; /* Dark background to match your theme */
-    color: #f5f5f5;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  /* Background Video */
-  #bg-video {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1;
-  }
-  
-  /* Main Content Area */
-  main {
-    flex: 1;
-    padding: 2rem;
-  }
-  
-  /* Flash Messages Container */
-  .flash-messages {
-    max-width: 1200px;
-    margin: 1rem auto;
-    padding: 0 1rem;
-  }
-  
-  .alert {
-    padding: 1rem;
-    border-radius: 5px;
-    margin-bottom: 1rem;
-  }
-  
-  .alert-success {
-    background: #d4edda;
-    color: #155724;
-  }
-  
-  .alert-error {
-    background: #f8d7da;
-    color: #721c24;
-  }
-  
-  /* Badges Container */
-  .badges-container {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-    text-align: center; /* Center the title and content */
-  }
-  
-  /* Title: "Your Earned Badges & Certificates" */
-  .badges-container h2 {
-    display: inline-block;
-    margin-bottom: 2rem;
-    padding: 10px 20px;
-    font-size: 2rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: #00adb5; /* Teal accent */
-  
-    /* Glassy teal gradient background */
-    background: linear-gradient(
-      135deg,
-      rgba(0,173,181,0.2),
-      rgba(0,173,181,0.4)
-    );
-    border-radius: 8px;
-    border: 2px solid rgba(255,255,255,0.3);
-    box-shadow: 0 0 10px rgba(0,173,181,0.3);
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
-    backdrop-filter: blur(4px);
-  
-    transition: transform 0.3s, background 0.3s, box-shadow 0.3s;
-  }
-  
-  .badges-container h2:hover {
-    transform: translateY(-3px);
-    background: linear-gradient(
-      135deg,
-      rgba(0,173,181,0.4),
-      rgba(0,173,181,0.6)
-    );
-    box-shadow: 0 0 12px rgba(0,173,181,0.5);
-  }
-  
-  /* Badges Grid */
-  .badges-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
-  }
-  
-  /* Badge Card */
-  .badge-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: rgba(30,30,30,0.7);
-    border-radius: 10px;
-    padding: 2rem;
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-    border: 1px solid rgba(255,255,255,0.2);
-    backdrop-filter: blur(8px);
-    transition: transform 0.3s ease;
-  }
-  
-  .badge-card:hover {
-    transform: translateY(-5px);
-  }
-  
-  /* Badge Icon (Large Award Icon) */
-  .badge-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: #f5f5f5; /* Default color, overridden by .bronze/.silver/.gold if present */
-  }
-  
-  /* Icon color for each rank */
-  .badge-card .badge-icon .beginner {
-    color: #3498db; /* or your chosen "beginner" blue */
-  }
-  
-  .badge-card .badge-icon .intermediate {
-    color: #2ecc71; /* or your chosen "intermediate" green */
-  }
-  
-  .badge-card .badge-icon .advanced {
-    color: #ffd700; /* or your chosen "advanced" gold */
-  }
-  
-  /* Title (Competency Name) */
-  .badge-card h3 {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-    color: #fff;
-  }
-  
-  /* Rank: Beginner, Intermediate, Advanced
-     You already have "bronze", "silver", "gold" for icons,
-     but also "Beginner", "Intermediate", "Advanced" text for rank.
-     We'll unify them with a distinct style. */
-  .rank {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-weight: bold;
-    margin: 1rem 0;
-    font-size: 0.9rem;
-  }
-  
-  /* Rank color backgrounds (like in your studentProfile) */
-  .rank.beginner {
-    background: rgba(52,152,219,0.2); /* a mild blue */
-    color: #3498db;
-    border: 1px solid rgba(52,152,219,0.3);
-  }
-  
-  .rank.intermediate {
-    background: rgba(46,204,113,0.2); /* a mild green */
-    color: #2ecc71;
-    border: 1px solid rgba(46,204,113,0.3);
-  }
-  
-  .rank.advanced {
-    background: rgba(255,215,0,0.2); /* gold-ish */
-    color: #ffd700;
-    border: 1px solid rgba(255,215,0,0.3);
-  }
-  
-  /* Feedback Section */
-  .feedback {
-    background: rgba(30,30,30,0.7);
-    padding: 1rem;
-    border-radius: 5px;
-    margin: 1rem 0;
-    text-align: left;
-  }
-  
-  .feedback p {
-    margin: 0.5rem 0;
-    font-size: 0.9rem;
-    color: #ddd;
-  }
-  
-  /* Certificate Buttons */
-  .view-certificate-btn,
-  .request-certificate-btn {
-    border: 1px solid rgba(0, 173, 181, 0.3);
-    display: inline-block;
-    background-color: rgba(0, 173, 181, 0.2);
-    color: #00adb5;               /* Teal text color */
-    border: 2px solid #00adb5;     /* Teal outline */
-    padding: 0.8rem 1.5rem;
-    border-radius: 5px;
-    text-decoration: none;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-  }
-  
-  .view-certificate-btn:hover,
-  .request-certificate-btn:hover {
-    background-color: rgba(0, 173, 181, 0.4);  
-  }
-  
-  /* Certificate Status (Pending) */
-  .certificate-status {
-    margin-top: 1rem;
-    padding: 0.8rem;
-    border-radius: 5px;
-    font-weight: bold;
-  }
-  
-  .certificate-status.pending {
-    background: rgba(255,243,205,0.3);
-    color: #856404;
-    border: 1px solid rgba(255,243,205,0.3);
-  }
-  
-  /* No Badges Message */
-  .no-badges {
-    text-align: center;
-    padding: 3rem;
-    background: rgba(30,30,30,0.7);
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-  }
-  
-  .no-badges i {
-    font-size: 4rem;
-    color: #ccc;
-    margin-bottom: 1rem;
-  }
-  
-  .no-badges p {
-    color: #ddd;
-    margin-bottom: 1.5rem;
-  }
-  
-  /* Browse Workshops Button */
-  .browse-workshops-btn {
-    display: inline-block;
-    background: #00adb5;
-    color: #fff;
-    padding: 1rem 2rem;
-    border-radius: 5px;
-    text-decoration: none;
-    transition: background-color 0.3s;
-  }
-  
-  .browse-workshops-btn:hover {
-    background: #008ca0;
-  }
-  
-  /* Update styles for workshop cards */
-  .workshop-details {
-    margin: 15px 0;
-  }
-  
-  .workshop-details p {
-    margin: 8px 0;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-  }
-  
-  .workshop-details i {
-    margin-right: 10px;
-    width: 16px;
-    text-align: center;
-  }
-  
-  .competencies {
-    margin-top: 15px;
-  }
-  
-  .competencies h4 {
-    font-size: 1rem;
-    margin-bottom: 8px;
-  }
-  
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  
-  .tag {
-    background-color: rgba(0, 173, 181, 0.1);
-    border: 1px solid rgba(0, 173, 181, 0.3);
-    border-radius: 16px;
-    padding: 4px 12px;
-    font-size: 0.8rem;
-    color: #00adb5;
-  }
-  
-  .request-certificate-btn {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    background-color: #2e7d32;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    text-align: center;
-    margin-top: 15px;
-  }
-  
-  .request-certificate-btn:hover {
-    background-color: #1b5e20;
-    transform: translateY(-2px);
-  }
-  
-  .view-certificate-btn {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    background-color: #8e24aa;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-    text-align: center;
-    transition: background-color 0.3s, transform 0.2s;
-    margin-top: 15px;
-  }
-  
-  .view-certificate-btn:hover {
-    background-color: #6a1b9a;
-    transform: translateY(-2px);
-  }
-  
-  .certificate-status {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    background-color: #ff9800;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-weight: 600;
-    text-align: center;
-    margin-top: 15px;
-  }
-  
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, h1, h2, p, input, button {
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: #e8e8e8;
+  color: #212529;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Background Video */
+#bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  opacity: 0.2;
+}
+
+/* Main Content Area */
+main {
+  flex: 1;
+  padding: 2rem;
+}
+
+/* Flash Messages Container */
+.flash-messages {
+  max-width: 1200px;
+  margin: 1rem auto;
+  padding: 0 1rem;
+}
+
+.alert {
+  padding: 1rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+}
+
+.alert-success {
+  background: #d4edda;
+  color: #155724;
+}
+
+.alert-error {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* Badges Container */
+.badges-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #f1f3f5;
+  border-radius: 10px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.30); /* Increased from 0.05 to 0.15 */
+  text-align: center;
+}
+
+.badges-container h2 {
+  display: inline-block;
+  margin-bottom: 2rem;
+  padding: 10px 20px;
+  font-size: 2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
+  background-color: #1B4A63;
+  border-radius: 8px;
+  border: 2px solid #4FA4B8;
+  box-shadow: 0 0 10px rgba(27,74,99,0.3);
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.badges-container h2:hover {
+  transform: translateY(-3px);
+  background-color: #FF6600;
+  box-shadow: 0 0 12px rgba(255,102,0,0.3);
+}
+
+/* Badges Grid */
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+/* Badge Card */
+.badge-card {
+  background: #f1f3f5;
+  border-radius: 10px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15); /* Increased from 0.05 to 0.15 */
+  border: 1px solid #dee2e6;
+  transition: transform 0.3s ease;
+}
+
+.badge-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5); /* Added darker shadow on hover */
+}
+
+.badge-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.badge-icon .beginner {
+  color: #3498db;
+}
+
+.badge-icon .intermediate {
+  color: #2ecc71;
+}
+
+.badge-icon .advanced {
+  color: #ffd700;
+}
+
+/* Title */
+.badge-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #1B4A63;
+}
+
+/* Rank Tag */
+.rank {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: bold;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+
+.rank.beginner {
+  background: rgba(52,152,219,0.1);
+  color: #3498db;
+  border: 1px solid rgba(52,152,219,0.2);
+}
+
+.rank.intermediate {
+  background: rgba(46,204,113,0.1);
+  color: #2ecc71;
+  border: 1px solid rgba(46,204,113,0.2);
+}
+
+.rank.advanced {
+  background: rgba(255,215,0,0.1);
+  color: #ffd700;
+  border: 1px solid rgba(255,215,0,0.2);
+}
+
+/* Feedback */
+.feedback {
+  background: #f1f3f5;
+  padding: 1rem;
+  border-radius: 5px;
+  margin: 1rem 0;
+  font-size: 0.95rem;
+  color: #495057;
+  line-height: 1.5;
+}
+
+.feedback p {
+  margin: 0.5rem 0;
+}
+
+/* Buttons */
+.view-certificate-btn,
+.request-certificate-btn {
+  display: inline-block;
+  background: #f1f3f5;
+  border: 2px solid #00adb5;
+  color: #00adb5;
+  padding: 0.8rem 1.5rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s, transform 0.3s;
+}
+
+.view-certificate-btn:hover,
+.request-certificate-btn:hover {
+  background: #FF6600;
+  color: white;
+  transform: scale(1.05);
+  border-color: #FF6600;
+}
+
+/* Certificate Status */
+.certificate-status {
+  margin-top: 1rem;
+  padding: 0.8rem;
+  border-radius: 5px;
+  font-weight: bold;
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+/* No Badges */
+.no-badges {
+  text-align: center;
+  padding: 3rem;
+  background: #f1f3f5;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15); /* Increased from 0.05 to 0.15 */
+}
+
+.no-badges i {
+  font-size: 4rem;
+  color: #adb5bd;
+  margin-bottom: 1rem;
+}
+
+.no-badges p {
+  color: #6c757d;
+  margin-bottom: 1.5rem;
+}
+
+/* Browse Workshops */
+.browse-workshops-btn {
+  display: inline-block;
+  background: #00adb5;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.browse-workshops-btn:hover {
+  background: #008b94;
+}
+
+/* Workshop Details */
+.workshop-details {
+  margin: 15px 0;
+}
+
+.workshop-details p {
+  margin: 8px 0;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+.workshop-details i {
+  margin-right: 10px;
+  width: 16px;
+  text-align: center;
+}
+
+/* Competencies Tags */
+.competencies {
+  margin-top: 15px;
+}
+
+.competencies h4 {
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  background-color: rgba(0,173,181,0.1);
+  border: 1px solid rgba(0,173,181,0.2);
+  border-radius: 16px;
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  color: #00adb5;
+}

@@ -10,8 +10,8 @@ body, h1, h2, p, input, button {
 }
 
 body {
-  background-color: #121212;
-  color: #f5f5f5;
+  background-color: #e8e8e8;
+  color: #212529;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -32,12 +32,13 @@ body {
 .search-section {
   text-align: center;
   margin: 1rem;
-  background: rgba(30, 30, 30, 0.7);
+  /* Glassy effect using a semi-transparent deep tone */
+  background: rgba(27, 74, 99, 0.6);
+  backdrop-filter: blur(10px);
   padding: 2rem;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(8px);
 }
 
 .search-section h2 {
@@ -47,31 +48,22 @@ body {
   font-size: 2rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: #00adb5;
-
-  /* Glassy teal gradient background */
-  background: linear-gradient(
-    135deg,
-    rgba(0,173,181,0.2),
-    rgba(0,173,181,0.4)
-  );
+  color: #FFFFFF;
+  /* Solid background (no gradient on text) using deep teal */
+  background-color: #1B4A63;
   border-radius: 8px;
-  border: 2px solid rgba(255,255,255,0.3);
-  box-shadow: 0 0 10px rgba(0,173,181,0.3);
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  border: 2px solid #4FA4B8;
+  box-shadow: 0 0 10px rgba(46,46,46,0.3);
+  text-shadow: 1px 1px 2px rgba(46,46,46,0.7);
   backdrop-filter: blur(4px);
-
-  transition: transform 0.3s, background 0.3s, box-shadow 0.3s;
+  transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
 }
 
 .search-section h2:hover {
   transform: translateY(-3px);
-  background: linear-gradient(
-    135deg,
-    rgba(0,173,181,0.4),
-    rgba(0,173,181,0.6)
-  );
-  box-shadow: 0 0 12px rgba(0,173,181,0.5);
+  /* On hover, use a strong orange to emphasize interactivity */
+  background-color: #FF6600;
+  box-shadow: 0 0 12px rgba(46,46,46,0.5);
 }
 
 /* Workshops Container */
@@ -82,10 +74,6 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 2rem;
-  /* If you want each row's cards to match the tallest card in that row:
-     grid-auto-rows: 1fr;
-     align-items: stretch;
-  */
   position: relative;
   min-height: 200px;
 }
@@ -95,12 +83,13 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 450px;
-  border-radius: 10px 10px 0 0; /* Remove bottom border radius */
+  border-radius: 10px 10px 0 0;
   overflow: hidden;
-  background-color: rgba(30,30,30,0.7);
+  /* Glassy effect: semi-transparent background and blur */
+  background-color: rgba(30,30,30,0.5);
+  backdrop-filter: blur(8px);
   box-shadow: 0 2px 8px rgba(0,0,0,0.3);
   border: 1px solid rgba(255,255,255,0.2);
-  backdrop-filter: blur(8px);
   background-size: cover;
   background-position: center;
   transition: transform 0.3s ease;
@@ -112,14 +101,15 @@ body {
   box-shadow: 0 5px 15px rgba(0,0,0,0.5);
 }
 
-/* Workshop Content (no absolute positioning) */
+/* Workshop Content */
 .workshop-content {
   display: flex;
   flex-direction: column;
   flex: 1;
   padding: 1.5rem;
+  /* Using a subtle linear overlay for readability */
+  background: linear-gradient(transparent, rgba(0,0,0,0.85));
   color: #f5f5f5;
-  background: linear-gradient(transparent, rgba(0,0,0,0.9));
 }
 
 .workshop-content h3 {
@@ -129,8 +119,8 @@ body {
 
 .workshop-description {
   margin-bottom: 1rem;
-  font-size: 0.9rem;
-  opacity: 0.9;
+  font-size: 0.95rem;
+  opacity: 0.95;
 }
 
 .workshop-details {
@@ -139,7 +129,8 @@ body {
 
 .workshop-details p {
   margin: 0.5rem 0;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
 .workshop-details i {
@@ -170,7 +161,7 @@ body {
   font-size: 0.8rem;
 }
 
-/* Unenroll Button at bottom of the content */
+/* Unenroll Button */
 .unenroll-button {
   display: block;
   width: 100%;
@@ -182,7 +173,7 @@ body {
   text-transform: uppercase;
   cursor: pointer;
   margin-top: auto;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, box-shadow 0.3s;
   letter-spacing: 1px;
   font-size: 14px;
 }
@@ -192,11 +183,11 @@ body {
   box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* If user not enrolled in any workshops */
+/* No Workshops Message */
 .no-workshops {
   text-align: center;
   padding: 50px 20px;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.4);
   border-radius: 10px;
   margin: 20px auto;
   max-width: 500px;
@@ -217,7 +208,7 @@ body {
 }
 
 .no-workshops a.enroll-button {
-  background: #00adb5;
+  background: #00E5FF;
   color: #fff;
   padding: 0.8rem 1.5rem;
   border-radius: 5px;
@@ -229,7 +220,9 @@ body {
 }
 
 .no-workshops a.enroll-button:hover {
-  background: #008e9a;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0,229,255,0.5);
+  background: #FF6600;
 }
 
 /* Tab content styles */
@@ -249,100 +242,100 @@ body {
 
 /* Tab styles */
 .tab-container {
-    width: 100%;
-    margin-bottom: 20px;
+  width: 100%;
+  margin-bottom: 20px;
 }
 
 .tab-nav {
-    display: flex;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 8px;
-    overflow: hidden;
-    margin-bottom: 20px;
+  display: flex;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
 }
 
 .tab-btn {
-    flex: 1;
-    padding: 15px;
-    background: transparent;
-    border: none;
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
+  flex: 1;
+  padding: 15px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
 }
 
 .tab-btn.active {
-    background: rgba(0, 173, 181, 0.7);
-    color: white;
+  background: #1B4A63;
+  color: white;
 }
 
 /* Completed workshop card styles */
 .completed-card {
-    position: relative;
-    border: 2px solid rgba(142, 36, 170, 0.5);
+  position: relative;
+  border: 2px solid rgba(142,36,170,0.5);
 }
 
 .completion-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #8e24aa;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 5px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #00E5FF;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 /* Status badges */
 .status {
-    display: inline-block;
-    padding: 3px 8px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 500;
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .status.enrolled {
-    background-color: #e1f5fe;
-    color: #0288d1;
+  background-color: #e1f5fe;
+  color: #0288d1;
 }
 
 .status.attended {
-    background-color: #e8f5e9;
-    color: #43a047;
+  background-color: #e8f5e9;
+  color: #43a047;
 }
 
 /* Certificate button styles */
 .certificate-actions {
-    margin-top: 15px;
-    display: flex;
-    justify-content: center;
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
 }
 
 .certificate-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #8e24aa;
-    color: white;
-    padding: 8px 15px;
-    border-radius: 20px;
-    text-decoration: none;
-    font-weight: 500;
-    gap: 8px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #00E5FF;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: 500;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
 }
 
 .certificate-button:hover {
-    background-color: #6a1b9a;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #FF6600;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(46,46,46,0.2);
 }

@@ -1,9 +1,11 @@
+/* navbar.css */
 .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 12px 24px;
-  background: linear-gradient(135deg, rgba(0,173,181,0.85), rgba(0,173,181,0.75));
+  /* Updated gradient: from bright cyan to deep navy blue */
+  background: linear-gradient(135deg, #00E5FF, #001f3f);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   color: #fff;
   position: relative; 
@@ -40,7 +42,6 @@
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
-
 /* Navigation items */
 .nav-items {
   display: flex;
@@ -68,7 +69,7 @@
   transform: scale(1.05);
 }
 
-/* Create a pseudo-element with the gradient background */
+/* Updated pseudo-element gradient for hover - strong orange gradient */
 .nav-items a::before {
   content: "";
   position: absolute;
@@ -76,18 +77,15 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, #007d80, #004f52, #007d80);
+  background: linear-gradient(90deg, #FF6600, #FF4500, #FF6600);
   opacity: 0;
   transition: opacity 1s ease;
   z-index: -1;
 }
 
-/* On hover, fade in the pseudo-element */
 .nav-items a:hover::before {
   opacity: 1;
 }
-
-
 
 .profile-dropdown {
   position: relative;
@@ -96,7 +94,7 @@
   z-index: 1001; 
 }
 
-/* Transitionable dropdown menu */
+/* Updated dropdown background with new color scheme */
 .dropdown-content {
   opacity: 0;
   visibility: hidden;
@@ -105,7 +103,7 @@
   position: absolute;
   right: 0;
   top: 50px;
-  background: linear-gradient(135deg, rgba(0,173,181,0.7), rgba(0,173,181,0.5)); 
+  background: linear-gradient(135deg, rgba(0,229,255,0.7), rgba(0,31,63,0.5));
   backdrop-filter: blur(8px);
   min-width: 160px;
   border-radius: 4px;
@@ -154,7 +152,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: rgba(0, 173, 181, 0.9);
+  /* Updated background color to strong orange */
+  background-color: #FF6600;
 }
 
 .dropdown-title {
@@ -191,7 +190,7 @@
 }
 
 .dropdown-content a:hover {
-  background-color: #007d80;
+  background-color: #FF6600;
 }
 
 /* Optional button styling for dropdown items */
@@ -199,7 +198,6 @@
   position: relative;
 }
 
-/* Animated loading bar for buttons */
 .options .button::after {
   content: '';
   position: absolute;
@@ -207,7 +205,7 @@
   left: 0;
   width: 100%;
   height: 4px;
-  background: linear-gradient(90deg, #007d80, #004f52, #007d80);
+  background: linear-gradient(90deg, #FF6600, #FF4500, #FF6600);
   background-size: 200% auto;
   animation: loading 2s linear infinite;
 }
@@ -259,7 +257,6 @@
   justify-content: center;
 }
 
-/* Hide badge when count is 0 */
 .notification-badge:empty,
 .notification-badge[data-count="0"] {
   display: none;
@@ -280,10 +277,9 @@
   visibility: hidden;
   transform: translateY(10px);
   transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
-  border: 1px solid rgba(0, 173, 181, 0.5);
+  border: 1px solid rgba(255,102,0, 0.5);
 }
 
-/* Make dropdown easier to interact with */
 .notifications-dropdown:hover .dropdown-content,
 .notifications-dropdown:focus-within .dropdown-content,
 .notifications-dropdown.active .dropdown-content {
@@ -321,7 +317,6 @@
   background-color: rgba(240, 240, 240, 0.95);
 }
 
-/* Regular (read) notifications - darker background */
 .notification-item:not(.unread) {
   background-color: rgba(220, 220, 220, 0.95);
 }
@@ -340,7 +335,7 @@
   width: 30px;
   height: 30px;
   margin-right: 10px;
-  background-color: #3498db;
+  background-color: #00E5FF;
   color: white;
   border-radius: 50%;
   display: flex;
@@ -349,44 +344,44 @@
 }
 
 .notification-icon.workshop {
-  background-color: #3498db;
+  background-color: #00E5FF;
 }
 
 .notification-icon.badge {
-  background-color: #f39c12;
+  background-color: #FF6600;
 }
 
 .notification-icon.certificate {
-  background-color: #27ae60;
+  background-color: #00E5FF;
 }
 
 .notification-icon.certificate-request {
-  background-color: #e74c3c;
+  background-color: #FF6600;
 }
 
 .notification-icon.certificate-approved {
-  background-color: #2ecc71;
+  background-color: #00ccff;
 }
 
 .notification-icon.enrollment {
-  background-color: #9b59b6;
+  background-color: #9B59B6;
 }
 
 .notification-icon.unenrollment {
-  background-color: #e67e22;
+  background-color: #FF6600;
 }
 
 .notification-text {
   flex-grow: 1;
   font-size: 14px;
-  color: #333; /* Darker color for better readability */
+  color: #333;
   line-height: 1.4;
   font-family: 'Poppins', sans-serif;
 }
 
 .notification-time {
   font-size: 12px;
-  color: #666; /* Darker color for better readability */
+  color: #666;
   margin-top: 5px;
   display: block;
 }
@@ -405,7 +400,6 @@
   font-family: 'Poppins', sans-serif;
 }
 
-/* Animation */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
