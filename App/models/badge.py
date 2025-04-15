@@ -1,7 +1,7 @@
 from App.database import db
 from datetime import datetime
 
-# Not used anymore
+# Not used anymore - This model has been deprecated
 
 class Badge(db.Model):
     __tablename__ = 'badges'
@@ -10,5 +10,6 @@ class Badge(db.Model):
     badgeName = db.Column(db.String(100), nullable=False)
     issueDate = db.Column(db.String(50))
     
-    competencyID = db.Column(db.Integer, db.ForeignKey('competencies.competencyID'))
+    # Update to reference the correct column in competencies
+    competencyID = db.Column(db.Integer, db.ForeignKey('competencies.id'))
     competency = db.relationship('Competency', backref='badges')

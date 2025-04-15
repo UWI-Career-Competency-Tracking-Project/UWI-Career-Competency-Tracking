@@ -78,6 +78,18 @@ def get_config(config_name=None):
     """Get configuration class based on environment"""
     if not config_name:
         config_name = os.environ.get('FLASK_CONFIG', 'default')
+    
+    # If config_name is a dictionary, use it to create a custom TestingConfig
+    if isinstance(config_name, dict):
+        class CustomConfig(TestingConfig):
+            pass
+        
+        for key, value in config_name.items():
+            setattr(CustomConfig, key, value)
+        
+        return CustomConfig
+    
+    # Otherwise, look up the config by name
     return config.get(config_name, config['default'])
 
 
