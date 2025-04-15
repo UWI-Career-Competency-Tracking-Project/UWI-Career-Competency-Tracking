@@ -45,9 +45,28 @@ main {
 }
 
 .search-container h2 {
-    margin-bottom: 1.5rem;
-    color: #0d67a3;
-    font-size: 1.8rem;
+    display: block;
+    width: fit-content;
+    margin: 2rem auto 1.5rem auto;
+    padding: 10px 20px;
+    font-size: 2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    /* Using bright cyan text on a solid deep teal background for clarity */
+    color: #FFFFFF;
+    background-color: #1B4A63;
+    border-radius: 8px;
+    border: 2px solid rgba(255,255,255,0.3);
+    box-shadow: 0 0 10px rgba(27,74,99,0.3);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
+}
+
+.search-container h2:hover {
+    transform: translateY(-3px);
+    background-color: #FF6600; /* Strong orange on hover */
+    box-shadow: 0 0 12px rgba(27,74,99,0.5);
 }
 
 .search-controls {
@@ -322,8 +341,8 @@ footer {
 
 .search-button {
     padding: 0.8rem 1.5rem;
-    background-color: #0d67a3;
-    color: white;
+    background-color: #1B4A63;
+    color: #FFFFFF;
     border: none;
     border-radius: 50px;
     font-size: 1rem;
@@ -335,7 +354,7 @@ footer {
 }
 
 .search-button:hover {
-    background-color: #085185;
+    background-color: #FF6600;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
