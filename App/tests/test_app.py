@@ -38,7 +38,7 @@ class UserUnitTests(unittest.TestCase):
     
     def test_hashed_password(self):
         password = "mypass"
-        hashed = generate_password_hash(password, method='sha256')
+        hashed = generate_password_hash(password)
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
         user = User(username=f"bob_{timestamp}", email=f"bob_{timestamp}@example.com", password=password)
         assert user.password_hash != password
