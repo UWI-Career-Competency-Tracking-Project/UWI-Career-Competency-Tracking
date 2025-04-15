@@ -1027,7 +1027,8 @@ def generate_resume():
             
             story.append(Paragraph("EDUCATION", heading_style))
             education_text = "<b>University of the West Indies</b><br/>"
-            education_text += f"Degree Program: {student.degree or '[Student\'s Degree]'}<br/>"
+            default_degree = "[Student's Degree]"
+            education_text += f"Degree Program: {student.degree or default_degree}<br/>"
             education_text += "Participated in the UWI Career Competency Tracking System to develop and validate professional skills."
             story.append(Paragraph(education_text, competency_style))
             
