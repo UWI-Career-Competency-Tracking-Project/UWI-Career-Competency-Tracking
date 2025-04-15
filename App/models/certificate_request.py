@@ -15,6 +15,7 @@ class CertificateRequest(db.Model):
     def __init__(self, student_id, competency):
         self.student_id = student_id
         self.competency = competency
+        self.status = "pending"
         
     def __repr__(self):
         return f'<CertificateRequest {self.student_id} - {self.competency}>'

@@ -5,14 +5,13 @@ from App.models import User
 def login(username, password):
   user = User.query.filter_by(username=username).first()
   if user and user.check_password(password):
-    return create_access_token(identity=username)
+    return user
   return None
 
 
 def setup_jwt(app):
   jwt = JWTManager(app)
 
-  # configure's flask jwt to resolve get_current_identity() to the corresponding user's ID
   @jwt.user_identity_loader
   def user_identity_lookup(identity):
     user = User.query.filter_by(username=identity).one_or_none()
@@ -27,8 +26,6 @@ def setup_jwt(app):
 
   return jwt
 
-
-# Context processor to make 'is_authenticated' available to all templates
 def add_auth_context(app):
   @app.context_processor
   def inject_user():

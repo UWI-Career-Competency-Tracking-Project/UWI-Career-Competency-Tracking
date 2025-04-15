@@ -47,6 +47,10 @@ class Workshop(db.Model):
             print(f"Error accessing competencies: {str(e)}")
             return []
 
+    def get_competency_names(self):
+        """Get list of competency names from the workshop"""
+        return self.competencies
+
     @competencies.setter
     def competencies(self, value):
         """Set the competencies list directly"""

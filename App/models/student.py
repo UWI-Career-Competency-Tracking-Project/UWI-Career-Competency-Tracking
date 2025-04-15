@@ -52,6 +52,19 @@ class Student(User):
                 db.session.rollback()
         return self._competencies
 
+    def get_competency_names(self):
+        """Get a list of competency names for this student"""
+        if self._competencies is None:
+            return []
+        return list(self.competencies.keys())
+        
+    def get_competency_data(self, competency_name):
+        """Get competency data for a specific competency"""
+        competencies = self.competencies
+        if competency_name in competencies:
+            return competencies[competency_name]
+        return {}
+
     def update_competency_rank(self, competency_name, rank, feedback=None):
         """Update a competency's rank and feedback"""
         try:
@@ -172,3 +185,51 @@ class Student(User):
             'degree': self.degree
         })
         return data
+
+    def add_competency(self, competency_name):
+        """Add a single competency to the student with level 1"""
+        try:
+            if self._competencies is None:
+                self._competencies = {}
+            
+            self._competencies[competency_name] = {
+                'level': 1,
+                'feedback': '',
+                'updated_at': datetime.utcnow().isoformat(),
+                'certificate_status': None
+            }
+            
+            flag_modified(self, '_competencies')
+            db.session.add(self)
+            db.session.commit()
+            return True
+        except Exception as e:
+            print(f"Error adding competency: {str(e)}")
+            db.session.rollback()
+            return False
+
+    def update_competency_level(self, competency_name, level):
+        """Update a competency's level"""
+        try:
+            if self._competencies is None:
+                self._competencies = {}
+            
+            if competency_name not in self._competencies:
+                self._competencies[competency_name] = {
+                    'level': level,
+                    'feedback': '',
+                    'updated_at': datetime.utcnow().isoformat(),
+                    'certificate_status': None
+                }
+            else:
+                self._competencies[competency_name]['level'] = level
+                self._competencies[competency_name]['updated_at'] = datetime.utcnow().isoformat()
+            
+            flag_modified(self, '_competencies')
+            db.session.add(self)
+            db.session.commit()
+            return True
+        except Exception as e:
+            print(f"Error updating competency level: {str(e)}")
+            db.session.rollback()
+            return False
