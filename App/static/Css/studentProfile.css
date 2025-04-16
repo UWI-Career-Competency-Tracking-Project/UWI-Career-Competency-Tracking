@@ -175,8 +175,8 @@ body {
 
 /* Circular avatar with glassy ring effect */
 .profile-avatar {
-  width: 80px;
-  height: 80px;
+  width: 84px;
+  height: 84px;
   margin: 0 auto 12px;
   position: relative;
 }
