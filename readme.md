@@ -1,34 +1,122 @@
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/uwidcit/flaskmvc)
-<a href="https://render.com/deploy?repo=https://github.com/uwidcit/flaskmvc">
-  <img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render">
-</a>
+# UWI Career Competency Tracking
 
-![Tests](https://github.com/uwidcit/flaskmvc/actions/workflows/dev.yml/badge.svg)
+A comprehensive web application for tracking, developing, and certifying career competencies for UWI students.
 
-# Flask MVC Template
-A template for flask applications structured in the Model View Controller pattern [Demo](https://dcit-flaskmvc.herokuapp.com/). [Postman Collection](https://documenter.getpostman.com/view/583570/2s83zcTnEJ)
+## Overview
+The UWI Career Competency Tracking application provides a centralized platform where:
+- Students can track their competency development and receive certifications
+- Administrators can create workshops and verify student competencies
+- Employers can view verified student competencies for hiring decisions
 
+## Features
+- **User Authentication**: Role-based login system for students, administrators, and employers
+- **Workshop Management**: Create, schedule, and manage workshops with associated competencies
+- **Competency Tracking**: Record and track student competencies gained through workshops
+- **Certificate Generation**: Generate certificates for verified competencies
+- **Profile Management**: Complete user profiles for students and employers
+- **Responsive Design**: Modern UI that works across desktop and mobile devices
 
-# Dependencies
-* Python3/pip3
-* Packages listed in requirements.txt
+## User Roles and Capabilities
+### Students
+- Register and create profiles with personal/academic information
+- Browse and enroll in competency-building workshops
+- Track acquired competencies and their levels
+- Request certificates for verified competencies
+- Manage personal profiles and upload resumes
+- View their workshop history and certificate status
 
-# Installing Dependencies
+### Administrators
+- Create and manage workshops with specific competencies
+- Review and verify student competencies
+- Approve certificate requests
+- Manage all users in the system
+- Generate reports on student participation and competency development
+
+### Employers
+- Create employer profiles
+- Browse student profiles with verified competencies
+- Filter students by competencies and qualifications
+- View verified certificates and student achievements
+
+## Application Architecture
+### MVC Structure
+The application follows the Model-View-Controller (MVC) architectural pattern:
+- **Models**: Database entities and business logic
+- **Views**: User interface templates and routes
+- **Controllers**: Business logic that connects models and views
+
+### Key Components
+
+#### Views
+The application has several view modules:
+- `views/auth.py`: Authentication views (login, registration, password reset)
+- `views/student_views.py`: Student dashboard, workshop enrollment, competency tracking
+- `views/admin_views.py`: Admin dashboard, workshop management, certificate approval
+- `views/employer_views.py`: Employer dashboard, student browsing, competency search
+- `views/dashboard_views.py`: Dashboard views for all user types
+- `views/index.py`: Main landing page and public views
+
+#### Models
+- `models/user.py`: Base user class with authentication
+- `models/student.py`: Student user type with competency tracking
+- `models/administrator.py`: Admin user type
+- `models/employer.py`: Employer user type
+- `models/workshop.py`: Workshop scheduling and management
+- `models/enrollment.py`: Student workshop enrollments
+- `models/competency.py`: Competency definitions
+- `models/student_competency.py`: Tracks student competency levels
+- `models/certificate.py`: Certificate generation and verification
+- `models/certificate_request.py`: Student requests for certificates
+- `models/notification.py`: System notifications
+- `models/feedback.py`: Workshop and competency feedback
+
+#### Controllers
+- `controllers/auth.py`: Authentication logic and JWT setup
+- Other controller files handle business logic for core functionality
+
+## Tech Stack
+- **Backend**: Flask framework (Python)
+- **Database**: SQLite (Development) / PostgreSQL (Production)
+- **Frontend**: HTML, CSS, JavaScript with Bootstrap
+- **Authentication**: Flask-Login and JWT
+- **ORM**: SQLAlchemy
+- **Testing**: Pytest
+
+## Installation and Setup
+
+### Prerequisites
+* Python 3.7+
+* Pip package manager
+
+### Installation Steps
+
+1. Clone the repository:
+```bash
+$ git clone https://github.com/UWI-Career-Competency-Tracking-Project/UWI-Career-Competency-Tracking.git
+$ cd UWI-Career-Competency-Tracking
+```
+
+2. Install dependencies:
 ```bash
 $ pip install -r requirements.txt
 ```
 
-# Configuration Management
+### Environment Setup
 
+Create a `.flaskenv` file in the root directory with the following content:
+```
+FLASK_APP=wsgi.py
+FLASK_ENV=development
+```
 
-Configuration information such as the database url/port, credentials, API keys etc are to be supplied to the application. However, it is bad practice to stage production information in publicly visible repositories.
-Instead, all config is provided by a config file or via [environment variables](https://linuxize.com/post/how-to-set-and-list-environment-variables-in-linux/).
+## Configuration Management
 
-## In Development
+Configuration information such as database credentials and API keys are managed through environment variables or config files.
 
-When running the project in a development environment (such as gitpod) the app is configured via default_config.py file in the App folder. By default, the config for development uses a sqlite database.
+### Development Configuration
 
-default_config.py
+When running the project in a development environment, the app is configured via `default_config.py` file in the App folder:
+
 ```python
 SQLALCHEMY_DATABASE_URI = "sqlite:///temp-database.db"
 SECRET_KEY = "secret key"
@@ -36,158 +124,139 @@ JWT_ACCESS_TOKEN_EXPIRES = 7
 ENV = "DEVELOPMENT"
 ```
 
-These values would be imported and added to the app in load_config() function in config.py
+### Production Configuration
 
-config.py
-```python
-# must be updated to inlude addtional secrets/ api keys & use a gitignored custom-config file instad
-def load_config():
-    config = {'ENV': os.environ.get('ENV', 'DEVELOPMENT')}
-    delta = 7
-    if config['ENV'] == "DEVELOPMENT":
-        from .default_config import JWT_ACCESS_TOKEN_EXPIRES, SQLALCHEMY_DATABASE_URI, SECRET_KEY
-        config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
-        config['SECRET_KEY'] = SECRET_KEY
-        delta = JWT_ACCESS_TOKEN_EXPIRES
-...
-```
+For production deployment on Render, set environment variables in your project dashboard:
+- DATABASE_URL (automatically provided by Render's PostgreSQL service)
+- SECRET_KEY
+- ENV=production
 
-## In Production
+## Running the Project
 
-When deploying your application to production/staging you must pass
-in configuration information via environment tab of your render project's dashboard.
-
-![perms](./images/fig1.png)
-
-# Flask Commands
-
-wsgi.py is a utility script for performing various tasks related to the project. You can use it to import and test any code in the project. 
-You just need create a manager command function, for example:
-
-```python
-# inside wsgi.py
-
-user_cli = AppGroup('user', help='User object commands')
-
-@user_cli.cli.command("create-user")
-@click.argument("username")
-@click.argument("password")
-def create_user_command(username, password):
-    create_user(username, password)
-    print(f'{username} created!')
-
-app.cli.add_command(user_cli) # add the group to the cli
-
-```
-
-Then execute the command invoking with flask cli with command name and the relevant parameters
-
-```bash
-$ flask user create bob bobpass
-```
-
-
-# Running the Project
-
-_For development run the serve command (what you execute):_
+### Development Server
 ```bash
 $ flask run
 ```
 
-_For production using gunicorn (what the production server executes):_
+### Production Server
 ```bash
 $ gunicorn wsgi:app
 ```
 
-# Deploying
-You can deploy your version of this app to render by clicking on the "Deploy to Render" link above.
+## Database Management
 
-# Initializing the Database
-When connecting the project to a fresh empty database ensure the appropriate configuration is set then file then run the following command. This must also be executed once when running the app on heroku by opening the heroku console, executing bash and running the command in the dyno.
+### Database Initialization
+The database is automatically initialized when the application starts. The initialization code can be found in `App/main.py` which:
+- Creates all necessary database tables
+- Sets up sample users (admin, student, employer)
+- Creates sample workshops with competencies
 
-```bash
-$ flask init
-```
+## Testing
 
-# Database Migrations
-If changes to the models are made, the database must be'migrated' so that it can be synced with the new models.
-Then execute following commands using manage.py. More info [here](https://flask-migrate.readthedocs.io/en/latest/)
-
-```bash
-$ flask db init
-$ flask db migrate
-$ flask db upgrade
-$ flask db --help
-```
-
-# Testing
-
-## Unit & Integration
-Unit and Integration tests are created in the App/test. You can then create commands to run them. Look at the unit test command in wsgi.py for example
-
-```python
-@test.command("user", help="Run User tests")
-@click.argument("type", default="all")
-def user_tests_command(type):
-    if type == "unit":
-        sys.exit(pytest.main(["-k", "UserUnitTests"]))
-    elif type == "int":
-        sys.exit(pytest.main(["-k", "UserIntegrationTests"]))
-    else:
-        sys.exit(pytest.main(["-k", "User"]))
-```
-
-You can then execute all user tests as follows
+### Running Tests
+Unit and integration tests are in the App/tests directory:
 
 ```bash
+# Run all tests
+$ pytest
+
+# Run specific test categories
 $ flask test user
 ```
 
-You can also supply "unit" or "int" at the end of the comand to execute only unit or integration tests.
-
-You can run all application tests with the following command
-
-```bash
-$ pytest
-```
-
-## Test Coverage
-
-You can generate a report on your test coverage via the following command
-
+### Test Coverage
+Generate a test coverage report:
 ```bash
 $ coverage report
+$ coverage html   
 ```
 
-You can also generate a detailed html report in a directory named htmlcov with the following comand
+## Project Structure
+```
+UWI-Career-Competency-Tracking/
+├── App/                    # Main application package
+│   ├── controllers/        # Business logic
+│   ├── models/             # Database models
+│   ├── static/             # Static assets (CSS, JS, images)
+│   ├── templates/          # HTML templates
+│   ├── tests/              # Test cases
+│   ├── views/              # Route handlers
+│   ├── __init__.py         # App initialization
+│   ├── config.py           # Configuration handling
+│   ├── database.py         # Database setup
+│   ├── default_config.py   # Default configuration
+│   └── main.py             # App factory and initialization
+├── instance/               # Instance-specific data
+├── __pycache__/            # Compiled Python files
+├── e2e/                    # End-to-end tests
+├── .flaskenv               # Flask environment variables
+├── app.py                  # Application entry point
+├── gunicorn_config.py      # Gunicorn configuration
+├── package.json            # Node.js dependencies
+├── pytest.ini              # Pytest configuration
+├── requirements.txt        # Python dependencies
+├── setup.cfg               # Setup configuration
+└── wsgi.py                 # WSGI entry point
+```
 
+## Data Flow
+
+1. **User Registration and Authentication**:
+   - Users register with email/password
+   - Authentication handled via Flask-Login
+   - Role-based access control for different user types
+
+2. **Workshop Management**:
+   - Administrators create workshops with specific competencies
+   - Workshops are stored with dates, times, locations, and instructors
+   - Competencies associated with workshops are tracked
+
+3. **Student Enrollment**:
+   - Students browse available workshops
+   - Students enroll in workshops
+   - System tracks enrollment and attendance
+
+4. **Competency Acquisition**:
+   - Students gain competencies from workshop attendance
+   - Competency levels are tracked (from beginner to advanced)
+   - Students can see their competency growth over time
+
+5. **Certificate Generation**:
+   - Students request certificates for specific competencies
+   - Administrators review and approve certificates
+   - System generates downloadable certificates
+
+## Security Considerations
+
+- Passwords are hashed using bcrypt
+- Role-based access control for protected routes
+- CSRF protection for form submissions
+- Input validation on all user inputs
+
+## Troubleshooting
+
+### Database Issues
+If you experience database issues, you may need to run migrations or recreate the database:
 ```bash
-$ coverage html
+$ flask db upgrade 
 ```
 
-# Troubleshooting
+## Deployment
 
-## Views 404ing
+### Deployed to Render
 
-If your newly created views are returning 404 ensure that they are added to the list in main.py.
+## Link: https://uwi-career-competency-tracker.onrender.com
 
-```python
-from App.views import (
-    user_views,
-    index_views
-)
 
-# New views must be imported and added to this list
-views = [
-    user_views,
-    index_views
-]
-```
+## Future Development Plans
+- Mobile application for on-the-go competency tracking
+- Advanced analytics dashboard for institutional insights
+- Integration with job boards and hiring platforms
+- Blockchain-based certification verification
+- Expanded employer engagement features
+- Integration with university systems for automatic enrollment
 
-## Cannot Update Workflow file
-
-If you are running into errors in gitpod when updateding your github actions file, ensure your [github permissions](https://gitpod.io/integrations) in gitpod has workflow enabled ![perms](./images/gitperms.png)
-
-## Database Issues
-
-If you are adding models you may need to migrate the database with the commands given in the previous database migration section. Alternateively you can delete you database file.
+## Contributors
+- Ijaaz Sisarran (@IjaazSisarran)
+- Varune Rampersad (@VaruneRampersad)
+- Josiah Phillip (@Josiah-Phillip)
